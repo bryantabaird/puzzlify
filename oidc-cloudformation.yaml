@@ -51,7 +51,7 @@ Resources:
   VercelRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: Vercelb_Actions_Role
+      RoleName: Vercel_Actions_Role
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
