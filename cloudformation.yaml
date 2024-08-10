@@ -47,3 +47,47 @@ Resources:
       ThumbprintList:
         - d89e3bd43d5d909b47a18977aa9d5ce36cee184c
       Url: https://token.actions.githubusercontent.com
+
+  VercelRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: Vercelb_Actions_Role
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/oidc.vercel.com
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringLike:
+                'oidc.vercel.com:sub': ['owner:bryantbaird:project:puzzlify:environment:preview', 'owner:bryantbaird:project:puzzlify:environment:production']
+              StringEqualsIgnoreCase:
+                'oidc.vercel.com:aud': https://vercel.com/bryantbaird
+      Policies:
+        - PolicyName: OidcSafetyPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: OidcSafeties
+                Effect: Deny
+                Action:
+                  - sts:AssumeRole
+                Resource: "*"
+        - PolicyName: VercelRole
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: AllowActions
+                Effect: Allow
+                Action: "*"
+                Resource: "*"
+
+  VercelOidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      ClientIdList:
+        - https://vercel.com/bryantbaird
+      ThumbprintList:
+        - 696db3af0dffc17e65c6a20d925c5a7bd24dec7e
+      Url: https://oidc.vercel.com
