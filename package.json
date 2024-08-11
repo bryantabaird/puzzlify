@@ -26,7 +26,8 @@
   "packageManager": "npm@10.2.3",
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "cdk"
   ],
   "config": {
     "commitizen": {
