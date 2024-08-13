@@ -24,8 +24,6 @@ export async function POST(req: Request) {
 
   const tenant = { organizationName, id, dateCreated };
 
-  console.log("Adding tenant", tenant);
-
   const { success, error } = tenantSchema.safeParse(tenant);
 
   if (!success) {

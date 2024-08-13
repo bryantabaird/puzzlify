@@ -1,0 +1,37 @@
+name: Deploy CDK Stack
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy_cdk:
+    name: Deploy CDK
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      
+      - name: Install CDK CLI
+        run: npm install -g aws-cdk
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./cdk
+      
+      - name: Configure AWS credentials from Test account
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub_Actions_Role
+          aws-region: us-east-1
+
+      - name: Deploy CDK Stack
+        run: cdk deploy --require-approval never
+        working-directory: ./cdk
