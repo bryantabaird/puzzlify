@@ -2,7 +2,7 @@ import z from "zod";
 
 export const tenantSchema = z.object({
   id: z.string().uuid(),
-  organizationName: z.string(),
+  tenantName: z.string(),
   dateCreated: z.string().datetime(),
 });
 

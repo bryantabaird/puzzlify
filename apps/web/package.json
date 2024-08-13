@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.629.0",
     "@aws-sdk/client-dynamodb": "^3.624.0",
     "@repo/shared": "*",
     "@repo/ui": "*",

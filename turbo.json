@@ -1,6 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalEnv": ["COGNITO_USER_POOL_APP_CLIENT_ID"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
