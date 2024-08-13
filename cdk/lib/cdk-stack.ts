@@ -11,7 +11,7 @@ export class CdkStack extends cdk.Stack {
     super(scope, id, props);
 
     // Create the cognito resources
-    new CognitoConstruct(this, "CognitoConstruct");
+    new CognitoConstruct(this, "Cognito");
 
     // Create a DynamoDB table for tenants
     new dynamodb.Table(this, "Tenant", {
