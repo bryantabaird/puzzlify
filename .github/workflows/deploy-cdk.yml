@@ -5,6 +5,7 @@ on:
 
 env:
   HUSKY: 0
+  AWS_REGION: us-west-2
 
 jobs:
   deploy_cdk:
@@ -34,6 +35,10 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub_Actions_Role
           aws-region: us-east-1
+
+      - name: Bootstrap CDK
+        run: cdk bootstrap
+        working-directory: ./cdk
 
       - name: Deploy CDK Stack
         run: cdk deploy --require-approval never
