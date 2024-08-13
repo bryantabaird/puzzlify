@@ -6,7 +6,7 @@ export class CognitoConstruct extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    const userPool = new cognito.UserPool(this, "PuzzlifyUserPool", {
+    const userPool = new cognito.UserPool(this, "UserPool", {
       userPoolName: "puzzlify-user-pool",
       signInAliases: {
         email: true,
@@ -36,7 +36,7 @@ export class CognitoConstruct extends Construct {
 
     const userPoolClient = new cognito.UserPoolClient(
       this,
-      "PuzzlifyUserPoolWebClient",
+      "UserPoolWebClient",
       {
         userPool: userPool,
         userPoolClientName: "puzzlify-web-client",

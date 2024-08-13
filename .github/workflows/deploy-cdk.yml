@@ -3,6 +3,9 @@ name: Deploy CDK Stack
 on:
   workflow_dispatch:
 
+env:
+  HUSKY: 0
+
 jobs:
   deploy_cdk:
     name: Deploy CDK
@@ -23,14 +26,18 @@ jobs:
         run: npm install -g aws-cdk
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
         working-directory: ./cdk
       
       - name: Configure AWS credentials from Test account
         uses: aws-actions/configure-aws-credentials@v3
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub_Actions_Role
-          aws-region: us-east-1
+          aws-region: us-west-2
+
+      - name: Bootstrap CDK
+        run: cdk bootstrap
+        working-directory: ./cdk
 
       - name: Deploy CDK Stack
         run: cdk deploy --require-approval never
