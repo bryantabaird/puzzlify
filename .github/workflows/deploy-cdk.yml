@@ -26,7 +26,7 @@ jobs:
         run: npm install -g aws-cdk
 
       - name: Install dependencies
-        run: HUSKY=0 npm ci
+        run: npm ci
         working-directory: ./cdk
       
       - name: Configure AWS credentials from Test account
