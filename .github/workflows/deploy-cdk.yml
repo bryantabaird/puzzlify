@@ -3,6 +3,9 @@ name: Deploy CDK Stack
 on:
   workflow_dispatch:
 
+env:
+  HUSKY: 0
+
 jobs:
   deploy_cdk:
     name: Deploy CDK
