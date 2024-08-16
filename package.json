@@ -29,9 +29,5 @@
     "*.{md,json}": [
       "prettier -w"
     ]
-  },
-  "dependencies": {
-    "@types/bcrypt": "^5.0.2",
-    "next-auth": "^5.0.0-beta.20"
   }
 }
