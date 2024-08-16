@@ -1,20 +1,27 @@
 import NextAuth from "next-auth";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import Credentials from "next-auth/providers/credentials";
 import { getItem } from "@/server/helpers/db";
 import { AUTH_USER_TABLE_NAME } from "@repo/shared";
+import { authConfig } from "./auth.config";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
   callbacks: {
     authorized: async ({ auth }) => {
-      console.log("authorized callback");
-      console.log("auth", auth);
       return !!auth;
     },
+  },
+  pages: {
+    signIn: "/",
   },
   providers: [
     Credentials({
       async authorize(credentials) {
+        if (process.env.NODE_ENV === "development") {
+          return { id: "fakeUserId", email: "fakeuser@example.com" };
+        }
+
         if (credentials.email === null) {
           return null;
         }
@@ -29,11 +36,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           const user = await getItem(email, AUTH_USER_TABLE_NAME);
 
-          console.log("getting user", user);
-
-          console.log("email", email);
-          console.log("password", password);
-
           if (!user) {
             return null;
           }
@@ -42,8 +44,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             password,
             user.hashedPassword,
           );
-
-          console.log("isPasswordMatch", isPasswordMatch);
 
           if (isPasswordMatch) {
             return { id: user.id, email: user.email };

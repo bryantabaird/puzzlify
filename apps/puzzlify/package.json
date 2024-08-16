@@ -13,9 +13,8 @@
     "@aws-sdk/client-dynamodb": "^3.632.0",
     "@aws-sdk/lib-dynamodb": "^3.632.0",
     "@repo/shared": "*",
-    "@types/bcrypt": "^5.0.2",
     "@vercel/functions": "^1.4.0",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "next": "14.2.5",
     "next-auth": "^5.0.0-beta.20",
     "react": "^18",
@@ -23,6 +22,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

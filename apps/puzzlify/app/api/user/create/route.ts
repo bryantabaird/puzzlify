@@ -2,10 +2,12 @@ import { userSchema } from "@/models/user";
 import { putItem } from "@/server/helpers/db";
 import { AUTH_USER_TABLE_NAME } from "@repo/shared";
 import { randomUUID } from "node:crypto";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (request: NextRequest) => {
+  throw new Error("creating new user disabled");
+
   const { email, password } = await request.json();
 
   const hashedPassword = await bcrypt.hash(password, 10);
