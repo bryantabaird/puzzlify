@@ -5,6 +5,7 @@
     "cdk": "bin/cdk.js"
   },
   "scripts": {
+    "ts": "tsc --noEmit",
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",

@@ -4,7 +4,8 @@
   "scripts": {
     "cz": "cz",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "prepare": "husky install || true"
+    "prepare": "husky install || true",
+    "ts": "npm run ts --workspaces"
   },
   "devDependencies": {
     "husky": "^8.0.0",

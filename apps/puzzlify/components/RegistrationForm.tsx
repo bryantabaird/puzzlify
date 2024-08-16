@@ -31,7 +31,10 @@ const RegistrationForm = () => {
 
       response.status === 201 && router.push("/");
     } catch (e) {
-      console.error(e.message);
+      console.error("Failed to register", e);
+      if (e instanceof Error) {
+        console.error("Message: ", e.message);
+      }
     }
   }
 
