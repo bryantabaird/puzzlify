@@ -2,22 +2,15 @@
   "name": "puzzlify",
   "private": true,
   "scripts": {
-    "build": "turbo build",
     "cz": "cz",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "prepare": "husky install || true"
+    "prepare": "husky install || true",
+    "ts": "npm run ts --workspaces"
   },
   "devDependencies": {
-    "@commitlint/cli": "19.3.0",
-    "@commitlint/config-conventional": "19.2.2",
-    "commitizen": "^4.3.0",
-    "cz-conventional-changelog": "^3.3.0",
     "husky": "^8.0.0",
     "lint-staged": "^15.2.8",
     "prettier": "^3.2.5",
-    "turbo": "^2.0.12",
     "typescript": "^5.4.5"
   },
   "engines": {
@@ -29,11 +22,6 @@
     "packages/*",
     "cdk"
   ],
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
-  },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix",

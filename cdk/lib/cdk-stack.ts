@@ -1,23 +1,26 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
-import * as s3 from "aws-cdk-lib/aws-s3";
 
-import { TENANT_TABLE_NAME } from "@repo/shared";
-import { CognitoConstruct } from "../constructs/cognito-user";
+import { TENANT_TABLE_NAME, AUTH_USER_TABLE_NAME } from "@repo/shared";
 
 export class CdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-
-    // Create the cognito resources
-    new CognitoConstruct(this, "Cognito");
 
     // Create a DynamoDB table for tenants
     new dynamodb.Table(this, "Tenant", {
       tableName: TENANT_TABLE_NAME,
       partitionKey: {
         name: "id",
+        type: dynamodb.AttributeType.STRING,
+      },
+    });
+
+    new dynamodb.Table(this, "User", {
+      tableName: AUTH_USER_TABLE_NAME,
+      partitionKey: {
+        name: "email",
         type: dynamodb.AttributeType.STRING,
       },
     });

@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "lint": "eslint . --max-warnings 0",
-    "build": "tsc"
+    "build": "tsc",
+    "ts": "tsc --noEmit"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",

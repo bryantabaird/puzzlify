@@ -5,11 +5,11 @@
     "cdk": "bin/cdk.js"
   },
   "scripts": {
+    "ts": "tsc --noEmit",
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk",
-    "deploy:local": "cdklocal bootstrap && cdklocal deploy --require-approval never"
+    "cdk": "cdk"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
