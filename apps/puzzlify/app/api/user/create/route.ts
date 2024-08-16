@@ -10,8 +10,8 @@ export const POST = async (request: NextRequest) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const dateCreated = new Date().toISOString();
   const id = randomUUID();
+  const dateCreated = new Date().toISOString();
 
   const user = { name, id, dateCreated, email, hashedPassword };
 
