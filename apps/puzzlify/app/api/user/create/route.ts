@@ -11,8 +11,8 @@ export const POST = async (request: NextApiRequest) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const id = randomUUID();
   const dateCreated = new Date().toISOString();
+  const id = randomUUID();
 
   const user = { username, id, dateCreated, email, hashedPassword };
 
