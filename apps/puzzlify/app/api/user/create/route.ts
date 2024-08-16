@@ -6,14 +6,14 @@ import bcrypt from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (request: NextRequest) => {
-  const { username, email, password } = await request.json();
+  const { name, email, password } = await request.json();
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const dateCreated = new Date().toISOString();
   const id = randomUUID();
 
-  const user = { username, id, dateCreated, email, hashedPassword };
+  const user = { name, id, dateCreated, email, hashedPassword };
 
   const { success, error } = userSchema.safeParse(user);
 
