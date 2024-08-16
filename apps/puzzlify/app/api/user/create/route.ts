@@ -1,13 +1,12 @@
 import { userSchema } from "@/models/user";
 import { putItem } from "@/server/helpers/db";
 import { USER_TABLE_NAME } from "@repo/shared";
-import { NextApiRequest } from "next";
 import { randomUUID } from "node:crypto";
 import bcrypt from "bcrypt";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export const POST = async (request: NextApiRequest) => {
-  const { username, email, password } = request.body;
+export const POST = async (request: NextRequest) => {
+  const { username, email, password } = await request.json();
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -33,18 +32,4 @@ export const POST = async (request: NextApiRequest) => {
   }
 
   return new NextResponse("User has been added", { status: 201 });
-};
-
-export const DELETE = async (request: NextApiRequest) => {
-  const { id } = request.body;
-
-  try {
-    await deleteItem(id, USER_TABLE_NAME);
-  } catch (error) {
-    const userFacingErrorMessage = "Failed to delete user";
-    console.error(userFacingErrorMessage, error);
-    return new NextResponse(userFacingErrorMessage, { status: 500 });
-  }
-
-  return new NextResponse("User has been deleted", { status: 200 });
 };
