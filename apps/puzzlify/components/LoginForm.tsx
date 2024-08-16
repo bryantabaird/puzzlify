@@ -1,45 +1,38 @@
 "use client";
 
+import { login } from "@/app/actions";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const RegistrationForm = () => {
+const LoginForm = () => {
   const router = useRouter();
+  const [error, setError] = useState("");
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     try {
       const formData = new FormData(event.currentTarget);
 
-      const email = formData.get("email");
-      const password = formData.get("password");
+      const response = await login(formData);
 
-      const response = await fetch(`/api/user/create`, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
-      });
-
-      response.status === 201 && router.push("/");
-    } catch (e) {
-      console.error("Failed to register", e);
-      if (e instanceof Error) {
-        console.error("Message: ", e.message);
+      if (response.error) {
+        console.error(response.error);
+        setError(response.error.message);
+      } else {
+        router.push("/home");
       }
+    } catch (e) {
+      console.error(e);
+      setError("Check your Credentials");
     }
   }
 
   return (
     <>
+      <div className="text-xl text-red-500">{error}</div>
       <form
-        onSubmit={handleSubmit}
         className="my-5 flex flex-col items-center border p-3 border-gray-200 rounded-md"
+        onSubmit={onSubmit}
       >
         <div className="my-2">
           <label htmlFor="email">Email Address</label>
@@ -65,11 +58,11 @@ const RegistrationForm = () => {
           type="submit"
           className="bg-orange-300 mt-4 rounded flex justify-center items-center w-36"
         >
-          Register
+          Credential Login
         </button>
       </form>
     </>
   );
 };
 
-export default RegistrationForm;
+export default LoginForm;

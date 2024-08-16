@@ -61,7 +61,7 @@ Resources:
             Action: sts:AssumeRoleWithWebIdentity
             Condition:
               StringLike:
-                'oidc.vercel.com:sub': ['owner:bryantbaird:project:puzzlify:environment:preview', 'owner:bryantbaird:project:puzzlify:environment:production']
+                'oidc.vercel.com:sub': ['owner:bryantbaird:project:puzzlify-web:environment:preview', 'owner:bryantbaird:project:puzzlify-web:environment:production']
               StringEqualsIgnoreCase:
                 'oidc.vercel.com:aud': https://vercel.com/bryantbaird
       Policies:

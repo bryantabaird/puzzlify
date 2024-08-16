@@ -1,6 +1,10 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
-import { TENANT_TABLE_NAME, USER_TABLE_NAME } from "@repo/shared";
+import {
+  DynamoDBDocumentClient,
+  PutCommand,
+  GetCommand,
+} from "@aws-sdk/lib-dynamodb";
+import { TENANT_TABLE_NAME, AUTH_USER_TABLE_NAME } from "@repo/shared";
 import { awsCredentialsProvider } from "@vercel/functions/oidc";
 
 const AWS_ROLE_ARN = process.env.AWS_ROLE_ARN;
@@ -23,7 +27,7 @@ const client = new DynamoDBClient({
 
 const documentClient = DynamoDBDocumentClient.from(client);
 
-type TableName = typeof TENANT_TABLE_NAME | typeof USER_TABLE_NAME;
+type TableName = typeof TENANT_TABLE_NAME | typeof AUTH_USER_TABLE_NAME;
 
 export const putItem = async (
   item: Record<string, unknown>,
@@ -40,5 +44,21 @@ export const putItem = async (
   } catch (error) {
     console.error("Error adding item", error);
     throw new Error("Failed to add item");
+  }
+};
+
+export const getItem = async (key: string, tableName: TableName) => {
+  console.log("Getting item", key);
+  try {
+    const { Item } = await documentClient.send(
+      new GetCommand({
+        TableName: tableName,
+        Key: { id: key },
+      }),
+    );
+    return Item;
+  } catch (error) {
+    console.error("Error getting item", error);
+    throw new Error("Failed to get item");
   }
 };
