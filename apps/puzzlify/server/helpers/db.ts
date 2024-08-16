@@ -53,7 +53,7 @@ export const getItem = async (key: string, tableName: TableName) => {
     const { Item } = await documentClient.send(
       new GetCommand({
         TableName: tableName,
-        Key: { id: key },
+        Key: { email: key },
       }),
     );
     return Item;
