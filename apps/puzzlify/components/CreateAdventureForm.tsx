@@ -59,7 +59,7 @@ const CreateAdventureForm = () => {
             Name
           </label>
           <input
-            type="datetime-local"
+            type="text"
             id="name"
             name="name"
             className="border mx-2 border-gray-500 rounded"

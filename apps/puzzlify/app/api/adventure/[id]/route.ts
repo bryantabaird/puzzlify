@@ -1,5 +1,4 @@
-import { getItem } from "@/server/helpers/db";
-import { ADVENTURE_TABLE_NAME } from "@repo/shared";
+import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (request: NextRequest) => {
@@ -11,11 +10,24 @@ export const GET = async (request: NextRequest) => {
   }
 
   try {
-    const adventure = await getItem(adventureId, ADVENTURE_TABLE_NAME);
+    const adventure = await prisma.adventure.findUnique({
+      where: {
+        id: adventureId,
+      },
+    });
     return NextResponse.json(adventure);
   } catch (error) {
     const userFacingErrorMessage = "Failed to get adventure";
     console.error(userFacingErrorMessage, error);
     return new NextResponse(userFacingErrorMessage, { status: 500 });
   }
+
+  // try {
+  //   const adventure = await getItem(adventureId, ADVENTURE_TABLE_NAME);
+  //   return NextResponse.json(adventure);
+  // } catch (error) {
+  //   const userFacingErrorMessage = "Failed to get adventure";
+  //   console.error(userFacingErrorMessage, error);
+  //   return new NextResponse(userFacingErrorMessage, { status: 500 });
+  // }
 };

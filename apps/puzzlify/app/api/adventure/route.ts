@@ -1,32 +1,36 @@
-import { putItem } from "@/server/helpers/db";
-import { ADVENTURE_TABLE_NAME } from "@repo/shared";
-import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
-import { adventureSchema } from "@/models/adventure";
+import prisma from "@/lib/prisma";
+import { auth } from "@/auth";
 
 export const POST = async (request: NextRequest) => {
   const userInput = await request.json();
+  const session = await auth();
 
-  const id = randomUUID();
-  const dateCreated = new Date().toISOString();
+  const user = session?.user;
 
-  const adventure = { id, dateCreated, ...userInput };
-
-  const { success, error } = adventureSchema.safeParse(adventure);
-
-  if (!success) {
-    const errorMessage = "Adventure schema is invalid";
-    console.error(errorMessage, error);
-    throw new Error(errorMessage);
+  if (!user) {
+    console.error("Error retrieving user from session");
+    return new NextResponse("Internal server error", { status: 500 });
   }
 
+  const userId = user.id;
+
+  if (!userId) {
+    console.error("Error retrieving user id from session");
+    return new NextResponse("Internal server error", { status: 500 });
+  }
+
+  const adventure = { name: userInput.name, hostId: userId };
+
   try {
-    await putItem(adventure, ADVENTURE_TABLE_NAME);
+    const createdAdventure = await prisma.adventure.create({
+      data: adventure,
+    });
+    console.log("Adventure created:", createdAdventure);
+    return NextResponse.json(createdAdventure);
   } catch (error) {
     const userFacingErrorMessage = "Failed to add adventure";
     console.error(userFacingErrorMessage, error);
     return new NextResponse(userFacingErrorMessage, { status: 500 });
   }
-
-  return new NextResponse(JSON.stringify(adventure), { status: 200 });
 };
