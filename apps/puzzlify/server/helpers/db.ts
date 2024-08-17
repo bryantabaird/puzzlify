@@ -4,7 +4,11 @@ import {
   PutCommand,
   GetCommand,
 } from "@aws-sdk/lib-dynamodb";
-import { TENANT_TABLE_NAME, AUTH_USER_TABLE_NAME } from "@repo/shared";
+import {
+  TENANT_TABLE_NAME,
+  AUTH_USER_TABLE_NAME,
+  ADVENTURE_TABLE_NAME,
+} from "@repo/shared";
 import { awsCredentialsProvider } from "@vercel/functions/oidc";
 
 const AWS_ROLE_ARN = process.env.AWS_ROLE_ARN;
@@ -27,7 +31,10 @@ const client = new DynamoDBClient({
 
 const documentClient = DynamoDBDocumentClient.from(client);
 
-type TableName = typeof TENANT_TABLE_NAME | typeof AUTH_USER_TABLE_NAME;
+type TableName =
+  | typeof TENANT_TABLE_NAME
+  | typeof AUTH_USER_TABLE_NAME
+  | typeof ADVENTURE_TABLE_NAME;
 
 export const putItem = async (
   item: Record<string, unknown>,
