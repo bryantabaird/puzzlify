@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { Hint } from "@prisma/client";
 import Link from "next/link";
 
 type ViewStagePageProps = {
@@ -38,7 +39,7 @@ export default async function ViewStagePage({ params }: ViewStagePageProps) {
       </Link>
       <h2>Hints</h2>
       <ul>
-        {stage.hints.map((hint) => (
+        {stage.hints.map((hint: Hint) => (
           <li key={hint.id}>
             <p>
               <strong>Hint:</strong> {hint.hint}

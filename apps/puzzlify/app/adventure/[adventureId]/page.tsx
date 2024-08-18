@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { Stage } from "@prisma/client";
 import Link from "next/link";
 
 export default async function ViewAdventurePage({
@@ -31,7 +32,7 @@ export default async function ViewAdventurePage({
       </Link>
       <h2>Stages</h2>
       <ul>
-        {adventure.stages.map((stage) => (
+        {adventure.stages.map((stage: Stage) => (
           <li key={stage.id}>
             <p>
               <strong>Riddle:</strong> {stage.riddle}
