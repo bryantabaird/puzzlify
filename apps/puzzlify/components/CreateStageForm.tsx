@@ -2,8 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Adventure } from "@prisma/client";
 
-const CreateAdventureForm = () => {
+type CreateStageFormProps = {
+  adventure: Adventure;
+};
+
+const CreateStageForm = ({ adventure }: CreateStageFormProps) => {
   const [error, setError] = useState<string>("");
   const router = useRouter();
 
@@ -12,22 +17,22 @@ const CreateAdventureForm = () => {
     const formData = new FormData(event.currentTarget);
 
     try {
-      const response = await fetch("/api/adventure", {
+      const response = await fetch(`/api/adventure/${adventure.id}/stage`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          startDate: formData.get("startDate"),
-          name: formData.get("name"),
+          riddle: formData.get("riddle"),
+          answer: formData.get("answer"),
         }),
       });
 
       if (response.ok) {
-        router.push("/adventure");
+        router.push(`/adventure/${adventure.id}`);
       } else {
         const data = await response.json();
-        setError(data.message || "Failed to create adventure.");
+        setError(data.message || "Failed to create stage.");
       }
     } catch (e) {
       console.error(e);
@@ -43,25 +48,25 @@ const CreateAdventureForm = () => {
         onSubmit={handleSubmit}
       >
         <div className="my-2">
-          <label htmlFor="startDate" className="block">
-            Start Date
+          <label htmlFor="riddle" className="block">
+            Riddle
           </label>
           <input
-            type="datetime-local"
-            id="startDate"
-            name="startDate"
+            type="text"
+            id="riddle"
+            name="riddle"
             className="border mx-2 border-gray-500 rounded"
           />
         </div>
 
         <div className="my-2">
-          <label htmlFor="name" className="block">
-            Name
+          <label htmlFor="answer" className="block">
+            Answer
           </label>
           <input
             type="text"
-            id="name"
-            name="name"
+            id="answer"
+            name="answer"
             className="border mx-2 border-gray-500 rounded"
           />
         </div>
@@ -70,11 +75,11 @@ const CreateAdventureForm = () => {
           type="submit"
           className="bg-orange-300 mt-4 rounded flex justify-center items-center w-36"
         >
-          Create Adventure
+          Create Stage
         </button>
       </form>
     </>
   );
 };
 
-export default CreateAdventureForm;
+export default CreateStageForm;

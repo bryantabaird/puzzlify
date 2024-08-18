@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     String      @id @default(uuid())
+  email                  String      @unique
+  password               String
+  hostedAdventures       Adventure[] @relation("HostAdventures")
+  participatedAdventures Adventure[] @relation("Participations")
+}
+
+model Adventure {
+  id           String    @id @default(uuid())
+  dateCreated  DateTime  @default(now())
+  name         String
+  startDate    DateTime?
+  stages       Stage[]   @relation("AdventureStages")
+  hostId       String
+  host         User      @relation("HostAdventures", fields: [hostId], references: [id])
+  participants User[]    @relation("Participations")
+}
+
+model Stage {
+  id          String     @id @default(uuid())
+  riddle      String
+  answer      String
+  hints       Hint[]     @relation("StageHints")
+  adventureId String
+  adventure   Adventure  @relation("AdventureStages", fields: [adventureId], references: [id])
+}
+
+model Hint {
+  id      String     @id @default(uuid())
+  delay   Int
+  hint    String
+  stageId String
+  stage   Stage      @relation("StageHints", fields: [stageId], references: [id])
+}

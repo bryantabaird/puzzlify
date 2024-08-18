@@ -1,5 +1,5 @@
 import CreateAdventureForm from "@/components/CreateAdventureForm";
 
-export default function Dashboard() {
+export default function CreateAdventurePage() {
   return <CreateAdventureForm />;
 }
