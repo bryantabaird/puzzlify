@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -11,17 +11,17 @@ const seed = async () => {
     {
       id: "1",
       email: "test1@test.com",
-      password: await bcrypt.hash("asdf", 10),
+      password: await bcryptjs.hash("asdf", 10),
     },
     {
       id: "2",
       email: "test2@test.com",
-      password: await bcrypt.hash("asdf", 10),
+      password: await bcryptjs.hash("asdf", 10),
     },
     {
       id: "3",
       email: "test3@test.com",
-      password: await bcrypt.hash("asdf", 10),
+      password: await bcryptjs.hash("asdf", 10),
     },
   ];
 

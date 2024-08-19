@@ -47,20 +47,9 @@ export default async function ViewStagePage({ params }: ViewStagePageProps) {
             <p>
               <strong>Delay (seconds):</strong> {hint.delay}
             </p>
-            <Link
-              href={`/adventure/${adventureId}/stage/${stageId}/hint/${hint.id}`}
-            >
-              View Hint
-            </Link>
           </li>
         ))}
       </ul>
-      <Link
-        href={`/adventure/${stageId}/stage/${stageId}/hint/create`}
-        className="mx-2 underline"
-      >
-        Create Hint
-      </Link>
     </div>
   );
 }
