@@ -1,13 +1,18 @@
 import NextAuth from "next-auth";
 import bcrypt from "bcryptjs";
 import Credentials from "next-auth/providers/credentials";
-import { getItem } from "@/server/helpers/db";
-import { AUTH_USER_TABLE_NAME } from "@repo/shared";
 import { authConfig } from "./auth.config";
+import prisma from "./lib/prisma";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
   callbacks: {
+    session({ session, token }) {
+      if (token.sub) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
     authorized: async ({ auth }) => {
       return !!auth;
     },
@@ -18,10 +23,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
       async authorize(credentials) {
-        if (process.env.NODE_ENV === "development") {
-          return { id: "fakeUserId", email: "fakeuser@example.com" };
-        }
-
         if (credentials.email === null) {
           return null;
         }
@@ -34,16 +35,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const email = credentials.email as string;
           const password = credentials.password as string;
 
-          const user = await getItem(email, AUTH_USER_TABLE_NAME);
+          const user = await prisma.user.findUnique({
+            where: {
+              email: email,
+            },
+          });
 
           if (!user) {
             return null;
           }
 
-          const isPasswordMatch = await bcrypt.compare(
-            password,
-            user.hashedPassword,
-          );
+          const isPasswordMatch = await bcrypt.compare(password, user.password);
 
           if (isPasswordMatch) {
             return { id: user.id, email: user.email };

@@ -1,0 +1,24 @@
+import { randomUUID } from "node:crypto";
+import bcrypt from "bcryptjs";
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+
+export const POST = async (request: NextRequest) => {
+  const { email, password } = await request.json();
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user = { email, password: hashedPassword };
+
+  try {
+    const createdUser = await prisma.user.create({
+      data: user,
+    });
+    console.log("User has been added:", createdUser);
+    return new NextResponse("User has been added", { status: 201 });
+  } catch (error) {
+    const userFacingErrorMessage = "Failed to add user";
+    console.error(userFacingErrorMessage, error);
+    return new NextResponse(userFacingErrorMessage, { status: 500 });
+  }
+};

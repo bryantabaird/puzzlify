@@ -14,7 +14,7 @@ const RegistrationForm = () => {
       const email = formData.get("email");
       const password = formData.get("password");
 
-      const response = await fetch(`/api/user/create`, {
+      const response = await fetch(`/api/user`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
