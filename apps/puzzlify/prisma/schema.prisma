@@ -17,37 +17,65 @@ datasource db {
 }
 
 model User {
-  id                     String      @id @default(uuid())
-  email                  String      @unique
-  password               String
-  hostedAdventures       Adventure[] @relation("HostAdventures")
-  participatedAdventures Adventure[] @relation("Participations")
+  id               String              @id @default(uuid())
+  email            String              @unique
+  password         String
+  hostedAdventures Adventure[]         @relation("HostAdventures")
+  stageProgresses  UserStageProgress[]
 }
 
 model Adventure {
-  id           String    @id @default(uuid())
-  dateCreated  DateTime  @default(now())
-  name         String
-  startDate    DateTime?
-  stages       Stage[]   @relation("AdventureStages")
-  hostId       String
-  host         User      @relation("HostAdventures", fields: [hostId], references: [id])
-  participants User[]    @relation("Participations")
+  id              String              @id @default(uuid())
+  dateCreated     DateTime            @default(now())
+  name            String
+  startDate       DateTime?
+  stages          Stage[]             @relation("AdventureStages")
+  hostId          String
+  host            User                @relation("HostAdventures", fields: [hostId], references: [id])
+  stageProgresses UserStageProgress[]
 }
 
 model Stage {
-  id          String     @id @default(uuid())
-  riddle      String
-  answer      String
-  hints       Hint[]     @relation("StageHints")
-  adventureId String
-  adventure   Adventure  @relation("AdventureStages", fields: [adventureId], references: [id])
+  id              String              @id @default(uuid())
+  riddle          String
+  answer          String
+  hints           Hint[]              @relation("StageHints")
+  adventureId     String
+  adventure       Adventure           @relation("AdventureStages", fields: [adventureId], references: [id])
+  stageProgresses UserStageProgress[]
+  previousStages  StageRelation[]     @relation("PreviousStages")
+  nextStages      StageRelation[]     @relation("NextStages")
+}
+
+model StageRelation {
+  id          String @id @default(uuid())
+  fromStageId String
+  fromStage   Stage  @relation("NextStages", fields: [fromStageId], references: [id])
+  toStageId   String
+  toStage     Stage  @relation("PreviousStages", fields: [toStageId], references: [id])
+
+  // @@unique([fromStageId, toStageId])
 }
 
 model Hint {
-  id      String     @id @default(uuid())
+  id      String @id @default(uuid())
   delay   Int
   hint    String
   stageId String
-  stage   Stage      @relation("StageHints", fields: [stageId], references: [id])
+  stage   Stage  @relation("StageHints", fields: [stageId], references: [id])
+}
+
+model UserStageProgress {
+  id          String    @id @default(uuid())
+  userId      String
+  adventureId String
+  stageId     String
+  startTime   DateTime  @default(now())
+  endTime     DateTime?
+
+  user      User      @relation(fields: [userId], references: [id])
+  adventure Adventure @relation(fields: [adventureId], references: [id])
+  stage     Stage     @relation(fields: [stageId], references: [id])
+
+  @@unique([userId, adventureId, stageId])
 }

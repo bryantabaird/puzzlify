@@ -24,7 +24,9 @@ const CreateAdventureForm = () => {
       });
 
       if (response.ok) {
-        router.push("/adventure");
+        const data = await response.json();
+        console.log("data", data);
+        router.push(`/adventure/${data.id}`);
       } else {
         const data = await response.json();
         setError(data.message || "Failed to create adventure.");
