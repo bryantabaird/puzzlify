@@ -1,10 +1,9 @@
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
-import { NextApiRequest } from "next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (
-  req: NextApiRequest,
+  req: NextRequest,
   { params }: { params: { adventureId: string } },
 ) => {
   const session = await auth();
