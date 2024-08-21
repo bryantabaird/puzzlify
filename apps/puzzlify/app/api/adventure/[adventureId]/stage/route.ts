@@ -1,26 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { auth } from "@/auth";
+import { getUserId } from "@/server/helpers/getUserId";
+import { getAdventureHost } from "@/server/helpers/isAdventureHost";
 
 export const POST = async (
   request: NextRequest,
   { params }: { params: { adventureId: string } },
 ) => {
-  const userInput = await request.json();
-  const session = await auth();
+  const userId = await getUserId();
+  const isHost = await getAdventureHost({
+    adventureId: params.adventureId,
+    userId,
+  });
 
-  const user = session?.user;
-
-  if (!user) {
-    console.error("Error retrieving user from session");
-    return new NextResponse("Internal server error", { status: 500 });
-  }
-
-  const userId = user.id;
-
-  if (!userId) {
-    console.error("Error retrieving user id from session");
-    return new NextResponse("Internal server error", { status: 500 });
+  if (!isHost) {
+    return new NextResponse("You are not the host of this adventure", {
+      status: 403,
+    });
   }
 
   const adventureId = params.adventureId;
@@ -29,6 +25,8 @@ export const POST = async (
     console.error("Error retrieving adventure id from params");
     return new NextResponse("Internal server error", { status: 500 });
   }
+
+  const userInput = await request.json();
 
   const stage = {
     adventureId,

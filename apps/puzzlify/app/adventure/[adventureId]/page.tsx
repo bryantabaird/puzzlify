@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { Stage } from "@prisma/client";
 import Link from "next/link";
 import { auth } from "@/auth";
+import JoinAdventureForm from "@/components/JoinAdventureForm";
 
 export default async function ViewAdventurePage({
   params,
@@ -27,7 +28,7 @@ export default async function ViewAdventurePage({
     );
   }
 
-  const isHost = adventure.hostId === userId; // Check if the current user is the host
+  const isHost = adventure.hostId === userId;
 
   return (
     <div>
@@ -66,12 +67,7 @@ export default async function ViewAdventurePage({
           </Link>
         </>
       ) : (
-        <Link
-          href={`/adventure/${adventure.id}/join`}
-          className="mx-2 underline"
-        >
-          Join Adventure
-        </Link>
+        <JoinAdventureForm adventureId={adventureId} />
       )}
     </div>
   );
