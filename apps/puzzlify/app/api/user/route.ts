@@ -1,12 +1,11 @@
-import { randomUUID } from "node:crypto";
-import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import hashInput from "@/server/helpers/hashInput";
 
 export const POST = async (request: NextRequest) => {
   const { email, password } = await request.json();
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await hashInput(password);
 
   const user = { email, password: hashedPassword };
 

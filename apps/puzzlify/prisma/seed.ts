@@ -4,6 +4,7 @@ import bcryptjs from "bcryptjs";
 const prisma = new PrismaClient();
 
 const seed = async () => {
+  await prisma.userProgress.deleteMany();
   await prisma.hint.deleteMany();
   await prisma.stageRelation.deleteMany();
   await prisma.stage.deleteMany();
