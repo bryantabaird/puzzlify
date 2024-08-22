@@ -1,35 +1,45 @@
-import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma"; // Adjust the import path according to your project structure
+"use server";
+
+import prisma from "@/lib/prisma";
 import { getUserId } from "@/server/helpers/getUserId";
+import { compareInput } from "@/server/helpers/hashInput";
 import { getAdventureHost } from "@/server/helpers/isAdventureHost";
-import hashInput from "@/server/helpers/hashInput";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export const POST = async (
-  request: Request,
-  {
-    params: { adventureId, stageId },
-  }: { params: { adventureId: string; stageId: string } },
-) => {
+import { z } from "zod";
+
+type Params = {
+  adventureId: string;
+  stageId: string;
+};
+
+export default async function verify(
+  { adventureId, stageId }: Params,
+  formData: FormData,
+) {
   try {
+    const schema = z.object({
+      answer: z.string().min(1).toLowerCase(),
+    });
+
+    const result = schema.safeParse({
+      answer: formData.get("answer"),
+    });
+
+    if (!result.success) {
+      return { message: "Invalid answer input" };
+    }
+
+    const {
+      data: { answer },
+    } = result;
+
     const userId = await getUserId();
     const isHost = await getAdventureHost({ adventureId, userId });
 
     if (isHost) {
-      return NextResponse.json(
-        { message: "You are the host of this adventure" },
-        { status: 403 },
-      );
-    }
-
-    const { answer } = await request.json();
-
-    if (typeof answer !== "string" || answer.trim() === "") {
-      return NextResponse.json(
-        { message: "Invalid answer input" },
-        { status: 400 },
-      );
+      return { message: "You are the host of this adventure" };
     }
 
     const stage = await prisma.stage.findUnique({
@@ -38,12 +48,12 @@ export const POST = async (
     });
 
     if (!stage) {
-      return NextResponse.json({ message: "Stage not found" }, { status: 404 });
+      return { message: "Stage not found" };
     }
-    const parsedAnswer = answer.toLowerCase();
-    const hashedAnswer = await hashInput(parsedAnswer);
 
-    if (answer === stage.answer) {
+    const isCorrectAnswer = await compareInput(answer, stage.answer);
+
+    if (isCorrectAnswer) {
       const now = new Date();
 
       const nextStages = await prisma.stageRelation.findMany({
@@ -79,7 +89,7 @@ export const POST = async (
                 userId,
                 adventureId,
                 stageId: { in: previousStageIds },
-                completionTime: null, // Uncompleted stages
+                completionTime: null,
               },
             },
           );
@@ -110,16 +120,13 @@ export const POST = async (
       });
 
       revalidatePath(`/adventure/${adventureId}/dashboard`);
-
-      return NextResponse.json({ message: "Correct answer!" });
     } else {
-      return NextResponse.json(
-        { message: "Incorrect answer. Try again." },
-        { status: 400 },
-      );
+      return { message: "Incorrect answer. Try again." };
     }
   } catch (error) {
     console.error("Error verifying answer:", error);
-    return NextResponse.json({ message: "An error occurred" }, { status: 500 });
+    return { message: "An error occurred" };
   }
-};
+
+  redirect(`/adventure/${adventureId}/dashboard`);
+}
