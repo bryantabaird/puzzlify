@@ -2,7 +2,7 @@
 
 import { hintSchema } from "@/app/schemas/stage";
 import { hostActionClient } from "@/lib/nextSafeAction";
-import prisma from "@/lib/prisma";
+import { updateHintDb } from "@/server/db/hint";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -21,13 +21,7 @@ export const editHint = hostActionClient
     }
 
     try {
-      await prisma.hint.update({
-        where: { id: hintId },
-        data: {
-          hint,
-          delay,
-        },
-      });
+      await updateHintDb(hintId, { hint, delay });
     } catch (error) {
       const userFacingErrorMessage = "Failed to edit hint";
       console.error(userFacingErrorMessage, error);

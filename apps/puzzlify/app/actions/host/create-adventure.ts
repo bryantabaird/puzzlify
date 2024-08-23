@@ -2,9 +2,9 @@
 
 import { adventureSchema } from "@/app/schemas/adventure";
 import { hostActionClient } from "@/lib/nextSafeAction";
-import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { createAdventureDb } from "@/server/db/adventure";
 
 export const createAdventure = hostActionClient
   .schema(adventureSchema)
@@ -18,7 +18,7 @@ export const createAdventure = hostActionClient
 
     let adventureId;
     try {
-      const adventure = await prisma.adventure.create({ data });
+      const adventure = await createAdventureDb(data);
       adventureId = adventure.id;
 
       revalidatePath(`/adventure/${adventureId}`);

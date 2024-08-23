@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { getHostAdventureId } from "../db/adventure";
 
 type IsAdventureHostProps = {
   userId: string;
@@ -9,13 +9,7 @@ export async function isAdventureHost({
   adventureId,
   userId,
 }: IsAdventureHostProps): Promise<boolean> {
-  const adventure = await prisma.adventure.findFirst({
-    where: {
-      id: adventureId,
-      hostId: userId,
-    },
-    select: { id: true },
-  });
+  const adventure = await getHostAdventureId(adventureId, userId);
 
   return !!adventure;
 }

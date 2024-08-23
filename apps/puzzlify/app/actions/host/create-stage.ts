@@ -2,7 +2,7 @@
 
 import { stageSchema } from "@/app/schemas/stage";
 import { hostActionClient } from "@/lib/nextSafeAction";
-import prisma from "@/lib/prisma";
+import { createStageDb } from "@/server/db/stage";
 import hashInput from "@/server/helpers/hashInput";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -23,9 +23,7 @@ export const createStage = hostActionClient
     const stage = { adventureId, riddle, answer: hashedAnswer };
 
     try {
-      await prisma.stage.create({
-        data: stage,
-      });
+      await createStageDb(stage);
 
       revalidatePath(`/adventure/${adventureId}`);
     } catch (error) {

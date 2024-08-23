@@ -1,7 +1,7 @@
 "use server";
 
 import { hostActionClient } from "@/lib/nextSafeAction";
-import prisma from "@/lib/prisma";
+import { deleteHintDb } from "@/server/db/hint";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -22,10 +22,12 @@ export const deleteHint = hostActionClient
       throw new Error("Adventure ID is required");
     }
 
+    if (!hintId) {
+      throw new Error("Hint ID is required");
+    }
+
     try {
-      await prisma.hint.delete({
-        where: { id: hintId },
-      });
+      await deleteHintDb(hintId);
     } catch (error) {
       const userFacingErrorMessage = "Failed to delete hint";
       console.error(userFacingErrorMessage, error);

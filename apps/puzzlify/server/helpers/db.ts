@@ -1,3 +1,5 @@
+// TODO: Remove all aws in the package
+
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,

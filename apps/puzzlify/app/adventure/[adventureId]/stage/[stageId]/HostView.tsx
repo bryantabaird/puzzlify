@@ -27,8 +27,6 @@ export default async function HostStageView({
   adventureId,
   stage,
 }: HostStageViewProps) {
-  console.log("HostStageView", stage);
-
   return (
     <div>
       <h1>{stage.riddle}</h1>

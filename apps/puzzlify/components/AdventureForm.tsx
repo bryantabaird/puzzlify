@@ -6,7 +6,6 @@ import { adventureSchema } from "@/app/schemas/adventure";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 import { Adventure } from "@prisma/client";
-import { get } from "http";
 
 type Props = {
   adventure?: Adventure;

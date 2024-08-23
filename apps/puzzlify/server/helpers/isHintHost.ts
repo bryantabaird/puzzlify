@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { getHostHintId } from "../db/hint";
 
 type Props = {
   userId: string;
@@ -6,19 +6,7 @@ type Props = {
 };
 
 export async function isHintHost({ hintId, userId }: Props): Promise<boolean> {
-  const hint = await prisma.hint.findFirst({
-    where: {
-      id: hintId,
-      stage: {
-        adventure: {
-          hostId: userId,
-        },
-      },
-    },
-    select: {
-      id: true,
-    },
-  });
+  const hint = await getHostHintId(hintId, userId);
 
   return !!hint;
 }

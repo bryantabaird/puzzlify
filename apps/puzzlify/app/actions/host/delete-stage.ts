@@ -1,14 +1,14 @@
 "use server";
 
 import { hostActionClient } from "@/lib/nextSafeAction";
-import prisma from "@/lib/prisma";
+import { deleteStageDb } from "@/server/db/stage";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
 export const deleteStage = hostActionClient
   .schema(z.object({}))
-  .metadata({ actionName: "delete-hint" })
+  .metadata({ actionName: "delete-stage" })
   .action(async ({ bindArgsParsedInputs }) => {
     const [{ adventureId, stageId }] = bindArgsParsedInputs;
 
@@ -23,18 +23,7 @@ export const deleteStage = hostActionClient
     }
 
     try {
-      await prisma.$transaction([
-        prisma.hint.deleteMany({
-          where: {
-            stageId: stageId,
-          },
-        }),
-        prisma.stage.delete({
-          where: {
-            id: stageId,
-          },
-        }),
-      ]);
+      await deleteStageDb(stageId);
     } catch (error) {
       const userFacingErrorMessage = "Failed to delete hint";
       console.error(userFacingErrorMessage, error);

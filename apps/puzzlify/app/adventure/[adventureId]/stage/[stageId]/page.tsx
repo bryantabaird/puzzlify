@@ -2,7 +2,7 @@ import { getUserId } from "@/server/helpers/getUserId";
 import { isAdventureHost } from "@/server/helpers/isAdventureHost";
 import HostStageView from "./HostView";
 import ParticipantStageView from "./ParticipantView";
-import prisma from "@/lib/prisma";
+import { getStageWithPreviousAndNextStages } from "@/server/db/stage";
 
 type ViewStagePageProps = {
   params: {
@@ -18,22 +18,7 @@ export default async function ViewStagePage({ params }: ViewStagePageProps) {
   const userId = await getUserId();
   const isHost = await isAdventureHost({ adventureId, userId });
 
-  const stage = await prisma.stage.findUnique({
-    where: { id: stageId },
-    include: {
-      hints: true,
-      previousStages: {
-        include: {
-          fromStage: true,
-        },
-      },
-      nextStages: {
-        include: {
-          toStage: true,
-        },
-      },
-    },
-  });
+  const stage = await getStageWithPreviousAndNextStages(stageId);
 
   if (!stage) {
     return (

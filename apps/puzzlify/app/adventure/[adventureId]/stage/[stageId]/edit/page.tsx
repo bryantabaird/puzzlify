@@ -1,7 +1,7 @@
 import DeleteHintForm from "@/components/DeleteHintForm";
 import HintForm from "@/components/HintForm";
 import StageForm from "@/components/StageForm";
-import prisma from "@/lib/prisma";
+import { getStageWithHints } from "@/server/db/stage";
 import React from "react";
 
 type EditStageProps = {
@@ -13,12 +13,7 @@ type EditStageProps = {
 
 export default async function EditStage({ params }: EditStageProps) {
   const { stageId, adventureId } = params;
-  const stage = await prisma.stage.findUnique({
-    where: { id: stageId },
-    include: {
-      hints: true,
-    },
-  });
+  const stage = await getStageWithHints(stageId);
 
   if (!stage) {
     return (

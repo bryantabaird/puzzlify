@@ -1,5 +1,5 @@
 import AdventureForm from "@/components/AdventureForm";
-import prisma from "@/lib/prisma";
+import { getAdventureWithStages } from "@/server/db/adventure";
 
 export default async function EditAdventure({
   params,
@@ -7,12 +7,7 @@ export default async function EditAdventure({
   params: { adventureId: string };
 }) {
   const adventureId = params.adventureId;
-  const adventure = await prisma.adventure.findUnique({
-    where: { id: adventureId },
-    include: {
-      stages: true,
-    },
-  });
+  const adventure = await getAdventureWithStages(adventureId);
 
   if (!adventure) {
     return (

@@ -2,7 +2,7 @@
 
 import { hintSchema } from "@/app/schemas/stage";
 import { hostActionClient } from "@/lib/nextSafeAction";
-import prisma from "@/lib/prisma";
+import { createHintDb } from "@/server/db/hint";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -23,9 +23,7 @@ export const addHint = hostActionClient
     }
 
     try {
-      await prisma.hint.create({
-        data: { hint, stageId, delay },
-      });
+      await createHintDb({ stageId, hint, delay });
     } catch (error) {
       const userFacingErrorMessage = "Failed to add hint";
       console.error(userFacingErrorMessage, error);

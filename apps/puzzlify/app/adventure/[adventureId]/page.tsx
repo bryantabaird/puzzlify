@@ -1,8 +1,8 @@
-import prisma from "@/lib/prisma";
 import { Stage } from "@prisma/client";
 import Link from "next/link";
 import { auth } from "@/auth";
 import JoinAdventureForm from "@/components/JoinAdventureForm";
+import { getAdventureWithStages } from "@/server/db/adventure";
 
 export default async function ViewAdventurePage({
   params,
@@ -13,12 +13,7 @@ export default async function ViewAdventurePage({
   const userId = session?.user?.id; // Assuming the session contains the user ID
 
   const adventureId = params.adventureId;
-  const adventure = await prisma.adventure.findUnique({
-    where: { id: adventureId },
-    include: {
-      stages: true,
-    },
-  });
+  const adventure = await getAdventureWithStages(adventureId);
 
   if (!adventure) {
     return (

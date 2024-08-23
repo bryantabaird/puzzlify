@@ -1,4 +1,3 @@
-import { getAdventureIdFromStage } from "@/server/helpers/getAdventureIdFromStage";
 import { getUserId } from "@/server/helpers/getUserId";
 import { isAdventureHost } from "@/server/helpers/isAdventureHost";
 import { isHintHost } from "@/server/helpers/isHintHost";

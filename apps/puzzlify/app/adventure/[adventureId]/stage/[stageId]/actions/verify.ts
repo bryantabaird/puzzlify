@@ -1,6 +1,12 @@
 "use server";
 
-import prisma from "@/lib/prisma";
+import { getStageValidationData } from "@/server/db/stage";
+import { getNextStagesWithNextedPreviousStages } from "@/server/db/stage-relation";
+import {
+  createUserProgress,
+  getCountOfIncompletePreviousStages,
+  updateUserProgress,
+} from "@/server/db/user-progress";
 import { getUserId } from "@/server/helpers/getUserId";
 import { compareInput } from "@/server/helpers/hashInput";
 import { isAdventureHost } from "@/server/helpers/isAdventureHost";
@@ -42,10 +48,7 @@ export default async function verify(
       return { message: "You are the host of this adventure" };
     }
 
-    const stage = await prisma.stage.findUnique({
-      where: { id: stageId },
-      select: { answer: true, id: true, nextStages: true },
-    });
+    const stage = await getStageValidationData(stageId);
 
     if (!stage) {
       return { message: "Stage not found" };
@@ -56,68 +59,35 @@ export default async function verify(
     if (isCorrectAnswer) {
       const now = new Date();
 
-      const nextStages = await prisma.stageRelation.findMany({
-        where: {
-          fromStageId: stage.id,
-        },
-        select: {
-          toStageId: true,
-          toStage: {
-            select: {
-              previousStages: {
-                where: {
-                  fromStageId: { not: stage.id },
-                },
-                select: {
-                  fromStageId: true,
-                },
-              },
-            },
-          },
-        },
-      });
+      const nextStages = await getNextStagesWithNextedPreviousStages(stageId);
 
+      // TODO: Transaction for the following operations
       await Promise.all(
         nextStages.map(async (nextStage) => {
           const previousStageIds = nextStage.toStage.previousStages.map(
             (stageRelation) => stageRelation.fromStageId,
           );
 
-          const incompletePreviousStagesCount = await prisma.userProgress.count(
-            {
-              where: {
-                userId,
-                adventureId,
-                stageId: { in: previousStageIds },
-                completionTime: null,
-              },
-            },
-          );
+          const incompletePreviousStagesCount =
+            await getCountOfIncompletePreviousStages(
+              adventureId,
+              userId,
+              previousStageIds,
+            );
 
           if (incompletePreviousStagesCount === 0) {
-            await prisma.userProgress.create({
-              data: {
-                userId,
-                adventureId,
-                stageId: nextStage.toStageId,
-                startTime: now,
-              },
-            });
+            await createUserProgress(
+              userId,
+              adventureId,
+              nextStage.toStageId,
+              now,
+            );
           }
         }),
       );
 
       // Update the user progress entry for the current stage
-      await prisma.userProgress.update({
-        where: {
-          userProgressId: {
-            userId,
-            adventureId,
-            stageId,
-          },
-        },
-        data: { completionTime: now },
-      });
+      await updateUserProgress(userId, adventureId, stageId, now);
 
       revalidatePath(`/adventure/${adventureId}/dashboard`);
     } else {

@@ -2,7 +2,7 @@
 
 import { adventureSchema } from "@/app/schemas/adventure";
 import { hostActionClient } from "@/lib/nextSafeAction";
-import prisma from "@/lib/prisma";
+import { updateAdventureDb } from "@/server/db/adventure";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -20,15 +20,18 @@ export const editAdventure = hostActionClient
       throw new Error("Adventure ID is required");
     }
 
-    // TODO: Consider editing the start date after users had already started
+    const parsedStartDate = new Date(startDate);
+
+    if (isNaN(parsedStartDate.getTime())) {
+      throw new Error("Invalid start date");
+    }
+
+    // TODO: Consider when editing the start date after an adventure has started
 
     try {
-      await prisma.adventure.update({
-        where: { id: adventureId },
-        data: {
-          name,
-          startDate,
-        },
+      await updateAdventureDb(adventureId, {
+        name,
+        startDate: parsedStartDate,
       });
     } catch (error) {
       const userFacingErrorMessage = "Failed to edit adventure";
