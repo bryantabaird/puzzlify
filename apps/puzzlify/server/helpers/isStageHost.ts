@@ -1,18 +1,20 @@
 import prisma from "@/lib/prisma";
 
-type IsAdventureHostProps = {
+type IsStageHost = {
   userId: string;
-  adventureId: string;
+  stageId: string;
 };
 
-export async function isAdventureHost({
-  adventureId,
+export async function isStageHost({
+  stageId,
   userId,
-}: IsAdventureHostProps): Promise<boolean> {
+}: IsStageHost): Promise<boolean> {
   const adventure = await prisma.adventure.findFirst({
     where: {
-      id: adventureId,
       hostId: userId,
+      stages: {
+        some: { id: stageId },
+      },
     },
     select: { id: true },
   });

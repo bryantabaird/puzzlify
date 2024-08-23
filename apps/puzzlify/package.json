@@ -13,6 +13,8 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.632.0",
     "@aws-sdk/lib-dynamodb": "^3.632.0",
+    "@hookform/resolvers": "^3.9.0",
+    "@next-safe-action/adapter-react-hook-form": "^1.0.12",
     "@prisma/client": "^5.18.0",
     "@repo/shared": "*",
     "@vercel/functions": "^1.4.0",
@@ -22,6 +24,7 @@
     "next-safe-action": "^7.7.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-hook-form": "^7.52.2",
     "sqlite3": "^5.1.7",
     "zod": "^3.23.8"
   },

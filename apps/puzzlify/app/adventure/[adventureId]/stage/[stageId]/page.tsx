@@ -1,5 +1,5 @@
 import { getUserId } from "@/server/helpers/getUserId";
-import { getAdventureHost } from "@/server/helpers/isAdventureHost";
+import { isAdventureHost } from "@/server/helpers/isAdventureHost";
 import HostStageView from "./HostView";
 import ParticipantStageView from "./ParticipantView";
 import prisma from "@/lib/prisma";
@@ -16,7 +16,7 @@ export default async function ViewStagePage({ params }: ViewStagePageProps) {
   const stageId = params.stageId;
 
   const userId = await getUserId();
-  const isHost = await getAdventureHost({ adventureId, userId });
+  const isHost = await isAdventureHost({ adventureId, userId });
 
   const stage = await prisma.stage.findUnique({
     where: { id: stageId },

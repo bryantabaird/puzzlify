@@ -1,4 +1,4 @@
-import CreateStageForm from "@/components/CreateStageForm";
+import StageForm from "@/components/StageForm";
 import prisma from "@/lib/prisma";
 
 export default async function CreateStagePage({
@@ -26,7 +26,7 @@ export default async function CreateStagePage({
     <div>
       <h1>{adventure.name}</h1>
       <pre>{JSON.stringify(adventure, null, 4)}</pre>
-      <CreateStageForm adventure={adventure} />
+      <StageForm adventureId={adventure.id} />
     </div>
   );
 }

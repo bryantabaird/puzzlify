@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getUserId } from "@/server/helpers/getUserId";
-import { getAdventureHost } from "@/server/helpers/isAdventureHost";
+import { isAdventureHost } from "@/server/helpers/isAdventureHost";
 
 export const POST = async (
   request: NextRequest,
@@ -9,7 +9,7 @@ export const POST = async (
 ) => {
   const adventureId = params.adventureId;
   const userId = await getUserId();
-  const isHost = await getAdventureHost({ adventureId, userId });
+  const isHost = await isAdventureHost({ adventureId, userId });
 
   if (!isHost) {
     return new NextResponse("You are not the host of this adventure", {

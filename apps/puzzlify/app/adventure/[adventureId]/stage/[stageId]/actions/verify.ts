@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { getUserId } from "@/server/helpers/getUserId";
 import { compareInput } from "@/server/helpers/hashInput";
-import { getAdventureHost } from "@/server/helpers/isAdventureHost";
+import { isAdventureHost } from "@/server/helpers/isAdventureHost";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -36,7 +36,7 @@ export default async function verify(
     } = result;
 
     const userId = await getUserId();
-    const isHost = await getAdventureHost({ adventureId, userId });
+    const isHost = await isAdventureHost({ adventureId, userId });
 
     if (isHost) {
       return { message: "You are the host of this adventure" };
