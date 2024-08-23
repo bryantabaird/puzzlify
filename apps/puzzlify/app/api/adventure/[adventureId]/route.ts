@@ -24,25 +24,3 @@ export const GET = async (
     return new NextResponse(userFacingErrorMessage, { status: 500 });
   }
 };
-
-export const PATCH = async (
-  request: NextRequest,
-  { params }: { params: { adventureId: string } },
-) => {
-  const { name, startDate } = await request.json();
-  const { adventureId } = params;
-
-  try {
-    const updatedAdventure = await prisma.adventure.update({
-      where: { id: adventureId },
-      data: {
-        ...(name && { name }),
-        ...(startDate && { startDate }),
-      },
-    });
-
-    return NextResponse.json(updatedAdventure);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to update adventure" });
-  }
-};

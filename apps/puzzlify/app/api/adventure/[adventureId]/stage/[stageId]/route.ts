@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import { Hint } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 // Get stage details

@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import DeleteAdventureForm from "@/components/DeleteAdventureForm";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 
@@ -50,6 +51,8 @@ export default async function Dashboard() {
                 >
                   {adventure.name}
                 </Link>
+
+                <DeleteAdventureForm adventureId={adventure.id} />
               </li>
             ))}
           </ul>

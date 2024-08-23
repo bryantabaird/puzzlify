@@ -29,7 +29,7 @@ export const editHint = hostActionClient
         },
       });
     } catch (error) {
-      const userFacingErrorMessage = "Failed to add hint";
+      const userFacingErrorMessage = "Failed to edit hint";
       console.error(userFacingErrorMessage, error);
       return { error: userFacingErrorMessage };
     }
