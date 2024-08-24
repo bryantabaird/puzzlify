@@ -69,6 +69,10 @@ export const updateUserProgress = async (
 type CreateUserProgressesPayload = Array<
   Pick<UserProgress, "userId" | "adventureId" | "stageId">
 >;
+// TODO: For signup, the start time should be the adventure start time,
+// but if we consider editing the start time on the adventure, ensure data integrity
+// here such that a user progress start time becomes out of sync. Maybe the
+// start time for starting stages could be a special ADVENTURE_START_TIME value
 export const createUserProgresses = async (
   data: CreateUserProgressesPayload,
 ) => {
