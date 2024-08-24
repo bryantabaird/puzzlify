@@ -40,6 +40,7 @@ const seed = async () => {
       name: "Test Adventure",
       hostId: "1",
       id: "adventure-id-1",
+      startDate: new Date(),
     },
   });
 
@@ -96,6 +97,7 @@ const seed = async () => {
       id: "adventure-id-2",
       name: "Test Adventure",
       hostId: "1",
+      startDate: new Date(),
       stages: {
         connect: [stage1, stage2a, stage2b, stage3],
       },
