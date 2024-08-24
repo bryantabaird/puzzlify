@@ -1,3 +1,4 @@
+import DeleteStageForm from "@/components/DeleteStageForm";
 import { type Prisma, Hint, StageRelation } from "@prisma/client";
 import Link from "next/link";
 
@@ -26,8 +27,6 @@ export default async function HostStageView({
   adventureId,
   stage,
 }: HostStageViewProps) {
-  console.log("HostStageView", stage);
-
   return (
     <div>
       <h1>{stage.riddle}</h1>
@@ -38,6 +37,7 @@ export default async function HostStageView({
       >
         Edit Stage
       </Link>
+      <DeleteStageForm adventureId={adventureId} stageId={stage.id} />
 
       <h2>Navigation</h2>
       <div className="flex">

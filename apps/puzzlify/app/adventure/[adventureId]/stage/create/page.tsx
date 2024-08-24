@@ -1,5 +1,5 @@
-import CreateStageForm from "@/components/CreateStageForm";
-import prisma from "@/lib/prisma";
+import StageForm from "@/components/StageForm";
+import { getAdventureWithStages } from "@/server/db/adventure";
 
 export default async function CreateStagePage({
   params,
@@ -7,12 +7,7 @@ export default async function CreateStagePage({
   params: { adventureId: string };
 }) {
   const adventureId = params.adventureId;
-  const adventure = await prisma.adventure.findUnique({
-    where: { id: adventureId },
-    include: {
-      stages: true,
-    },
-  });
+  const adventure = await getAdventureWithStages(adventureId);
 
   if (!adventure) {
     return (
@@ -26,7 +21,7 @@ export default async function CreateStagePage({
     <div>
       <h1>{adventure.name}</h1>
       <pre>{JSON.stringify(adventure, null, 4)}</pre>
-      <CreateStageForm adventure={adventure} />
+      <StageForm adventureId={adventure.id} />
     </div>
   );
 }

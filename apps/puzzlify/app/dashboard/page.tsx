@@ -1,5 +1,9 @@
 import { auth } from "@/auth";
-import prisma from "@/lib/prisma";
+import DeleteAdventureForm from "@/components/DeleteAdventureForm";
+import {
+  getHostAdventures,
+  getParticipantAdventures,
+} from "@/server/db/adventure";
 import Link from "next/link";
 
 export default async function Dashboard() {
@@ -16,18 +20,8 @@ export default async function Dashboard() {
   }
 
   const [hostedAdventures, adventures] = await Promise.all([
-    prisma.adventure.findMany({
-      where: {
-        hostId: session.user.id,
-      },
-    }),
-    prisma.adventure.findMany({
-      where: {
-        NOT: {
-          hostId: session.user.id,
-        },
-      },
-    }),
+    await getHostAdventures(session.user.id),
+    await getParticipantAdventures(session.user.id),
   ]);
 
   return (
@@ -50,6 +44,8 @@ export default async function Dashboard() {
                 >
                   {adventure.name}
                 </Link>
+
+                <DeleteAdventureForm adventureId={adventure.id} />
               </li>
             ))}
           </ul>

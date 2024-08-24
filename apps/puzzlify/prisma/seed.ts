@@ -40,6 +40,7 @@ const seed = async () => {
       name: "Test Adventure",
       hostId: "1",
       id: "adventure-id-1",
+      startDate: new Date(),
     },
   });
 
@@ -47,7 +48,7 @@ const seed = async () => {
     data: {
       id: "stage-id-1",
       riddle: "What is the answer to life, the universe, and everything?",
-      answer: "42",
+      answer: await bcryptjs.hash("42".toLowerCase(), 10),
       adventureId: "adventure-id-1",
       hints: {
         create: [
@@ -68,7 +69,7 @@ const seed = async () => {
     data: {
       id: "stage-id-2a",
       riddle: "What is the capital of France?",
-      answer: "Paris",
+      answer: await bcryptjs.hash("Paris".toLowerCase(), 10),
       adventureId: "adventure-id-1",
     },
   });
@@ -77,7 +78,7 @@ const seed = async () => {
     data: {
       id: "stage-id-2b",
       riddle: "What is the capital of Germany?",
-      answer: "Berlin",
+      answer: await bcryptjs.hash("Berlin".toLowerCase(), 10),
       adventureId: "adventure-id-1",
     },
   });
@@ -86,7 +87,7 @@ const seed = async () => {
     data: {
       id: "stage-id-3",
       riddle: "What is the capital of Italy?",
-      answer: "Rome",
+      answer: await bcryptjs.hash("Rome".toLowerCase(), 10),
       adventureId: "adventure-id-1",
     },
   });
@@ -96,6 +97,7 @@ const seed = async () => {
       id: "adventure-id-2",
       name: "Test Adventure",
       hostId: "1",
+      startDate: new Date(),
       stages: {
         connect: [stage1, stage2a, stage2b, stage3],
       },

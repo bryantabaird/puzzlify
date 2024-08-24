@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
-import prisma from "@/lib/prisma";
+import { getStartStages } from "@/server/db/stage";
+import { createUserProgresses } from "@/server/db/user-progress";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (
@@ -25,22 +26,15 @@ export const POST = async (
   const adventureId = params.adventureId;
 
   try {
-    const stagesWithoutPrevious = await prisma.stage.findMany({
-      where: {
-        adventureId: adventureId,
-        previousStages: { none: {} },
-      },
-    });
+    const startStages = await getStartStages(adventureId);
 
-    const userProgressEntries = stagesWithoutPrevious.map((stage) => ({
+    const userProgressEntries = startStages.map((stage) => ({
       userId: userId,
       adventureId: adventureId,
       stageId: stage.id,
     }));
 
-    await prisma.userProgress.createMany({
-      data: userProgressEntries,
-    });
+    await createUserProgresses(userProgressEntries);
 
     return NextResponse.json(
       { message: "User successfully joined the adventure" },

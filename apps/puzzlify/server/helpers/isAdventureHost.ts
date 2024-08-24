@@ -1,22 +1,15 @@
-import prisma from "@/lib/prisma";
+import { getHostAdventureId } from "../db/adventure";
 
-type GetAdventureHostProps = {
+type IsAdventureHostProps = {
   userId: string;
   adventureId: string;
 };
 
-export async function getAdventureHost({
+export async function isAdventureHost({
   adventureId,
   userId,
-}: GetAdventureHostProps): Promise<boolean> {
-  const adventure = await prisma.adventure.findUnique({
-    where: { id: adventureId },
-    select: { hostId: true },
-  });
+}: IsAdventureHostProps): Promise<boolean> {
+  const adventure = await getHostAdventureId(adventureId, userId);
 
-  if (!adventure) {
-    return false;
-  }
-
-  return adventure.hostId === userId;
+  return !!adventure;
 }

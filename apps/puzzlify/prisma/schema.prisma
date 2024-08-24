@@ -28,7 +28,7 @@ model Adventure {
   id              String         @id @default(uuid())
   dateCreated     DateTime       @default(now())
   name            String
-  startDate       DateTime?
+  startDate       DateTime
   stages          Stage[]        @relation("AdventureStages")
   hostId          String
   host            User           @relation("HostAdventures", fields: [hostId], references: [id])

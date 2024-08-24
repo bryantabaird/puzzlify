@@ -1,6 +1,6 @@
-import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 import Link from "next/link";
+import { getParticipantStagesInProgress } from "@/server/db/user-progress";
 
 type DashboardPageProps = {
   params: {
@@ -20,18 +20,10 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     );
   }
 
-  const stagesInProgress = await prisma.userProgress.findMany({
-    where: {
-      userId: userId,
-      adventureId: params.adventureId,
-      completionTime: null,
-    },
-    include: {
-      stage: true,
-    },
-  });
-
-  console.log("progress", stagesInProgress);
+  const stagesInProgress = await getParticipantStagesInProgress(
+    userId,
+    params.adventureId,
+  );
 
   if (stagesInProgress.length === 0) {
     return (
