@@ -1,16 +1,14 @@
-import { Stage } from "@prisma/client";
-import Link from "next/link";
-import { auth } from "@/auth";
-import JoinAdventureForm from "@/components/JoinAdventureForm";
 import { getAdventureWithStages } from "@/server/db/adventure";
+import HostAdventureDashboard from "@/app/views/HostAdventureDashboard";
+import ParticipantAdventureDashboard from "@/app/views/ParticipantAdventureDashboard";
+import { getUserId } from "@/server/helpers/getUserId";
 
 export default async function ViewAdventurePage({
   params,
 }: {
   params: { adventureId: string };
 }) {
-  const session = await auth(); // Get the current user's session
-  const userId = session?.user?.id; // Assuming the session contains the user ID
+  const userId = await getUserId();
 
   const adventureId = params.adventureId;
   const adventure = await getAdventureWithStages(adventureId);
@@ -25,45 +23,14 @@ export default async function ViewAdventurePage({
 
   const isHost = adventure.hostId === userId;
 
-  return (
-    <div>
-      <h1>{adventure.name}</h1>
-      <pre>{JSON.stringify(adventure, null, 4)}</pre>
-
-      {isHost ? (
-        <>
-          <Link
-            href={`/adventure/${adventure.id}/edit`}
-            className="mx-2 underline"
-          >
-            Edit Adventure
-          </Link>
-          <h2>Stages</h2>
-          <ul>
-            {adventure.stages.map((stage: Stage) => (
-              <li key={stage.id}>
-                <p>
-                  <strong>Riddle:</strong> {stage.riddle}
-                </p>
-                <p>
-                  <strong>Answer:</strong> {stage.answer}
-                </p>
-                <Link href={`/adventure/${adventure.id}/stage/${stage.id}`}>
-                  View Stage
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <Link
-            href={`/adventure/${adventure.id}/stage/create`}
-            className="mx-2 underline"
-          >
-            Create Stage
-          </Link>
-        </>
-      ) : (
-        <JoinAdventureForm adventureId={adventureId} />
-      )}
-    </div>
-  );
+  if (isHost) {
+    return <HostAdventureDashboard adventure={adventure} />;
+  } else {
+    return (
+      <ParticipantAdventureDashboard
+        userId={userId}
+        adventureId={adventure.id}
+      />
+    );
+  }
 }

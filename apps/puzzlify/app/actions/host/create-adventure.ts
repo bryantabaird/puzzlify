@@ -8,7 +8,7 @@ import { createAdventureDb } from "@/server/db/adventure";
 
 export const createAdventure = hostActionClient
   .schema(adventureSchema)
-  .metadata({ actionName: "create-adventure" })
+  .metadata({ roleName: "host", actionName: "create-adventure" })
   .action(async ({ parsedInput, ctx }) => {
     const { name, startDate } = parsedInput;
 

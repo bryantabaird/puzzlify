@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 
 export const editHint = hostActionClient
   .schema(hintSchema)
-  .metadata({ actionName: "edit-hint" })
+  .metadata({ roleName: "host", actionName: "edit-hint" })
   .action(async ({ parsedInput, bindArgsParsedInputs }) => {
     const { hint, delay } = parsedInput;
     const [{ hintId, stageId, adventureId }] = bindArgsParsedInputs;

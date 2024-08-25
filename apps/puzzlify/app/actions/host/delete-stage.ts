@@ -8,7 +8,7 @@ import { z } from "zod";
 
 export const deleteStage = hostActionClient
   .schema(z.object({}))
-  .metadata({ actionName: "delete-stage" })
+  .metadata({ roleName: "host", actionName: "delete-stage" })
   .action(async ({ bindArgsParsedInputs }) => {
     const [{ adventureId, stageId }] = bindArgsParsedInputs;
 

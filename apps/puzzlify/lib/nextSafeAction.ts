@@ -1,12 +1,18 @@
+import { getParticipantStageInProgress } from "@/server/db/user-progress";
 import { getUserId } from "@/server/helpers/getUserId";
 import { isAdventureHost } from "@/server/helpers/isAdventureHost";
+import { isAdventureParticipant } from "@/server/helpers/isAdventureParticipant";
 import { isHintHost } from "@/server/helpers/isHintHost";
 import { isStageHost } from "@/server/helpers/isStageHost";
 import { createSafeActionClient } from "next-safe-action";
 import { z } from "zod";
 
 export const baseActionClient = createSafeActionClient({
-  defineMetadataSchema: () => z.object({ actionName: z.string() }),
+  defineMetadataSchema: () =>
+    z.object({
+      roleName: z.literal("participant").or(z.literal("host")),
+      actionName: z.string(),
+    }),
 }).use(async ({ next }) => {
   const userId = await getUserId();
   return await next({ ctx: { userId } });
@@ -52,6 +58,36 @@ export const hostActionClient = baseActionClient
 
       if (!isHost) {
         throw new Error("User is not the host of this hint");
+      }
+    }
+
+    return await next({ ctx: { userId, adventureId, stageId } });
+  });
+
+export const participantActionClient = baseActionClient
+  .bindArgsSchemas<[stageClientSchema: typeof bindArgsSchema]>([bindArgsSchema])
+  .use(async ({ next, bindArgsClientInputs, ctx }) => {
+    const bindArgs = bindArgsClientInputs[0];
+    const { adventureId, stageId } = bindArgsSchema.parse(bindArgs);
+    const { userId } = ctx;
+
+    if (adventureId) {
+      const isParticipant = isAdventureParticipant({ userId, adventureId });
+
+      if (!isParticipant) {
+        throw new Error("User is not a participant of this adventure");
+      }
+    }
+
+    if (stageId && adventureId) {
+      const activeStage = await getParticipantStageInProgress({
+        userId,
+        stageId,
+        adventureId,
+      });
+
+      if (!activeStage) {
+        throw new Error("This stage is not available to the user");
       }
     }
 

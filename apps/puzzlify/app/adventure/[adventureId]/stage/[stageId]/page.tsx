@@ -1,8 +1,8 @@
 import { getUserId } from "@/server/helpers/getUserId";
 import { isAdventureHost } from "@/server/helpers/isAdventureHost";
-import HostStageView from "./HostView";
-import ParticipantStageView from "./ParticipantView";
 import { getStageWithPreviousAndNextStages } from "@/server/db/stage";
+import HostStageView from "@/app/views/HostStageView";
+import ParticipantStageView from "@/app/views/ParticipantStageView";
 
 type ViewStagePageProps = {
   params: {

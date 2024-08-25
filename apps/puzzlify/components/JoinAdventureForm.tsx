@@ -1,44 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { joinAdventure } from "@/app/actions/participant/join-adventure";
+import { Adventure } from "@prisma/client";
 
-export default function AdventureJoinButton({
-  adventureId,
-}: {
-  adventureId: string;
-}) {
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+type Props = {
+  adventureId: Adventure["id"];
+};
 
-  const handleJoinAdventure = async () => {
-    setIsLoading(true);
-
-    try {
-      const response = await fetch(`/api/adventure/${adventureId}/join`, {
-        method: "POST",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to join adventure");
-      }
-
-      router.push(`/adventure/${adventureId}/dashboard`);
-    } catch (error) {
-      console.error("Error joining adventure:", error);
-      alert("Failed to join adventure");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const JoinAdventureForm = ({ adventureId }: Props) => {
+  const joinAdventureWithIds = joinAdventure.bind(null, { adventureId });
 
   return (
-    <button
-      onClick={handleJoinAdventure}
-      disabled={isLoading}
-      className="mx-2 underline"
-    >
-      {isLoading ? "Joining..." : "Join Adventure"}
-    </button>
+    <>
+      <form action={joinAdventureWithIds}>
+        <button
+          type="submit"
+          className="bg-orange-300 mt-4 rounded flex justify-center items-center w-36"
+        >
+          Join Adventure
+        </button>
+      </form>
+    </>
   );
-}
+};
+
+export default JoinAdventureForm;

@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 
 export const editStage = hostActionClient
   .schema(stageSchema)
-  .metadata({ actionName: "edit-stage" })
+  .metadata({ roleName: "host", actionName: "edit-stage" })
   .action(async ({ parsedInput, bindArgsParsedInputs }) => {
     const { riddle, answer } = parsedInput;
 

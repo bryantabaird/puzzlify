@@ -5,23 +5,24 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// datasource db {
-//   provider = "sqlite"
-//   url      = env("DATABASE_URL")
-// }
-
 datasource db {
   provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  url      = env("DATABASE_URL")
 }
 
+// datasource db {
+//   provider = "postgresql"
+//   url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+//   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+// }
+
 model User {
-  id               String         @id @default(uuid())
-  email            String         @unique
-  password         String
-  hostedAdventures Adventure[]    @relation("HostAdventures")
-  stageProgresses  UserProgress[]
+  id                     String         @id @default(uuid())
+  email                  String         @unique
+  password               String
+  hostedAdventures       Adventure[]    @relation("HostAdventures")
+  participatedAdventures Adventure[]    @relation("ParticipantsAdventures")
+  stageProgresses        UserProgress[]
 }
 
 model Adventure {
@@ -32,6 +33,7 @@ model Adventure {
   stages          Stage[]        @relation("AdventureStages")
   hostId          String
   host            User           @relation("HostAdventures", fields: [hostId], references: [id])
+  participants    User[]         @relation("ParticipantsAdventures")
   stageProgresses UserProgress[]
 }
 

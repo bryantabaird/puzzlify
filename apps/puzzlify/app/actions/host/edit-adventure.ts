@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 
 export const editAdventure = hostActionClient
   .schema(adventureSchema)
-  .metadata({ actionName: "edit-adventure" })
+  .metadata({ roleName: "host", actionName: "edit-adventure" })
   .action(async ({ parsedInput, bindArgsParsedInputs }) => {
     const { name, startDate } = parsedInput;
     const [{ adventureId }] = bindArgsParsedInputs;
