@@ -1,44 +1,21 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { userSchema } from "@/app/schemas/user";
+import { createUser } from "@/app/actions/user/create-user";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 
 const RegistrationForm = () => {
-  const router = useRouter();
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    try {
-      const formData = new FormData(event.currentTarget);
-
-      const email = formData.get("email");
-      const password = formData.get("password");
-
-      const response = await fetch(`/api/user`, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
-      });
-
-      response.status === 201 && router.push("/");
-    } catch (e) {
-      console.error("Failed to register", e);
-      if (e instanceof Error) {
-        console.error("Message: ", e.message);
-      }
-    }
-  }
+  const { form, handleSubmitWithAction } = useHookFormAction(
+    createUser,
+    zodResolver(userSchema),
+    { formProps: { defaultValues: { email: "", password: "" } } },
+  );
 
   return (
     <>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmitWithAction}
         className="my-5 flex flex-col items-center border p-3 border-gray-200 rounded-md"
       >
         <div className="my-2">
@@ -46,9 +23,11 @@ const RegistrationForm = () => {
           <input
             className="border mx-2 border-gray-500 rounded"
             type="email"
-            name="email"
-            id="email"
+            {...form.register("email")}
           />
+          {form.formState.errors.email ? (
+            <p>{form.formState.errors.email.message}</p>
+          ) : null}
         </div>
 
         <div className="my-2">
@@ -56,9 +35,11 @@ const RegistrationForm = () => {
           <input
             className="border mx-2 border-gray-500 rounded"
             type="password"
-            name="password"
-            id="password"
+            {...form.register("password")}
           />
+          {form.formState.errors.password ? (
+            <p>{form.formState.errors.password.message}</p>
+          ) : null}
         </div>
 
         <button

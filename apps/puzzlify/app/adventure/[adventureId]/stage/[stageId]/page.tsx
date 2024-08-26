@@ -3,6 +3,7 @@ import { isAdventureHost } from "@/server/helpers/isAdventureHost";
 import { getStageWithPreviousAndNextStages } from "@/server/db/stage";
 import HostStageView from "@/app/views/HostStageView";
 import ParticipantStageView from "@/app/views/ParticipantStageView";
+import { getUserStageStartTime } from "@/server/db/user-progress";
 
 type ViewStagePageProps = {
   params: {
@@ -21,16 +22,31 @@ export default async function ViewStagePage({ params }: ViewStagePageProps) {
   const stage = await getStageWithPreviousAndNextStages(stageId);
 
   if (!stage) {
-    return (
-      <div>
-        <h1>Stage not found</h1>
-      </div>
-    );
+    throw new Error("Stage not found");
   }
 
   if (isHost) {
     return <HostStageView adventureId={adventureId} stage={stage} />;
   } else {
-    return <ParticipantStageView adventureId={adventureId} stage={stage} />;
+    let startDate;
+    if (stage.hints.length > 0) {
+      const userProgress = await getUserStageStartTime(
+        userId,
+        adventureId,
+        stageId,
+      );
+      startDate = userProgress?.startTime;
+      if (!startDate) {
+        throw new Error("User has not started this stage");
+      }
+    }
+
+    return (
+      <ParticipantStageView
+        adventureId={adventureId}
+        stage={stage}
+        startDate={startDate}
+      />
+    );
   }
 }

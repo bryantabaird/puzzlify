@@ -40,7 +40,7 @@ const seed = async () => {
       name: "Test Adventure",
       hostId: "1",
       id: "adventure-id-1",
-      startDate: new Date(),
+      startDate: new Date(new Date().getTime() + 10 * 1000),
     },
   });
 
@@ -54,11 +54,11 @@ const seed = async () => {
         create: [
           {
             hint: "It's the answer to everything",
-            delay: 5,
+            delay: 10,
           },
           {
             hint: "It's a number",
-            delay: 10,
+            delay: 20,
           },
         ],
       },
@@ -97,7 +97,7 @@ const seed = async () => {
       id: "adventure-id-2",
       name: "Test Adventure",
       hostId: "1",
-      startDate: new Date(),
+      startDate: new Date(new Date().getTime() + 10 * 1000),
       stages: {
         connect: [stage1, stage2a, stage2b, stage3],
       },

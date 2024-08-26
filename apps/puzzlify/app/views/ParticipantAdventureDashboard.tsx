@@ -5,25 +5,25 @@ import { Adventure, User } from "@prisma/client";
 
 type Props = {
   userId: User["id"];
-  adventureId: Adventure["id"];
+  adventure: Adventure;
 };
 
 export default async function ParticipantAdventureDashboard({
   userId,
-  adventureId,
+  adventure,
 }: Props) {
-  const isParticipant = await isAdventureParticipant({ userId, adventureId });
+  const hasJoinedAdventure = await isAdventureParticipant({
+    userId,
+    adventureId: adventure.id,
+  });
 
-  console.log("isParticipant", isParticipant);
-
-  if (isParticipant) {
-    // TODO: use the start date from adventure
-    const startDate = new Date(Date.now() + 4000);
+  if (hasJoinedAdventure) {
+    const startDate = adventure.startDate;
 
     return (
-      <BeginAdventureForm adventureId={adventureId} startDate={startDate} />
+      <BeginAdventureForm adventureId={adventure.id} startDate={startDate} />
     );
   } else {
-    return <JoinAdventureForm adventureId={adventureId} />;
+    return <JoinAdventureForm adventureId={adventure.id} />;
   }
 }

@@ -27,10 +27,7 @@ export default async function ViewAdventurePage({
     return <HostAdventureDashboard adventure={adventure} />;
   } else {
     return (
-      <ParticipantAdventureDashboard
-        userId={userId}
-        adventureId={adventure.id}
-      />
+      <ParticipantAdventureDashboard userId={userId} adventure={adventure} />
     );
   }
 }

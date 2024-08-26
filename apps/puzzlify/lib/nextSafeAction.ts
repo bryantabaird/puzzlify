@@ -10,10 +10,15 @@ import { z } from "zod";
 export const baseActionClient = createSafeActionClient({
   defineMetadataSchema: () =>
     z.object({
-      roleName: z.literal("participant").or(z.literal("host")),
+      roleName: z
+        .literal("participant")
+        .or(z.literal("host"))
+        .or(z.literal("auth")),
       actionName: z.string(),
     }),
-}).use(async ({ next }) => {
+});
+
+export const userActionClient = baseActionClient.use(async ({ next }) => {
   const userId = await getUserId();
   return await next({ ctx: { userId } });
 });
@@ -30,7 +35,7 @@ const bindArgsSchema = z.object({
   hintId: z.string().optional(),
 });
 
-export const hostActionClient = baseActionClient
+export const hostActionClient = userActionClient
   .bindArgsSchemas<[stageClientSchema: typeof bindArgsSchema]>([bindArgsSchema])
   .use(async ({ next, bindArgsClientInputs, ctx }) => {
     const bindArgs = bindArgsClientInputs[0];
@@ -64,7 +69,7 @@ export const hostActionClient = baseActionClient
     return await next({ ctx: { userId, adventureId, stageId } });
   });
 
-export const participantActionClient = baseActionClient
+export const participantActionClient = userActionClient
   .bindArgsSchemas<[stageClientSchema: typeof bindArgsSchema]>([bindArgsSchema])
   .use(async ({ next, bindArgsClientInputs, ctx }) => {
     const bindArgs = bindArgsClientInputs[0];

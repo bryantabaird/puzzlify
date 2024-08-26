@@ -12,7 +12,6 @@ import {
 import { compareInput } from "@/server/helpers/hashInput";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { z } from "zod";
 
 export const verifyStage = participantActionClient
   .schema(riddleSubmission)

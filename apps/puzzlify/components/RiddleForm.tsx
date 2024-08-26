@@ -1,3 +1,5 @@
+"use client";
+
 import { verifyStage } from "@/app/actions/participant/verify-stage";
 import { riddleSubmission } from "@/app/schemas/riddle";
 import { zodResolver } from "@hookform/resolvers/zod";
