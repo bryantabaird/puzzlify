@@ -17,8 +17,6 @@ export const createUser = baseActionClient
 
     const possibleExistingUser = await getUserByEmail(email);
 
-    console.log("possibleExistingUser", possibleExistingUser);
-
     if (possibleExistingUser) {
       const userFacingErrorMessage = "User already exists";
       console.error(userFacingErrorMessage);

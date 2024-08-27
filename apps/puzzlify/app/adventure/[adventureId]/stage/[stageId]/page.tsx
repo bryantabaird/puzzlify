@@ -1,8 +1,8 @@
 import { getUserId } from "@/server/helpers/getUserId";
 import { isAdventureHost } from "@/server/helpers/isAdventureHost";
 import { getStageWithPreviousAndNextStages } from "@/server/db/stage";
-import HostStageView from "@/app/views/HostStageView";
-import ParticipantStageView from "@/app/views/ParticipantStageView";
+import HostStageView from "@/views/HostStageView";
+import ParticipantStageView from "@/views/ParticipantStageView";
 import { getUserStageStartTime } from "@/server/db/user-progress";
 
 type ViewStagePageProps = {
