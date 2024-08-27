@@ -1,6 +1,6 @@
 "use client";
 
-import { joinAdventure } from "@/app/actions/participant/join-adventure";
+import { joinAdventure } from "@/actions/participant/join-adventure";
 import { Adventure } from "@prisma/client";
 
 type Props = {

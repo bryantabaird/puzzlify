@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteStage } from "@/app/actions/host/delete-stage";
+import { deleteStage } from "@/actions/host/delete-stage";
 import { Adventure, Stage } from "@prisma/client";
 
 type Props = {

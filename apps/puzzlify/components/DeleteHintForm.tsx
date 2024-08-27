@@ -1,7 +1,7 @@
 "use client";
 // TODO: Can I remove use client?
 
-import { deleteHint } from "@/app/actions/host/delete-stage-hint";
+import { deleteHint } from "@/actions/host/delete-stage-hint";
 import { Adventure, Hint, Stage } from "@prisma/client";
 
 type HintProps = {
