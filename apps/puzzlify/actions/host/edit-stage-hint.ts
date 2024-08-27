@@ -1,6 +1,6 @@
 "use server";
 
-import { hintSchema } from "@/app/schemas/stage";
+import { hintSchema } from "@/schemas/stage";
 import { hostActionClient } from "@/lib/nextSafeAction";
 import { updateHintDb } from "@/server/db/hint";
 import { revalidatePath } from "next/cache";
@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 
 export const editHint = hostActionClient
   .schema(hintSchema)
-  .metadata({ actionName: "edit-hint" })
+  .metadata({ roleName: "host", actionName: "edit-hint" })
   .action(async ({ parsedInput, bindArgsParsedInputs }) => {
     const { hint, delay } = parsedInput;
     const [{ hintId, stageId, adventureId }] = bindArgsParsedInputs;

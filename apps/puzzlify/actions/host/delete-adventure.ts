@@ -1,35 +1,27 @@
 "use server";
 
 import { hostActionClient } from "@/lib/nextSafeAction";
-import { deleteStageDb } from "@/server/db/stage";
+import { deleteAdventureDb } from "@/server/db/adventure";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
-export const deleteStage = hostActionClient
+export const deleteAdventure = hostActionClient
   .schema(z.object({}))
-  .metadata({ actionName: "delete-stage" })
+  .metadata({ roleName: "host", actionName: "delete-adventure" })
   .action(async ({ bindArgsParsedInputs }) => {
-    const [{ adventureId, stageId }] = bindArgsParsedInputs;
-
-    console.log("deleting");
-
-    if (!stageId) {
-      throw new Error("Stage ID is required");
-    }
+    const [{ adventureId }] = bindArgsParsedInputs;
 
     if (!adventureId) {
       throw new Error("Adventure ID is required");
     }
 
     try {
-      await deleteStageDb(stageId);
+      await deleteAdventureDb(adventureId);
     } catch (error) {
       const userFacingErrorMessage = "Failed to delete hint";
       console.error(userFacingErrorMessage, error);
       return { error: userFacingErrorMessage };
     }
 
-    revalidatePath(`/adventure/${adventureId}`);
-    redirect(`/adventure/${adventureId}`);
+    revalidatePath(`/dashboard`);
   });

@@ -1,6 +1,6 @@
 "use server";
 
-import { adventureSchema } from "@/app/schemas/adventure";
+import { adventureSchema } from "@/schemas/adventure";
 import { hostActionClient } from "@/lib/nextSafeAction";
 import { updateAdventureDb } from "@/server/db/adventure";
 import { revalidatePath } from "next/cache";
@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 
 export const editAdventure = hostActionClient
   .schema(adventureSchema)
-  .metadata({ actionName: "edit-adventure" })
+  .metadata({ roleName: "host", actionName: "edit-adventure" })
   .action(async ({ parsedInput, bindArgsParsedInputs }) => {
     const { name, startDate } = parsedInput;
     const [{ adventureId }] = bindArgsParsedInputs;

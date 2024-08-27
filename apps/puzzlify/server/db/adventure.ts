@@ -1,7 +1,9 @@
-import prisma from "@/lib/prisma";
-import { Adventure } from "@prisma/client";
+"use server";
 
-export const getAdventureWithStages = async (adventureId: string) => {
+import prisma from "@/lib/prisma";
+import { Adventure, User } from "@prisma/client";
+
+export const getAdventureWithStages = async (adventureId: Adventure["id"]) => {
   return prisma.adventure.findUnique({
     where: { id: adventureId },
     include: {
@@ -15,7 +17,7 @@ export const createAdventureDb = async (data: CreateAdventurePayload) => {
   return await prisma.adventure.create({ data });
 };
 
-export const deleteAdventureDb = async (adventureId: string) => {
+export const deleteAdventureDb = async (adventureId: Adventure["id"]) => {
   return await prisma.adventure.delete({
     where: { id: adventureId },
   });
@@ -23,7 +25,7 @@ export const deleteAdventureDb = async (adventureId: string) => {
 
 type UpdateAdventurePayload = Pick<Adventure, "name" | "startDate">;
 export const updateAdventureDb = async (
-  adventureId: string,
+  adventureId: Adventure["id"],
   data: UpdateAdventurePayload,
 ) => {
   return await prisma.adventure.update({
@@ -33,7 +35,7 @@ export const updateAdventureDb = async (
 };
 
 export const getHostAdventureId = async (
-  adventureId: string,
+  adventureId: Adventure["id"],
   userId: string,
 ) => {
   return await prisma.adventure.findFirst({
@@ -59,5 +61,45 @@ export const getParticipantAdventures = async (userId: string) => {
         hostId: userId,
       },
     },
+  });
+};
+
+export const addParticipantToAdventure = async (
+  userId: User["id"],
+  adventureId: Adventure["id"],
+) => {
+  return await prisma.adventure.update({
+    where: { id: adventureId },
+    data: {
+      participants: {
+        connect: { id: userId },
+      },
+    },
+  });
+};
+
+export const getParticipantAdventureId = async (
+  userId: User["id"],
+  adventureId: Adventure["id"],
+) => {
+  return await prisma.adventure.findFirst({
+    where: {
+      id: adventureId,
+      participants: {
+        some: {
+          id: userId,
+        },
+      },
+    },
+    select: { id: true },
+  });
+};
+
+export const getAdventureStartDateTime = async (
+  adventureId: Adventure["id"],
+) => {
+  return await prisma.adventure.findUnique({
+    where: { id: adventureId },
+    select: { startDate: true },
   });
 };

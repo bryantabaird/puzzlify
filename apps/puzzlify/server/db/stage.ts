@@ -1,5 +1,11 @@
+"use server";
+
 import prisma from "@/lib/prisma";
 import { Stage } from "@prisma/client";
+
+export type StageWithPreviousAndNextStages = Awaited<
+  ReturnType<typeof getStageWithPreviousAndNextStages>
+>;
 
 export const getStageWithPreviousAndNextStages = async (
   stageId: Stage["id"],

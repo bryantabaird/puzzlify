@@ -1,4 +1,4 @@
-import { logout } from "@/app/actions";
+import { logout } from "@/actions";
 
 const Logout = () => {
   return (

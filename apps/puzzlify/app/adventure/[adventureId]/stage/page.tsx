@@ -25,6 +25,8 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     params.adventureId,
   );
 
+  console.log("stagesInProgress", stagesInProgress);
+
   if (stagesInProgress.length === 0) {
     return (
       <div>

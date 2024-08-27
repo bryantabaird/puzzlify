@@ -1,6 +1,6 @@
 "use server";
 
-import { hintSchema } from "@/app/schemas/stage";
+import { hintSchema } from "@/schemas/stage";
 import { hostActionClient } from "@/lib/nextSafeAction";
 import { createHintDb } from "@/server/db/hint";
 import { revalidatePath } from "next/cache";
@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 
 export const addHint = hostActionClient
   .schema(hintSchema)
-  .metadata({ actionName: "add-hint" })
+  .metadata({ roleName: "host", actionName: "add-hint" })
   .action(async ({ parsedInput, bindArgsParsedInputs }) => {
     console.log("addHint action");
     const { hint, delay } = parsedInput;
