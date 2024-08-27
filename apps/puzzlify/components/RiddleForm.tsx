@@ -1,7 +1,7 @@
 "use client";
 
 import { verifyStage } from "@/actions/participant/verify-stage";
-import { riddleSubmission } from "@/app/schemas/riddle";
+import { riddleSubmission } from "@/schemas/riddle";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 import { Adventure, Stage } from "@prisma/client";

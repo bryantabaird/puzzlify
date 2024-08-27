@@ -4,7 +4,7 @@ import { Adventure, Stage } from "@prisma/client";
 import { createStage } from "@/actions/host/create-stage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
-import { stageSchema } from "@/app/schemas/stage";
+import { stageSchema } from "@/schemas/stage";
 import { editStage } from "@/actions/host/edit-stage";
 
 type StageFormProps = {

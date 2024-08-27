@@ -2,7 +2,7 @@
 
 import { createAdventure } from "@/actions/host/create-adventure";
 import { editAdventure } from "@/actions/host/edit-adventure";
-import { adventureSchema } from "@/app/schemas/adventure";
+import { adventureSchema } from "@/schemas/adventure";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 import { Adventure } from "@prisma/client";
