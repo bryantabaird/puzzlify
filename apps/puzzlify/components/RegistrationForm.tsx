@@ -1,7 +1,7 @@
 "use client";
 
 import { userSchema } from "@/schemas/user";
-import { createUser } from "@/actions/user/create-user";
+import { createUser } from "@/server/actions/user/create-user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 

@@ -22,6 +22,12 @@ export const updateHintDb = async (hintId: string, data: UpdateHintPayload) => {
   });
 };
 
+export const getHintDb = async (hintId: string) => {
+  return await prisma.hint.findUnique({
+    where: { id: hintId },
+  });
+};
+
 export const getHostHintId = async (hintId: string, userId: string) => {
   return await prisma.hint.findFirst({
     where: {

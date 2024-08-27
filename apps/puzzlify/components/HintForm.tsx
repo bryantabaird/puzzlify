@@ -1,7 +1,7 @@
 "use client";
 
-import { addHint } from "@/actions/host/create-stage-hint";
-import { editHint } from "@/actions/host/edit-stage-hint";
+import { addHint } from "@/server/actions/host/create-stage-hint";
+import { editHint } from "@/server/actions/host/edit-stage-hint";
 import { hintSchema } from "@/schemas/stage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
