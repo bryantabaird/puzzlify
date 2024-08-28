@@ -46,6 +46,7 @@ const seed = async () => {
 
   const stage1 = await prisma.stage.create({
     data: {
+      label: "Stage 1",
       id: "stage-id-1",
       riddle: "What is the answer to life, the universe, and everything?",
       answer: await bcryptjs.hash("42".toLowerCase(), 10),
@@ -67,6 +68,7 @@ const seed = async () => {
 
   const stage2a = await prisma.stage.create({
     data: {
+      label: "Stage 2a",
       id: "stage-id-2a",
       riddle: "What is the capital of France?",
       answer: await bcryptjs.hash("Paris".toLowerCase(), 10),
@@ -76,6 +78,7 @@ const seed = async () => {
 
   const stage2b = await prisma.stage.create({
     data: {
+      label: "Stage 2b",
       id: "stage-id-2b",
       riddle: "What is the capital of Germany?",
       answer: await bcryptjs.hash("Berlin".toLowerCase(), 10),
@@ -85,6 +88,7 @@ const seed = async () => {
 
   const stage3 = await prisma.stage.create({
     data: {
+      label: "Stage 3",
       id: "stage-id-3",
       riddle: "What is the capital of Italy?",
       answer: await bcryptjs.hash("Rome".toLowerCase(), 10),
@@ -92,9 +96,11 @@ const seed = async () => {
     },
   });
 
+  const adventureId = "adventure-id-2";
+
   await prisma.adventure.create({
     data: {
-      id: "adventure-id-2",
+      id: adventureId,
       name: "Test Adventure",
       hostId: "1",
       startDate: new Date(new Date().getTime() + 10 * 1000),
@@ -107,12 +113,14 @@ const seed = async () => {
   await Promise.all([
     prisma.stageRelation.create({
       data: {
+        adventureId,
         fromStageId: stage1.id,
         toStageId: stage2a.id,
       },
     }),
     prisma.stageRelation.create({
       data: {
+        adventureId,
         fromStageId: stage1.id,
         toStageId: stage2b.id,
       },
@@ -120,12 +128,14 @@ const seed = async () => {
 
     prisma.stageRelation.create({
       data: {
+        adventureId,
         fromStageId: stage2a.id,
         toStageId: stage3.id,
       },
     }),
     prisma.stageRelation.create({
       data: {
+        adventureId,
         fromStageId: stage2b.id,
         toStageId: stage3.id,
       },

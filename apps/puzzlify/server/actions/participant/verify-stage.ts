@@ -34,6 +34,10 @@ export const verifyStage = participantActionClient
       return { message: "Stage not found" };
     }
 
+    if (!stage.answer) {
+      return { message: "Stage does not have an answer" };
+    }
+
     try {
       const isCorrectAnswer = await compareInput(answer, stage.answer);
 

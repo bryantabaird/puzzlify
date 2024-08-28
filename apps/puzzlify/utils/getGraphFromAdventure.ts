@@ -10,15 +10,13 @@ const convertAdventureResponse = (
   adventure.stages.forEach((stage, idx) => {
     nodes.push({
       id: stage.id,
-      data: { label: stage.riddle },
+      data: { label: stage.label },
       position: { x: 100 * idx, y: 100 * idx },
-      // Linked to nodeTypes
-      // type: "toolbarNode",
     });
 
     stage.nextStages.forEach((relation) => {
       edges.push({
-        id: `${relation.fromStageId}->${relation.toStageId}`,
+        id: relation.id,
         source: relation.fromStageId,
         target: relation.toStageId,
         animated: true,

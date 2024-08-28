@@ -20,7 +20,7 @@ const StageForm = ({ adventureId, stage }: StageFormProps) => {
     : editStage.bind(null, { adventureId, stageId: stage.id });
 
   const { riddle, answer } = stage || { riddle: "", answer: "" };
-  const defaultValues = { riddle, answer };
+  const defaultValues = { riddle: riddle || "", answer: answer || "" };
 
   const { form, handleSubmitWithAction } = useHookFormAction(
     boundUpdateStage,
@@ -33,6 +33,16 @@ const StageForm = ({ adventureId, stage }: StageFormProps) => {
       className="my-5 flex flex-col items-center border p-3 border-gray-200 rounded-md"
       onSubmit={handleSubmitWithAction}
     >
+      <label htmlFor="label" className="block">
+        Label
+      </label>
+      <input
+        {...form.register("label")}
+        className="border mx-2 border-gray-500 rounded"
+      />
+      {form.formState.errors.label ? (
+        <p>{form.formState.errors.label.message}</p>
+      ) : null}
       <label htmlFor="riddle" className="block">
         Riddle
       </label>

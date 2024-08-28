@@ -5,32 +5,30 @@ import { hostActionClient } from "@/lib/nextSafeAction";
 import { createStageDb } from "@/server/db/stage";
 import hashInput from "@/server/helpers/hashInput";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 export const createStage = hostActionClient
   .schema(stageSchema)
   .metadata({ roleName: "host", actionName: "create-stage" })
   .action(async ({ parsedInput, bindArgsParsedInputs }) => {
-    const { riddle, answer } = parsedInput;
+    const { riddle, answer, label } = parsedInput;
     const { adventureId } = bindArgsParsedInputs[0];
 
-    const hashedAnswer = await hashInput(answer);
+    const hashedAnswer = answer ? await hashInput(answer) : null;
 
     if (!adventureId) {
       throw new Error("Adventure ID is required");
     }
 
-    const stage = { adventureId, riddle, answer: hashedAnswer };
+    const stagePayload = { label, adventureId, riddle, answer: hashedAnswer };
 
     try {
-      await createStageDb(stage);
-
+      const stage = await createStageDb(stagePayload);
       revalidatePath(`/adventure/${adventureId}`);
+
+      return { stageId: stage.id };
     } catch (error) {
       const userFacingErrorMessage = "Failed to add stage";
       console.error(userFacingErrorMessage, error);
       return { error: userFacingErrorMessage };
     }
-
-    redirect(`/adventure/${adventureId}`);
   });

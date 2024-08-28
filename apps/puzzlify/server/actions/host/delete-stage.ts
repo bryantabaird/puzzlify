@@ -25,7 +25,7 @@ export const deleteStage = hostActionClient
     try {
       await deleteStageDb(stageId);
     } catch (error) {
-      const userFacingErrorMessage = "Failed to delete hint";
+      const userFacingErrorMessage = "Failed to delete stage";
       console.error(userFacingErrorMessage, error);
       return { error: userFacingErrorMessage };
     }

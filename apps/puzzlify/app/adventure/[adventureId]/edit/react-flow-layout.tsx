@@ -1,13 +1,6 @@
 "use client";
 
-import Dagre, { GraphLabel } from "@dagrejs/dagre";
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ReactFlow,
   Panel,
@@ -18,55 +11,27 @@ import {
   type Edge,
   useNodesInitialized,
   Background,
-  OnConnectEnd,
-  OnConnectStart,
-  OnConnect,
   addEdge,
   Controls,
+  OnBeforeDelete,
 } from "@xyflow/react";
 
 import "@xyflow/react/dist/style.css";
-import nodeTypes from "@/utils/nodeTypes";
-
-const getLayoutedElements = (
-  nodes: Array<Node>,
-  edges: Array<Edge>,
-  options: GraphLabel,
-) => {
-  const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-  g.setGraph({ rankdir: options.rankdir });
-
-  edges.forEach((edge) => g.setEdge(edge.source, edge.target));
-  nodes.forEach((node) =>
-    g.setNode(node.id, {
-      ...node,
-      width: node.measured?.width ?? 0,
-      height: node.measured?.height ?? 0,
-    }),
-  );
-
-  Dagre.layout(g);
-
-  return {
-    nodes: nodes.map((node: Node) => {
-      const position = g.node(node.id);
-      const x = position.x - (node.measured?.width ?? 0) / 2;
-      const y = position.y - (node.measured?.height ?? 0) / 2;
-
-      return { ...node, position: { x, y } };
-    }),
-    edges,
-  };
-};
+import { getLayoutedElements } from "@/utils/getLayoutedElements";
+import { Adventure } from "@prisma/client";
+import { deleteStagesAndRelations } from "@/server/actions/host/delete-relations-and-stages";
+import { useFlowConnectHandlers } from "@/hooks/useFlowConnectHandlers";
 
 type ReactLayoutFlowProps = {
   initialNodes: Array<Node>;
   initialEdges: Array<Edge>;
+  adventureId: Adventure["id"];
 };
 
 const ReactLayoutFlow = ({
   initialNodes,
   initialEdges,
+  adventureId,
 }: ReactLayoutFlowProps) => {
   const { fitView } = useReactFlow();
 
@@ -76,6 +41,13 @@ const ReactLayoutFlow = ({
 
   const nodesInitialized = useNodesInitialized();
   const [initialLayoutFinished, setInitialLayoutFinished] = useState(false);
+
+  const { onConnect, onConnectEnd, onConnectStart } = useFlowConnectHandlers({
+    adventureId,
+    setNodes,
+    setEdges,
+    nodeCount: nodes.length,
+  });
 
   const onLayout = useCallback(
     (rankdir: string) => {
@@ -104,65 +76,24 @@ const ReactLayoutFlow = ({
     }
   }, [nodesInitialized, initialLayoutFinished]);
 
-  const connectingNodeId = useRef<string | null>(null);
-  const { screenToFlowPosition } = useReactFlow();
-  const onConnect: OnConnect = useCallback((params) => {
-    console.log("onConnect");
-    // reset the start node on connections
-    connectingNodeId.current = null;
-    const edge: Edge = {
-      id: `${params.source}->${params.target}`,
-      source: params.source,
-      target: params.target,
-      animated: true,
-    };
-    setEdges((edges) => addEdge(edge, edges));
-  }, []);
+  const onBeforeDelete: OnBeforeDelete = useCallback(
+    async ({ nodes, edges }) => {
+      console.log("onBeforeDelete");
 
-  const onConnectStart: OnConnectStart = useCallback((_, { nodeId }) => {
-    console.log("onConnectStart");
-    connectingNodeId.current = nodeId;
-  }, []);
+      const edgesIds = edges.map((edge) => edge.id);
+      const nodesIds = nodes.map((node) => node.id);
 
-  const onConnectEnd: OnConnectEnd = useCallback(
-    (event) => {
-      console.log("onConnectEnd");
-      if (!connectingNodeId.current) return;
+      console.log("edgesIds", edgesIds);
+      console.log("nodesIds", nodesIds);
 
-      let targetIsPane = false;
-      if (event.target instanceof HTMLElement) {
-        targetIsPane = event.target.classList.contains("react-flow__pane");
-      }
+      await deleteStagesAndRelations(
+        { adventureId },
+        { stageRelationIds: edgesIds, stageIds: nodesIds },
+      );
 
-      if (targetIsPane && event instanceof MouseEvent) {
-        const id = Math.random().toString();
-        const newNode: Node = {
-          id,
-          position: screenToFlowPosition({
-            x: event.clientX,
-            y: event.clientY,
-          }),
-          data: { label: `Node ${id}` },
-          origin: [0.5, 0],
-        };
-
-        setNodes((nodes) => nodes.concat(newNode));
-        setEdges((edges) => {
-          if (!connectingNodeId.current) {
-            return edges;
-          } else {
-            const edgeId = `${connectingNodeId.current}->${id}`;
-            return edges.concat({
-              id: edgeId,
-              source: connectingNodeId.current,
-              target: id,
-              animated: true,
-            });
-          }
-        });
-      }
+      return { nodes, edges };
     },
-    [screenToFlowPosition],
+    [],
   );
 
   return (
@@ -175,6 +106,7 @@ const ReactLayoutFlow = ({
         onConnect={onConnect}
         onConnectStart={onConnectStart}
         onConnectEnd={onConnectEnd}
+        onBeforeDelete={onBeforeDelete}
         // nodeTypes={nodeTypes}
         fitView
       >

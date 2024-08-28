@@ -28,6 +28,7 @@ export default async function EditAdventure({
       <AdventureForm adventure={adventure} />
       <ReactFlowProvider>
         <ReactFlowLayout
+          adventureId={adventureId}
           initialNodes={initialNodes}
           initialEdges={initialEdges}
         />
