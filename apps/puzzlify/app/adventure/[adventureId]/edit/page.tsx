@@ -1,5 +1,8 @@
 import AdventureForm from "@/components/AdventureForm";
-import { getAdventureWithStages } from "@/server/db/adventure";
+import { getAdventureLayout } from "@/server/fetchers/get-adventure-layout";
+import ReactFlowLayout from "./react-flow-layout";
+import { ReactFlowProvider } from "@xyflow/react";
+import getGraphFromAdventure from "@/utils/getGraphFromAdventure";
 
 export default async function EditAdventure({
   params,
@@ -7,7 +10,7 @@ export default async function EditAdventure({
   params: { adventureId: string };
 }) {
   const adventureId = params.adventureId;
-  const adventure = await getAdventureWithStages(adventureId);
+  const adventure = await getAdventureLayout(adventureId);
 
   if (!adventure) {
     return (
@@ -17,5 +20,18 @@ export default async function EditAdventure({
     );
   }
 
-  return <AdventureForm adventure={adventure} />;
+  const { nodes: initialNodes, edges: initialEdges } =
+    getGraphFromAdventure(adventure);
+
+  return (
+    <>
+      <AdventureForm adventure={adventure} />
+      <ReactFlowProvider>
+        <ReactFlowLayout
+          initialNodes={initialNodes}
+          initialEdges={initialEdges}
+        />
+      </ReactFlowProvider>
+    </>
+  );
 }
