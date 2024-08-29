@@ -1,6 +1,6 @@
 import { getAdventureWithStages } from "@/server/db/adventure";
-import HostAdventureDashboard from "@/views/HostAdventureDashboard";
-import ParticipantAdventureDashboard from "@/views/ParticipantAdventureDashboard";
+import ParticipantAdventureDashboard from "./_components/ParticipantAdventureDashboard";
+import HostAdventureDashboard from "./_components/HostAdventureDashboard";
 import { getUserId } from "@/server/helpers/getUserId";
 
 export default async function ViewAdventurePage({

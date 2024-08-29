@@ -1,7 +1,7 @@
 import RiddleForm from "@/components/RiddleForm";
-import ParticipantHintView from "./ParticipantHintView";
 import { type StageWithPreviousAndNextStages } from "@/server/db/stage";
 import { Hint } from "@prisma/client";
+import ParticipantHintView from "./ParticipantHintView";
 
 type ParticipantStageProps = {
   stage: NonNullable<StageWithPreviousAndNextStages>;
