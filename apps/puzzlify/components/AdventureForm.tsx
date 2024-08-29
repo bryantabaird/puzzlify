@@ -1,7 +1,7 @@
 "use client";
 
-import { createAdventure } from "@/actions/host/create-adventure";
-import { editAdventure } from "@/actions/host/edit-adventure";
+import { createAdventure } from "@/server/actions/host/create-adventure";
+import { editAdventure } from "@/server/actions/host/edit-adventure";
 import { adventureSchema } from "@/schemas/adventure";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";

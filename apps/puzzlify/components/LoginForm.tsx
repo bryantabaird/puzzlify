@@ -1,6 +1,6 @@
 "use client";
 
-import { login } from "@/actions";
+import { login } from "@/server/actions";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 

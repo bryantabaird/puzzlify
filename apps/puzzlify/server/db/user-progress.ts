@@ -104,8 +104,8 @@ export const createUserProgresses = async (
 
 export const getUserStageStartTime = async (
   userId: User["id"],
-  adventureId: Adventure["id"],
   stageId: Stage["id"],
+  adventureId: Adventure["id"],
 ) => {
   return await prisma.userProgress.findFirst({
     where: {

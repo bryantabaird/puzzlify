@@ -9,7 +9,7 @@ type ParticipantStageProps = {
   startDate?: Date;
 };
 
-export default function ParticipateStageView({
+export default function ParticipantStageView({
   stage,
   adventureId,
   startDate,
@@ -27,7 +27,13 @@ export default function ParticipateStageView({
 
             return (
               <li key={hint.id}>
-                <ParticipantHintView hint={hint} startDate={startDate} />
+                <ParticipantHintView
+                  hintId={hint.id}
+                  stageId={stage.id}
+                  adventureId={adventureId}
+                  delay={hint.delay}
+                  startDate={startDate}
+                />
               </li>
             );
           })}

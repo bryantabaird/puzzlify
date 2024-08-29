@@ -17,6 +17,7 @@ export default async function ViewStagePage({ params }: ViewStagePageProps) {
   const stageId = params.stageId;
 
   const userId = await getUserId();
+
   const isHost = await isAdventureHost({ adventureId, userId });
 
   const stage = await getStageWithPreviousAndNextStages(stageId);
@@ -32,9 +33,12 @@ export default async function ViewStagePage({ params }: ViewStagePageProps) {
     if (stage.hints.length > 0) {
       const userProgress = await getUserStageStartTime(
         userId,
-        adventureId,
         stageId,
+        adventureId,
       );
+
+      console.log("userProgress", userProgress);
+
       startDate = userProgress?.startTime;
       if (!startDate) {
         throw new Error("User has not started this stage");

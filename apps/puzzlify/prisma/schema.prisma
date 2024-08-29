@@ -26,21 +26,24 @@ model User {
 }
 
 model Adventure {
-  id              String         @id @default(uuid())
-  dateCreated     DateTime       @default(now())
+  id              String          @id @default(uuid())
+  dateCreated     DateTime        @default(now())
   name            String
   startDate       DateTime
-  stages          Stage[]        @relation("AdventureStages")
+  stages          Stage[]         @relation("AdventureStages")
+  stageRelations  StageRelation[] @relation("AdventureStageRelations")
   hostId          String
-  host            User           @relation("HostAdventures", fields: [hostId], references: [id])
-  participants    User[]         @relation("ParticipantsAdventures")
+  host            User            @relation("HostAdventures", fields: [hostId], references: [id])
+  participants    User[]          @relation("ParticipantsAdventures")
   stageProgresses UserProgress[]
 }
 
 model Stage {
   id              String          @id @default(uuid())
-  riddle          String
-  answer          String
+  label           String
+  riddle          String?
+  answer          String?
+  status          String          @default("draft")
   hints           Hint[]          @relation("StageHints")
   adventureId     String
   adventure       Adventure       @relation("AdventureStages", fields: [adventureId], references: [id])
@@ -50,11 +53,13 @@ model Stage {
 }
 
 model StageRelation {
-  id          String @id @default(uuid())
+  id          String    @id @default(uuid())
+  adventureId String
+  adventure   Adventure @relation("AdventureStageRelations", fields: [adventureId], references: [id])
   fromStageId String
-  fromStage   Stage  @relation("NextStages", fields: [fromStageId], references: [id])
+  fromStage   Stage     @relation("NextStages", fields: [fromStageId], references: [id])
   toStageId   String
-  toStage     Stage  @relation("PreviousStages", fields: [toStageId], references: [id])
+  toStage     Stage     @relation("PreviousStages", fields: [toStageId], references: [id])
 
   @@unique([fromStageId, toStageId])
 }

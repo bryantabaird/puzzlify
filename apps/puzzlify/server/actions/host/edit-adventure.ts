@@ -2,7 +2,10 @@
 
 import { adventureSchema } from "@/schemas/adventure";
 import { hostActionClient } from "@/lib/nextSafeAction";
-import { updateAdventureDb } from "@/server/db/adventure";
+import {
+  getAdventureStartDateTime,
+  updateAdventureDb,
+} from "@/server/db/adventure";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -26,7 +29,21 @@ export const editAdventure = hostActionClient
       throw new Error("Invalid start date");
     }
 
-    // TODO: Consider when editing the start date after an adventure has started
+    const adventure = await getAdventureStartDateTime(adventureId);
+
+    if (!adventure) {
+      throw new Error("Adventure not found");
+    }
+
+    const currentDateTime = new Date();
+    if (currentDateTime >= adventure.startDate) {
+      console.error(
+        "Cannot edit the start date after the adventure has begun.",
+      );
+      return {
+        error: "Cannot edit the start date after the adventure has begun.",
+      };
+    }
 
     try {
       await updateAdventureDb(adventureId, {

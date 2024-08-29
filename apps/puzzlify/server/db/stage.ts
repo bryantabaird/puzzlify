@@ -1,7 +1,8 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Stage } from "@prisma/client";
+import { Prisma, Stage } from "@prisma/client";
+import { deleteStageRelationsFromStageDb } from "./stage-relation";
 
 export type StageWithPreviousAndNextStages = Awaited<
   ReturnType<typeof getStageWithPreviousAndNextStages>
@@ -44,27 +45,46 @@ export const getStageWithHints = async (stageId: Stage["id"]) => {
   });
 };
 
-type CreateStagePayload = Pick<Stage, "riddle" | "answer" | "adventureId">;
+type CreateStagePayload = Pick<
+  Stage,
+  "label" | "riddle" | "answer" | "adventureId"
+>;
 export const createStageDb = async (data: CreateStagePayload) => {
   return await prisma.stage.create({ data });
 };
 
 export const deleteStageDb = async (stageId: string) => {
-  return await prisma.$transaction([
-    prisma.hint.deleteMany({
-      where: {
-        stageId: stageId,
-      },
-    }),
-    prisma.stage.delete({
+  return await prisma.$transaction(async (prismaStageClient) => {
+    await deleteStageRelationsFromStageDb({
+      stageId,
+      prismaClient: prismaStageClient,
+    });
+    return await prismaStageClient.stage.delete({
       where: {
         id: stageId,
       },
-    }),
-  ]);
+    });
+  });
 };
 
-type UpdateStagePayload = Pick<Stage, "riddle" | "answer">;
+type DeleteStagesDbParams = {
+  stageIds: string[];
+  prismaClient?: Prisma.TransactionClient;
+};
+export const deleteStagesDb = async ({
+  stageIds,
+  prismaClient = prisma,
+}: DeleteStagesDbParams) => {
+  return await prismaClient.stage.deleteMany({
+    where: {
+      id: { in: stageIds },
+    },
+  });
+};
+
+type UpdateStagePayload =
+  | Pick<Stage, "label">
+  | Pick<Stage, "label" | "riddle" | "answer">;
 export const updateStageDb = async (
   stageId: string,
   data: UpdateStagePayload,

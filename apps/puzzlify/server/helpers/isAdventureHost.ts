@@ -5,6 +5,7 @@ type IsAdventureHostProps = {
   adventureId: string;
 };
 
+// TODO: Cache this frequent call that should rarely if ever change
 export async function isAdventureHost({
   adventureId,
   userId,

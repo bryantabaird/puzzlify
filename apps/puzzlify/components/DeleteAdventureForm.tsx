@@ -1,7 +1,7 @@
 "use client";
 // TODO: Can I remove useclient?
 
-import { deleteAdventure } from "@/actions/host/delete-adventure";
+import { deleteAdventure } from "@/server/actions/host/delete-adventure";
 import { Adventure } from "@prisma/client";
 
 type Props = {

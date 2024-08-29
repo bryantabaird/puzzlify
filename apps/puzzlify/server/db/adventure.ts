@@ -12,6 +12,22 @@ export const getAdventureWithStages = async (adventureId: Adventure["id"]) => {
   });
 };
 
+export type AdventureLayout = Awaited<ReturnType<typeof getAdventureLayoutDb>>;
+
+export const getAdventureLayoutDb = async (adventureId: Adventure["id"]) => {
+  return prisma.adventure.findUnique({
+    where: { id: adventureId },
+    include: {
+      stages: {
+        include: {
+          previousStages: true,
+          nextStages: true,
+        },
+      },
+    },
+  });
+};
+
 type CreateAdventurePayload = Pick<Adventure, "name" | "hostId" | "startDate">;
 export const createAdventureDb = async (data: CreateAdventurePayload) => {
   return await prisma.adventure.create({ data });

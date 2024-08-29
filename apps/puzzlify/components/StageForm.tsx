@@ -1,11 +1,11 @@
 "use client";
 
 import { Adventure, Stage } from "@prisma/client";
-import { createStage } from "@/actions/host/create-stage";
+import { createStage } from "@/server/actions/host/create-stage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 import { stageSchema } from "@/schemas/stage";
-import { editStage } from "@/actions/host/edit-stage";
+import { editStage } from "@/server/actions/host/edit-stage";
 
 type StageFormProps = {
   adventureId: Adventure["id"];
@@ -19,8 +19,8 @@ const StageForm = ({ adventureId, stage }: StageFormProps) => {
     ? createStage.bind(null, { adventureId })
     : editStage.bind(null, { adventureId, stageId: stage.id });
 
-  const { riddle, answer } = stage || { riddle: "", answer: "" };
-  const defaultValues = { riddle, answer };
+  const { riddle, label } = stage || { riddle: "", answer: "", label: "" };
+  const defaultValues = { riddle: riddle || "", answer: "", label };
 
   const { form, handleSubmitWithAction } = useHookFormAction(
     boundUpdateStage,
@@ -33,6 +33,16 @@ const StageForm = ({ adventureId, stage }: StageFormProps) => {
       className="my-5 flex flex-col items-center border p-3 border-gray-200 rounded-md"
       onSubmit={handleSubmitWithAction}
     >
+      <label htmlFor="label" className="block">
+        Label
+      </label>
+      <input
+        {...form.register("label")}
+        className="border mx-2 border-gray-500 rounded"
+      />
+      {form.formState.errors.label ? (
+        <p>{form.formState.errors.label.message}</p>
+      ) : null}
       <label htmlFor="riddle" className="block">
         Riddle
       </label>

@@ -1,5 +1,5 @@
 import AdventureForm from "@/components/AdventureForm";
-import { getAdventureWithStages } from "@/server/db/adventure";
+import { getAdventureLayout } from "@/server/fetchers/get-adventure-layout";
 
 export default async function EditAdventure({
   params,
@@ -7,7 +7,7 @@ export default async function EditAdventure({
   params: { adventureId: string };
 }) {
   const adventureId = params.adventureId;
-  const adventure = await getAdventureWithStages(adventureId);
+  const adventure = await getAdventureLayout(adventureId);
 
   if (!adventure) {
     return (
@@ -17,5 +17,9 @@ export default async function EditAdventure({
     );
   }
 
-  return <AdventureForm adventure={adventure} />;
+  return (
+    <>
+      <AdventureForm adventure={adventure} />
+    </>
+  );
 }

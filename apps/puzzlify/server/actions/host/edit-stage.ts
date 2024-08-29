@@ -11,9 +11,9 @@ export const editStage = hostActionClient
   .schema(stageSchema)
   .metadata({ roleName: "host", actionName: "edit-stage" })
   .action(async ({ parsedInput, bindArgsParsedInputs }) => {
-    const { riddle, answer } = parsedInput;
+    const { riddle, answer, label } = parsedInput;
 
-    const hashedAnswer = await hashInput(answer);
+    const hashedAnswer = answer ? await hashInput(answer) : null;
     const [{ adventureId, stageId }] = bindArgsParsedInputs;
 
     if (!adventureId) {
@@ -25,7 +25,7 @@ export const editStage = hostActionClient
     }
 
     try {
-      await updateStageDb(stageId, { riddle, answer: hashedAnswer });
+      await updateStageDb(stageId, { label, riddle, answer: hashedAnswer });
 
       revalidatePath(`/adventure/${adventureId}`);
     } catch (error) {

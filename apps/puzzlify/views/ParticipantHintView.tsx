@@ -1,21 +1,25 @@
 "use client";
 
+import GetHintForm from "@/components/GetHintForm";
 import useCountdown from "@/hooks/useCountdown";
-import { Hint } from "@prisma/client";
+import { Adventure, Hint, Stage } from "@prisma/client";
 
 type HostStageViewProps = {
-  hint: Hint;
+  hintId: Hint["id"];
+  stageId: Stage["id"];
+  adventureId: Adventure["id"];
+  delay: Hint["delay"];
   startDate: Date;
 };
 
 export default function ParticipantHintView({
-  hint,
+  hintId,
+  stageId,
+  adventureId,
+  delay,
   startDate,
 }: HostStageViewProps) {
-  const hintReleaseTime = new Date(startDate.getTime() + hint.delay * 1000);
-
-  // TODO: Hints should not be retrieve client side until the time expires.
-  // Put behind a server action that verifies the time
+  const hintReleaseTime = new Date(startDate.getTime() + delay * 1000);
   const timeRemaining = useCountdown(hintReleaseTime);
 
   return (
@@ -23,7 +27,11 @@ export default function ParticipantHintView({
       {timeRemaining ? (
         <p>(Available in {timeRemaining})</p>
       ) : (
-        <p>{hint.hint}</p>
+        <GetHintForm
+          hintId={hintId}
+          stageId={stageId}
+          adventureId={adventureId}
+        />
       )}
     </>
   );

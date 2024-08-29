@@ -13,11 +13,13 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.632.0",
     "@aws-sdk/lib-dynamodb": "^3.632.0",
+    "@dagrejs/dagre": "^1.1.4",
     "@hookform/resolvers": "^3.9.0",
     "@next-safe-action/adapter-react-hook-form": "^1.0.12",
     "@prisma/client": "^5.18.0",
     "@repo/shared": "*",
     "@vercel/functions": "^1.4.0",
+    "@xyflow/react": "^12.1.1",
     "bcryptjs": "^2.4.3",
     "next": "14.2.5",
     "next-auth": "^5.0.0-beta.20",

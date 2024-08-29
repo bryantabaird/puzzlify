@@ -18,7 +18,7 @@ export const deleteAdventure = hostActionClient
     try {
       await deleteAdventureDb(adventureId);
     } catch (error) {
-      const userFacingErrorMessage = "Failed to delete hint";
+      const userFacingErrorMessage = "Failed to delete adventure";
       console.error(userFacingErrorMessage, error);
       return { error: userFacingErrorMessage };
     }
