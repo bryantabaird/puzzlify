@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ReactFlow,
   Panel,
@@ -11,9 +11,10 @@ import {
   type Edge,
   useNodesInitialized,
   Background,
-  addEdge,
   Controls,
   OnBeforeDelete,
+  OnDelete,
+  OnNodesChange,
 } from "@xyflow/react";
 
 import "@xyflow/react/dist/style.css";
@@ -21,9 +22,12 @@ import { getLayoutedElements } from "@/utils/getLayoutedElements";
 import { Adventure } from "@prisma/client";
 import { deleteStagesAndRelations } from "@/server/actions/host/delete-relations-and-stages";
 import { useFlowConnectHandlers } from "@/hooks/useFlowConnectHandlers";
+import { useRouter } from "next/navigation";
+
+type StageNode = Node<{ label: string }>;
 
 type ReactLayoutFlowProps = {
-  initialNodes: Array<Node>;
+  initialNodes: Array<StageNode>;
   initialEdges: Array<Edge>;
   adventureId: Adventure["id"];
 };
@@ -35,14 +39,15 @@ const ReactLayoutFlow = ({
 }: ReactLayoutFlowProps) => {
   const { fitView } = useReactFlow();
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] =
+    useNodesState<StageNode>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [opacity, setOpacity] = useState(0);
 
   const nodesInitialized = useNodesInitialized();
   const [initialLayoutFinished, setInitialLayoutFinished] = useState(false);
 
-  const { onConnect, onConnectEnd, onConnectStart } = useFlowConnectHandlers({
+  const onConnectHandlers = useFlowConnectHandlers({
     adventureId,
     setNodes,
     setEdges,
@@ -56,7 +61,9 @@ const ReactLayoutFlow = ({
 
       const origin: [number, number] = [0, 0];
 
-      setNodes([...layouted.nodes.map((node: Node) => ({ ...node, origin }))]);
+      setNodes([
+        ...layouted.nodes.map((node: StageNode) => ({ ...node, origin })),
+      ]);
       setEdges([...layouted.edges]);
 
       window.requestAnimationFrame(async () => {
@@ -76,15 +83,12 @@ const ReactLayoutFlow = ({
     }
   }, [nodesInitialized, initialLayoutFinished]);
 
-  const onBeforeDelete: OnBeforeDelete = useCallback(
+  const onBeforeDelete: OnBeforeDelete<StageNode> = useCallback(
     async ({ nodes, edges }) => {
       console.log("onBeforeDelete");
 
       const edgesIds = edges.map((edge) => edge.id);
       const nodesIds = nodes.map((node) => node.id);
-
-      console.log("edgesIds", edgesIds);
-      console.log("nodesIds", nodesIds);
 
       await deleteStagesAndRelations(
         { adventureId },
@@ -96,18 +100,27 @@ const ReactLayoutFlow = ({
     [],
   );
 
+  const router = useRouter();
+
+  const onDelete: OnDelete = useCallback(() => {
+    router.replace(`/adventure/${adventureId}/edit/stage`);
+  }, []);
+
+  const handleNodesChange: OnNodesChange<StageNode> = useCallback((changes) => {
+    onNodesChange(changes);
+  }, []);
+
   return (
     <div style={{ width: 1000, height: 500, opacity }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        onNodesChange={onNodesChange}
+        onNodesChange={handleNodesChange}
         onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onConnectStart={onConnectStart}
-        onConnectEnd={onConnectEnd}
+        {...onConnectHandlers}
         onBeforeDelete={onBeforeDelete}
-        // nodeTypes={nodeTypes}
+        onDelete={onDelete}
+        multiSelectionKeyCode={null}
         fitView
       >
         <Panel position="top-right">

@@ -1,10 +1,12 @@
 import { AdventureLayout } from "@/server/db/adventure";
 import type { Node, Edge } from "@xyflow/react";
 
+type StageNode = Node<{ label: string }>;
+
 const convertAdventureResponse = (
   adventure: NonNullable<AdventureLayout>,
-): { nodes: Node[]; edges: Edge[] } => {
-  const nodes: Node[] = [];
+): { nodes: StageNode[]; edges: Edge[] } => {
+  const nodes: StageNode[] = [];
   const edges: Edge[] = [];
 
   adventure.stages.forEach((stage, idx) => {

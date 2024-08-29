@@ -12,9 +12,11 @@ import {
 } from "@xyflow/react";
 import React, { useCallback, useRef } from "react";
 
+type StageNode = Node<{ label: string }>;
+
 type UseFlowConnectHandlersProps = {
   adventureId: Adventure["id"];
-  setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
+  setNodes: React.Dispatch<React.SetStateAction<StageNode[]>>;
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
   nodeCount: number;
 };
@@ -75,7 +77,7 @@ export const useFlowConnectHandlers = ({
       }
 
       if (targetIsPane && event instanceof MouseEvent) {
-        const label = `Stage ${nodeCount}`;
+        const label = `Stage ${nodeCount + 1}`;
         const createStageResponse = await createStage(
           { adventureId },
           { label, riddle: null, answer: null },
@@ -102,9 +104,7 @@ export const useFlowConnectHandlers = ({
           return;
         }
 
-        createStageRelationId;
-
-        const newNode: Node = {
+        const newNode: StageNode = {
           id: stageId,
           position: screenToFlowPosition({
             x: event.clientX,

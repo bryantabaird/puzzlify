@@ -6,6 +6,7 @@ import { hintSchema } from "@/schemas/stage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 import { Adventure, Hint, Stage } from "@prisma/client";
+import { use, useEffect, useState } from "react";
 
 type HintProps = {
   adventureId: Adventure["id"];
@@ -20,15 +21,32 @@ const HintForm = ({ adventureId, stageId, hint }: HintProps) => {
     ? addHint.bind(null, { adventureId, stageId })
     : editHint.bind(null, { adventureId, stageId, hintId: hint.id });
 
-  const { hint: hintMessage, delay } = hint || { hintMessage: "", delay: 0 };
+  const [isSubmitSuccess, setIsSubmitSuccess] = useState<boolean>();
+
+  const { hint: hintMessage, delay } = hint || {
+    hintMessage: "",
+    delay: undefined,
+  };
   const defaultValues = { hint: hintMessage, delay };
 
   const { form, handleSubmitWithAction } = useHookFormAction(
     updateHint,
     // TODO: A bad schema here isn't showing errors
     zodResolver(hintSchema),
-    { formProps: { defaultValues } },
+    {
+      formProps: { defaultValues },
+      actionProps: { onSuccess: () => setIsSubmitSuccess(true) },
+    },
   );
+
+  useEffect(() => {
+    if (isSubmitSuccess) {
+      if (mode === "create") {
+        form.reset();
+      }
+      setIsSubmitSuccess(false);
+    }
+  }, [isSubmitSuccess]);
 
   return (
     <>
