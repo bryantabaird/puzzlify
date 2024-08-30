@@ -1,4 +1,3 @@
-import DeleteHintForm from "@/components/DeleteHintForm";
 import HintForm from "@/components/HintForm";
 import StageForm from "@/components/StageForm";
 import { getStageWithHints } from "@/server/db/stage";
@@ -24,23 +23,22 @@ export default async function EditStage({ params }: EditStageProps) {
   }
 
   return (
-    <>
+    <div className="flex flex-col flex-1 p-10 gap-10">
       <StageForm adventureId={adventureId} stage={stage} />
-      <br />
       <HintForm adventureId={adventureId} stageId={params.stageId} />
-      <br />
-      {stage.hints.map((hint) => {
-        return (
-          <React.Fragment key={hint.id}>
-            <HintForm adventureId={adventureId} stageId={stageId} hint={hint} />
-            <DeleteHintForm
-              adventureId={adventureId}
-              stageId={stageId}
-              hintId={hint.id}
-            />
-          </React.Fragment>
-        );
-      })}
-    </>
+      <div>
+        {stage.hints.map((hint) => {
+          return (
+            <React.Fragment key={hint.id}>
+              <HintForm
+                adventureId={adventureId}
+                stageId={stageId}
+                hint={hint}
+              />
+            </React.Fragment>
+          );
+        })}
+      </div>
+    </div>
   );
 }

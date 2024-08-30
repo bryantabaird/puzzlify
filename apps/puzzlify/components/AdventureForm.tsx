@@ -6,6 +6,7 @@ import { adventureSchema } from "@/schemas/adventure";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 import { Adventure } from "@prisma/client";
+import { useRouter } from "next/navigation";
 
 type Props = {
   adventure?: Adventure;
@@ -35,49 +36,81 @@ const AdventureForm = ({ adventure }: Props) => {
     updateAdventure,
     // TODO: A bad schema here isn't showing errors
     zodResolver(adventureSchema),
-    { formProps: { defaultValues } },
+    {
+      formProps: { defaultValues },
+      actionProps: {
+        onSuccess: (response) => {
+          if (response.data) {
+            router.push(`/adventure/${response.data.adventureId}`);
+          } else {
+            // TODO: Update form there was an error try again
+          }
+        },
+      },
+    },
   );
+
+  const router = useRouter();
 
   const minDateTime = getLocalDateTime(new Date());
 
+  const isSubmitting = form.formState.isSubmitting;
+
   return (
     <>
-      <form
-        className="my-5 flex flex-col items-center border p-3 border-gray-200 rounded-md"
-        onSubmit={handleSubmitWithAction}
-      >
+      <form onSubmit={handleSubmitWithAction}>
         <label htmlFor="name" className="block">
-          Name
+          <div className="label">
+            <span className="label-text">Name</span>
+          </div>
+          <input
+            {...form.register("name")}
+            className={`input input-bordered ${form.formState.errors.name ? "input-error" : ""} w-full max-w-xs`}
+          />
         </label>
-        <input
-          {...form.register("name")}
-          className="border mx-2 border-gray-500 rounded"
-        />
         {form.formState.errors.name ? (
-          <p>{form.formState.errors.name.message}</p>
+          <div className="label">
+            <span className="label-text-alt">
+              {form.formState.errors.name.message}
+            </span>
+          </div>
         ) : null}
 
         <label htmlFor="startDate" className="block">
-          Start Date
+          <div className="label">
+            <span className="label-text">Start Date</span>
+          </div>
+          <input
+            {...form.register("startDate", {
+              setValueAs: (value) =>
+                value ? new Date(value).toISOString() : "",
+            })}
+            type="datetime-local"
+            min={minDateTime}
+            className={`input input-bordered ${form.formState.errors.startDate ? "input-error" : ""} w-full max-w-xs`}
+          />
         </label>
-        <input
-          {...form.register("startDate", {
-            setValueAs: (value) => (value ? new Date(value).toISOString() : ""),
-          })}
-          type="datetime-local"
-          min={minDateTime}
-          className="border mx-2 border-gray-500 rounded"
-        />
         {form.formState.errors.startDate ? (
-          <p>{form.formState.errors.startDate.message}</p>
+          <div className="label">
+            <span className="label-text-alt">
+              {form.formState.errors.startDate.message}
+            </span>
+          </div>
         ) : null}
 
-        <button
-          type="submit"
-          className="bg-orange-300 mt-4 rounded flex justify-center items-center w-36"
-        >
-          {mode === "create" ? "Create Adventure" : "Edit Adventure"}
-        </button>
+        {isSubmitting ? (
+          <button
+            type="submit"
+            className="btn btn-primary btn-disabled w-full mt-6"
+          >
+            <span className="loading loading-spinner"></span>
+            {mode === "create" ? "Creating Adventure" : "Editing Adventure"}
+          </button>
+        ) : (
+          <button type="submit" className="btn btn-primary w-full mt-6">
+            {mode === "create" ? "Create Adventure" : "Edit Adventure"}
+          </button>
+        )}
       </form>
     </>
   );

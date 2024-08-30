@@ -3,7 +3,6 @@
 import { adventureSchema } from "@/schemas/adventure";
 import { hostActionClient } from "@/lib/nextSafeAction";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createAdventureDb } from "@/server/db/adventure";
 
 export const createAdventure = hostActionClient
@@ -16,17 +15,15 @@ export const createAdventure = hostActionClient
 
     const data = { name, hostId: userId, startDate: new Date(startDate) };
 
-    let adventureId;
     try {
       const adventure = await createAdventureDb(data);
-      adventureId = adventure.id;
+      const adventureId = adventure.id;
 
       revalidatePath(`/adventure/${adventureId}`);
+      return { adventureId };
     } catch (error) {
       const userFacingErrorMessage = "Failed to add adventure";
       console.error(userFacingErrorMessage, error);
       return { error: userFacingErrorMessage };
     }
-
-    redirect(`/adventure/${adventureId}`);
   });

@@ -1,9 +1,7 @@
 import { ReactFlowProvider } from "@xyflow/react";
-import ReactFlowLayout from "../react-flow-layout";
+import ReactFlowLayout from "./_components/react-flow-layout";
 import { getAdventureLayout } from "@/server/fetchers/get-adventure-layout";
 import getGraphFromAdventure from "@/utils/getGraphFromAdventure";
-import Link from "next/link";
-import StageList from "../stage-list";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -26,17 +24,18 @@ const Layout: React.FC<LayoutProps> = async ({ children, params }) => {
     getGraphFromAdventure(adventure);
 
   return (
-    <>
+    <div className="flex flex-col lg:flex-row flex-1">
       <ReactFlowProvider>
-        <ReactFlowLayout
-          adventureId={adventureId}
-          initialNodes={initialNodes}
-          initialEdges={initialEdges}
-        />
-        <StageList adventureId={adventureId} />
+        <div className="lg:w-1/2 lg:h-full w-full h-1/2">
+          <ReactFlowLayout
+            adventureId={adventureId}
+            initialNodes={initialNodes}
+            initialEdges={initialEdges}
+          />
+        </div>
       </ReactFlowProvider>
       {children}
-    </>
+    </div>
   );
 };
 
