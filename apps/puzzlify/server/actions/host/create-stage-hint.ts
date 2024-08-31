@@ -1,26 +1,17 @@
 "use server";
 
 import { hintSchema } from "@/schemas/stage";
-import { hostActionClient } from "@/lib/nextSafeAction";
+import { hostStageActionClient } from "@/lib/next-safe-action";
 import { createHintDb } from "@/server/db/hint";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export const addHint = hostActionClient
+export const addHint = hostStageActionClient
   .schema(hintSchema)
   .metadata({ roleName: "host", actionName: "add-hint" })
-  .action(async ({ parsedInput, bindArgsParsedInputs }) => {
-    console.log("addHint action");
+  .action(async ({ parsedInput, ctx }) => {
     const { hint, delay } = parsedInput;
-    const [{ adventureId, stageId }] = bindArgsParsedInputs;
-
-    if (!stageId) {
-      throw new Error("Stage ID is required");
-    }
-
-    if (!adventureId) {
-      throw new Error("Adventure ID is required");
-    }
+    const { adventureId, stageId } = ctx;
 
     try {
       await createHintDb({ stageId, hint, delay });

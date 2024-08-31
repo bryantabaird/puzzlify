@@ -1,23 +1,18 @@
 "use server";
 
 import { stageSchema } from "@/schemas/stage";
-import { hostActionClient } from "@/lib/nextSafeAction";
+import { hostAdventureActionClient } from "@/lib/next-safe-action";
 import { createStageDb } from "@/server/db/stage";
 import hashInput from "@/server/helpers/hashInput";
 import { revalidatePath } from "next/cache";
 
-export const createStage = hostActionClient
+export const createStage = hostAdventureActionClient
   .schema(stageSchema)
   .metadata({ roleName: "host", actionName: "create-stage" })
-  .action(async ({ parsedInput, bindArgsParsedInputs }) => {
+  .action(async ({ parsedInput, ctx: { adventureId } }) => {
     const { riddle, answer, label } = parsedInput;
-    const { adventureId } = bindArgsParsedInputs[0];
 
     const hashedAnswer = answer ? await hashInput(answer) : null;
-
-    if (!adventureId) {
-      throw new Error("Adventure ID is required");
-    }
 
     const stagePayload = { label, adventureId, riddle, answer: hashedAnswer };
 

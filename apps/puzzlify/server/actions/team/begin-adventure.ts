@@ -1,6 +1,6 @@
 "use server";
 
-import { teamActionClient } from "@/lib/nextSafeAction";
+import { teamAdventureActionClient } from "@/lib/next-safe-action";
 import { getAdventureStartDateTime } from "@/server/db/adventure";
 import { getStartStages } from "@/server/db/stage";
 import { createTeamProgresses } from "@/server/db/team-progress";
@@ -8,7 +8,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-export const beginAdventure = teamActionClient
+export const beginAdventure = teamAdventureActionClient
   .schema(z.object({}))
   .metadata({ roleName: "team", actionName: "begin-adventure" })
   .action(async ({ bindArgsParsedInputs, ctx }) => {

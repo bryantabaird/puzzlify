@@ -1,17 +1,15 @@
 "use server";
 
 import { adventureSchema } from "@/schemas/adventure";
-import { hostActionClient } from "@/lib/nextSafeAction";
+import { userActionClient } from "@/lib/next-safe-action";
 import { revalidatePath } from "next/cache";
 import { createAdventureDb } from "@/server/db/adventure";
 
-export const createAdventure = hostActionClient
+export const createAdventure = userActionClient
   .schema(adventureSchema)
   .metadata({ roleName: "host", actionName: "create-adventure" })
-  .action(async ({ parsedInput, ctx }) => {
+  .action(async ({ parsedInput, ctx: { userId } }) => {
     const { name, startDate } = parsedInput;
-
-    const { userId } = ctx;
 
     const data = { name, hostId: userId, startDate: new Date(startDate) };
 

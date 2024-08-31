@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Adventure, User } from "@prisma/client";
+import { Adventure, Team, User } from "@prisma/client";
 
 export const getAdventureWithStages = async (adventureId: Adventure["id"]) => {
   return prisma.adventure.findUnique({
@@ -69,6 +69,7 @@ export const getHostAdventures = async (userId: string) => {
   });
 };
 
+// TODO: Update this
 export const getTeamAdventures = async (userId: string) => {
   return await prisma.adventure.findMany({
     where: {
@@ -79,15 +80,19 @@ export const getTeamAdventures = async (userId: string) => {
   });
 };
 
-export const addTeamToAdventure = async (
-  userId: User["id"],
-  adventureId: Adventure["id"],
-) => {
+type AddTeamToAdventureParams = {
+  teamId: Team["id"];
+  adventureId: Adventure["id"];
+};
+export const addTeamToAdventure = async ({
+  teamId,
+  adventureId,
+}: AddTeamToAdventureParams) => {
   return await prisma.adventure.update({
     where: { id: adventureId },
     data: {
       teams: {
-        connect: { id: userId },
+        connect: { id: teamId },
       },
     },
   });

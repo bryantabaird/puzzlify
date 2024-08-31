@@ -2,7 +2,7 @@
 
 import { userSchema } from "@/schemas/user";
 import { createUserInDb, getUserByEmail } from "@/server/db/user";
-import { baseActionClient } from "@/lib/nextSafeAction";
+import { baseActionClient } from "@/lib/next-safe-action";
 import hashInput from "@/server/helpers/hashInput";
 import { redirect } from "next/navigation";
 

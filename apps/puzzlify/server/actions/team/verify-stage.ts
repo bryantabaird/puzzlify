@@ -1,7 +1,7 @@
 "use server";
 
 import { riddleSubmission } from "@/schemas/riddle";
-import { teamActionClient } from "@/lib/nextSafeAction";
+import { stageAdventureActionClient } from "@/lib/next-safe-action";
 import { getStageValidationData } from "@/server/db/stage";
 import { getNextStagesWithNextedPreviousStages } from "@/server/db/stage-relation";
 import {
@@ -13,20 +13,12 @@ import { compareInput } from "@/server/helpers/hashInput";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export const verifyStage = teamActionClient
+export const verifyStage = stageAdventureActionClient
   .schema(riddleSubmission)
   .metadata({ roleName: "team", actionName: "verify-stage" })
   .action(async ({ parsedInput, ctx }) => {
     const { userId, adventureId, stageId } = ctx;
     const { answer } = parsedInput;
-
-    if (!stageId) {
-      return { message: "Stage id not provided" };
-    }
-
-    if (!adventureId) {
-      return { message: "Adventure id not provided" };
-    }
 
     const stage = await getStageValidationData(stageId);
 

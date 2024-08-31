@@ -1,7 +1,7 @@
 "use server";
 
 import { adventureSchema } from "@/schemas/adventure";
-import { hostActionClient } from "@/lib/nextSafeAction";
+import { hostAdventureActionClient } from "@/lib/next-safe-action";
 import {
   getAdventureStartDateTime,
   updateAdventureDb,
@@ -12,16 +12,11 @@ import { redirect } from "next/navigation";
 // TODO: /adventure/undefined/stage/28f09d72-a727-45ba-a8ad-7bb2761cce66
 // Make sure this link doesn't work
 
-export const editAdventure = hostActionClient
+export const editAdventure = hostAdventureActionClient
   .schema(adventureSchema)
   .metadata({ roleName: "host", actionName: "edit-adventure" })
-  .action(async ({ parsedInput, bindArgsParsedInputs }) => {
+  .action(async ({ parsedInput, ctx: { adventureId } }) => {
     const { name, startDate } = parsedInput;
-    const [{ adventureId }] = bindArgsParsedInputs;
-
-    if (!adventureId) {
-      throw new Error("Adventure ID is required");
-    }
 
     const parsedStartDate = new Date(startDate);
 

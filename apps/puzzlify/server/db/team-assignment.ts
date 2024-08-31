@@ -1,6 +1,5 @@
 import prisma from "@/lib/prisma";
-import { Adventure } from "@prisma/client";
-import { User } from "next-auth";
+import { User, Adventure, Team } from "@prisma/client";
 
 type GetTeamAssignmentPayload = {
   userId: User["id"];
@@ -14,6 +13,25 @@ export const getTeamAssignment = async ({
     where: {
       userId,
       adventureId,
+    },
+  });
+};
+
+type CreateTeamAssignmentPayload = {
+  userId: User["id"];
+  adventureId: Adventure["id"];
+  teamId: Team["id"];
+};
+export const createTeamAssignment = async ({
+  userId,
+  adventureId,
+  teamId,
+}: CreateTeamAssignmentPayload) => {
+  return await prisma.teamAssignment.create({
+    data: {
+      userId,
+      adventureId,
+      teamId,
     },
   });
 };
