@@ -40,7 +40,7 @@ const StageForm = ({ adventureId, stage }: StageFormProps) => {
           </label>
           {form.formState.errors.label ? (
             <div className="label">
-              <span className="label-text-alt">
+              <span className="label-text-alt text-error">
                 {form.formState.errors.label.message}
               </span>
             </div>
@@ -56,7 +56,7 @@ const StageForm = ({ adventureId, stage }: StageFormProps) => {
           </label>
           {form.formState.errors.riddle ? (
             <div className="label">
-              <span className="label-text-alt">
+              <span className="label-text-alt text-error">
                 {form.formState.errors.riddle.message}
               </span>
             </div>
@@ -72,7 +72,7 @@ const StageForm = ({ adventureId, stage }: StageFormProps) => {
           </label>
           {form.formState.errors.answer ? (
             <div className="label">
-              <span className="label-text-alt">
+              <span className="label-text-alt text-error">
                 {form.formState.errors.answer.message}
               </span>
             </div>

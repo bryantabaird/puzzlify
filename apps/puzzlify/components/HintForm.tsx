@@ -63,7 +63,7 @@ const HintForm = ({ adventureId, stageId, hint }: HintProps) => {
             </label>
             {form.formState.errors.hint ? (
               <div className="label">
-                <span className="label-text-alt">
+                <span className="label-text-alt text-error">
                   {form.formState.errors.hint.message}
                 </span>
               </div>
@@ -80,7 +80,7 @@ const HintForm = ({ adventureId, stageId, hint }: HintProps) => {
             </label>
             {form.formState.errors.delay ? (
               <div className="label">
-                <span className="label-text-alt">
+                <span className="label-text-alt text-error">
                   {form.formState.errors.delay.message}
                 </span>
               </div>

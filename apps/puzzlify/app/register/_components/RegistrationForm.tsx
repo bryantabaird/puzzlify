@@ -37,7 +37,7 @@ const RegistrationForm = () => {
           </label>
           {form.formState.errors.email ? (
             <div className="label">
-              <span className="label-text-alt">
+              <span className="label-text-alt text-error">
                 {form.formState.errors.email.message}
               </span>
             </div>
@@ -69,7 +69,7 @@ const RegistrationForm = () => {
           </label>
           {form.formState.errors.password ? (
             <div className="label">
-              <span className="label-text-alt">
+              <span className="label-text-alt text-error">
                 {form.formState.errors.password.message}
               </span>
             </div>

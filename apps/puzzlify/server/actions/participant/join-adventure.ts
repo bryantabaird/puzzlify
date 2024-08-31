@@ -1,12 +1,13 @@
 "use server";
 
 import { participantActionClient } from "@/lib/nextSafeAction";
+import { joinAdventureSchema } from "@/schemas/adventure";
 import { addParticipantToAdventure } from "@/server/db/adventure";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 export const joinAdventure = participantActionClient
-  .schema(z.object({}))
+  .schema(joinAdventureSchema)
   .metadata({ roleName: "participant", actionName: "join-adventure" })
   .action(async ({ bindArgsParsedInputs, ctx }) => {
     const { userId } = ctx;
