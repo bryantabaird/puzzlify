@@ -1,19 +1,19 @@
 import RiddleForm from "@/components/RiddleForm";
 import { type StageWithPreviousAndNextStages } from "@/server/db/stage";
 import { Hint } from "@prisma/client";
-import ParticipantHintView from "./ParticipantHintView";
+import TeamHintView from "./TeamHintView";
 
-type ParticipantStageProps = {
+type TeamStageProps = {
   stage: NonNullable<StageWithPreviousAndNextStages>;
   adventureId: string;
   startDate?: Date;
 };
 
-export default function ParticipantStageView({
+export default function TeamStageView({
   stage,
   adventureId,
   startDate,
-}: ParticipantStageProps) {
+}: TeamStageProps) {
   return (
     <>
       <RiddleForm stage={stage} adventureId={adventureId} />
@@ -27,7 +27,7 @@ export default function ParticipantStageView({
 
             return (
               <li key={hint.id}>
-                <ParticipantHintView
+                <TeamHintView
                   hintId={hint.id}
                   stageId={stage.id}
                   adventureId={adventureId}

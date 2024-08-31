@@ -1,7 +1,7 @@
 "use server";
 
 import { PrismaClient } from "@prisma/client";
-import { getUserStageStartTime } from "../db/user-progress";
+import { getTeamStageStartTime } from "../db/team-progress";
 import { getUserId } from "../helpers/getUserId";
 
 const prisma = new PrismaClient();
@@ -27,7 +27,7 @@ export const getHintIfAvailable = async (
 
   console.log("ids", userId, stageId, adventureId);
 
-  const userProgress = await getUserStageStartTime(
+  const userProgress = await getTeamStageStartTime(
     userId,
     stageId,
     adventureId,

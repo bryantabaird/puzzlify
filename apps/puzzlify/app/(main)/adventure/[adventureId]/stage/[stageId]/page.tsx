@@ -1,8 +1,8 @@
 import { getUserId } from "@/server/helpers/getUserId";
 import { isAdventureHost } from "@/server/helpers/isAdventureHost";
 import { getStageWithPreviousAndNextStages } from "@/server/db/stage";
-import { getUserStageStartTime } from "@/server/db/user-progress";
-import ParticipantStageView from "./_components/ParticipantStageView";
+import { getTeamStageStartTime } from "@/server/db/team-progress";
+import TeamStageView from "./_components/TeamStageView";
 import HostStageView from "./_components/HostStageView";
 
 type ViewStagePageProps = {
@@ -31,7 +31,7 @@ export default async function ViewStagePage({ params }: ViewStagePageProps) {
   } else {
     let startDate;
     if (stage.hints.length > 0) {
-      const userProgress = await getUserStageStartTime(
+      const userProgress = await getTeamStageStartTime(
         userId,
         stageId,
         adventureId,
@@ -46,7 +46,7 @@ export default async function ViewStagePage({ params }: ViewStagePageProps) {
     }
 
     return (
-      <ParticipantStageView
+      <TeamStageView
         adventureId={adventureId}
         stage={stage}
         startDate={startDate}

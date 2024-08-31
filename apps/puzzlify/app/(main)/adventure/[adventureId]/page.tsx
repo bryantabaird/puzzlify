@@ -1,5 +1,5 @@
 import { getAdventureWithStages } from "@/server/db/adventure";
-import ParticipantAdventureDashboard from "./_components/ParticipantAdventureDashboard";
+import TeamAdventureDashboard from "./_components/TeamAdventureDashboard";
 import HostAdventureDashboard from "./_components/HostAdventureDashboard";
 import { getUserId } from "@/server/helpers/getUserId";
 
@@ -31,15 +31,13 @@ export default async function ViewAdventurePage({
   //   Stats per stage
   //   Leaderboard
   // Both:
-  //   Upgrade options for participants
+  //   Upgrade options for teams
   //   Available joiners until paywall hit
   //   Possible pay to play settings for the host
 
   if (isHost) {
     return <HostAdventureDashboard adventure={adventure} />;
   } else {
-    return (
-      <ParticipantAdventureDashboard userId={userId} adventure={adventure} />
-    );
+    return <TeamAdventureDashboard userId={userId} adventure={adventure} />;
   }
 }

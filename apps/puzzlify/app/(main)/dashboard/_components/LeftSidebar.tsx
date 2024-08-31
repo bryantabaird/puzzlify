@@ -13,7 +13,7 @@ const LeftSidebar = () => {
                   <Link href="/adventure/join">Join</Link>
                 </li>
                 <li>
-                  <Link href="/adventure">Participant</Link>
+                  <Link href="/adventure">Teams</Link>
                 </li>
                 <li>
                   <Link href="/adventure/join">Hosted</Link>

@@ -11,31 +11,41 @@ generator client {
 // }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 model User {
-  id                     String         @id @default(uuid())
-  email                  String         @unique
-  password               String
-  hostedAdventures       Adventure[]    @relation("HostAdventures")
-  participatedAdventures Adventure[]    @relation("ParticipantsAdventures")
-  stageProgresses        UserProgress[]
+  id               String           @id @default(uuid())
+  email            String           @unique
+  password         String
+  hostedAdventures Adventure[]      @relation("HostAdventures")
+  teams            Team[]
+  teamAssignments  TeamAssignment[]
+}
+
+model Team {
+  id                   String           @id @default(uuid())
+  name                 String
+  users                User[]
+  adventures           Adventure[]      @relation("TeamAdventures")
+  teamProgresses       TeamProgress[]
+  adventureAssignments TeamAssignment[]
 }
 
 model Adventure {
-  id              String          @id @default(uuid())
-  dateCreated     DateTime        @default(now())
+  id              String           @id @default(uuid())
+  dateCreated     DateTime         @default(now())
   name            String
   startDate       DateTime
-  stages          Stage[]         @relation("AdventureStages")
-  stageRelations  StageRelation[] @relation("AdventureStageRelations")
+  stages          Stage[]          @relation("AdventureStages")
+  stageRelations  StageRelation[]  @relation("AdventureStageRelations")
   hostId          String
-  host            User            @relation("HostAdventures", fields: [hostId], references: [id])
-  participants    User[]          @relation("ParticipantsAdventures")
-  stageProgresses UserProgress[]
+  host            User             @relation("HostAdventures", fields: [hostId], references: [id])
+  teams           Team[]           @relation("TeamAdventures")
+  stageProgresses TeamProgress[]
+  teamAssignments TeamAssignment[]
 }
 
 model Stage {
@@ -47,7 +57,7 @@ model Stage {
   hints           Hint[]          @relation("StageHints")
   adventureId     String
   adventure       Adventure       @relation("AdventureStages", fields: [adventureId], references: [id])
-  stageProgresses UserProgress[]
+  stageProgresses TeamProgress[]
   previousStages  StageRelation[] @relation("PreviousStages")
   nextStages      StageRelation[] @relation("NextStages")
 }
@@ -72,17 +82,30 @@ model Hint {
   stage   Stage  @relation("StageHints", fields: [stageId], references: [id])
 }
 
-model UserProgress {
+model TeamProgress {
   id             String    @id @default(uuid())
-  userId         String
+  teamId         String
   adventureId    String
   stageId        String
   startTime      DateTime  @default(now())
   completionTime DateTime?
 
-  user      User      @relation(fields: [userId], references: [id])
+  team      Team      @relation(fields: [teamId], references: [id])
   adventure Adventure @relation(fields: [adventureId], references: [id])
   stage     Stage     @relation(fields: [stageId], references: [id])
 
-  @@unique(name: "userProgressId", [userId, adventureId, stageId])
+  @@unique(name: "teamProgressId", [teamId, adventureId, stageId])
+}
+
+model TeamAssignment {
+  id          String @id @default(uuid())
+  userId      String
+  adventureId String
+  teamId      String
+
+  user      User      @relation(fields: [userId], references: [id])
+  adventure Adventure @relation(fields: [adventureId], references: [id])
+  team      Team      @relation(fields: [teamId], references: [id])
+
+  @@unique([userId, adventureId])
 }

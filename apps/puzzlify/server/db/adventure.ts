@@ -69,8 +69,7 @@ export const getHostAdventures = async (userId: string) => {
   });
 };
 
-// TODO: Update user model to include participant adventures
-export const getParticipantAdventures = async (userId: string) => {
+export const getTeamAdventures = async (userId: string) => {
   return await prisma.adventure.findMany({
     where: {
       NOT: {
@@ -80,28 +79,49 @@ export const getParticipantAdventures = async (userId: string) => {
   });
 };
 
-export const addParticipantToAdventure = async (
+export const addTeamToAdventure = async (
   userId: User["id"],
   adventureId: Adventure["id"],
 ) => {
   return await prisma.adventure.update({
     where: { id: adventureId },
     data: {
-      participants: {
+      teams: {
         connect: { id: userId },
       },
     },
   });
 };
 
-export const getParticipantAdventureId = async (
+export const getUserAdventureTeam = async ({
+  userId,
+  adventureId,
+}: {
+  userId: User["id"];
+  adventureId: Adventure["id"];
+}) => {
+  return await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      teams: {
+        select: {
+          adventures: {
+            where: { id: adventureId },
+          },
+        },
+      },
+    },
+  });
+};
+
+export const getTeamAdventureId = async (
   userId: User["id"],
   adventureId: Adventure["id"],
 ) => {
   return await prisma.adventure.findFirst({
     where: {
       id: adventureId,
-      participants: {
+      teams: {
         some: {
           id: userId,
         },

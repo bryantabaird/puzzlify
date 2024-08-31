@@ -1,14 +1,14 @@
 "use server";
 
-import { participantActionClient } from "@/lib/nextSafeAction";
+import { teamActionClient } from "@/lib/nextSafeAction";
 import { joinAdventureSchema } from "@/schemas/adventure";
-import { addParticipantToAdventure } from "@/server/db/adventure";
+import { addTeamToAdventure } from "@/server/db/adventure";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-export const joinAdventure = participantActionClient
+export const joinAdventure = teamActionClient
   .schema(joinAdventureSchema)
-  .metadata({ roleName: "participant", actionName: "join-adventure" })
+  .metadata({ roleName: "team", actionName: "join-adventure" })
   .action(async ({ bindArgsParsedInputs, ctx }) => {
     const { userId } = ctx;
     const { adventureId } = bindArgsParsedInputs[0];
@@ -17,7 +17,7 @@ export const joinAdventure = participantActionClient
       throw new Error("Adventure ID is required");
     }
 
-    await addParticipantToAdventure(userId, adventureId);
+    await addTeamToAdventure(userId, adventureId);
 
     revalidatePath(`/adventure/${adventureId}`);
   });

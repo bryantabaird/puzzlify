@@ -1,21 +1,21 @@
 "use server";
 
 import { riddleSubmission } from "@/schemas/riddle";
-import { participantActionClient } from "@/lib/nextSafeAction";
+import { teamActionClient } from "@/lib/nextSafeAction";
 import { getStageValidationData } from "@/server/db/stage";
 import { getNextStagesWithNextedPreviousStages } from "@/server/db/stage-relation";
 import {
   getCountOfIncompletePreviousStages,
-  createUserProgress,
-  updateUserProgress,
-} from "@/server/db/user-progress";
+  createTeamProgress,
+  updateTeamProgress,
+} from "@/server/db/team-progress";
 import { compareInput } from "@/server/helpers/hashInput";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export const verifyStage = participantActionClient
+export const verifyStage = teamActionClient
   .schema(riddleSubmission)
-  .metadata({ roleName: "participant", actionName: "verify-stage" })
+  .metadata({ roleName: "team", actionName: "verify-stage" })
   .action(async ({ parsedInput, ctx }) => {
     const { userId, adventureId, stageId } = ctx;
     const { answer } = parsedInput;
@@ -61,7 +61,7 @@ export const verifyStage = participantActionClient
               );
 
             if (incompletePreviousStagesCount === 0) {
-              await createUserProgress(
+              await createTeamProgress(
                 userId,
                 adventureId,
                 nextStage.toStageId,
@@ -72,7 +72,7 @@ export const verifyStage = participantActionClient
         );
 
         // Update the user progress entry for the current stage
-        await updateUserProgress(userId, adventureId, stageId, now);
+        await updateTeamProgress(userId, adventureId, stageId, now);
 
         // TODO: Does this revalidate the path for all users or just
         // the current user? Only needs to be the current user

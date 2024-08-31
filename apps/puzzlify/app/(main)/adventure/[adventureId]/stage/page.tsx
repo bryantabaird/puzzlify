@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import Link from "next/link";
-import { getParticipantStagesInProgress } from "@/server/db/user-progress";
+import { getTeamStagesInProgress } from "@/server/db/team-progress";
 
 type DashboardPageProps = {
   params: {
@@ -20,7 +20,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     );
   }
 
-  const stagesInProgress = await getParticipantStagesInProgress(
+  const stagesInProgress = await getTeamStagesInProgress(
     userId,
     params.adventureId,
   );

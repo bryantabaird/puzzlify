@@ -1,6 +1,6 @@
 "use client";
 
-import { verifyStage } from "@/server/actions/participant/verify-stage";
+import { verifyStage } from "@/server/actions/team/verify-stage";
 import { riddleSubmission } from "@/schemas/riddle";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";

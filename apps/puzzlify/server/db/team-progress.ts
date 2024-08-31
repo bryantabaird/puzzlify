@@ -1,16 +1,16 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Adventure, Stage, User, UserProgress } from "@prisma/client";
+import { Adventure, Stage, TeamProgress, Team } from "@prisma/client";
 
-export const getParticipantStagesInProgress = async (
-  userId: User["id"],
+export const getTeamStagesInProgress = async (
+  teamId: Team["id"],
   adventureId: Adventure["id"],
 ) => {
-  return await prisma.userProgress.findMany({
+  return await prisma.teamProgress.findMany({
     where: {
-      userId: userId,
-      adventureId: adventureId,
+      teamId,
+      adventureId,
       completionTime: null,
     },
     include: {
@@ -19,22 +19,22 @@ export const getParticipantStagesInProgress = async (
   });
 };
 
-type GetParticipantStageInProgressPayload = {
-  userId: User["id"];
+type GetTeamStageInProgressPayload = {
+  teamId: Team["id"];
   adventureId: Adventure["id"];
   stageId: Stage["id"];
 };
 
-export const getParticipantStageInProgress = async ({
-  userId,
+export const getTeamStageInProgress = async ({
+  teamId,
   adventureId,
   stageId,
-}: GetParticipantStageInProgressPayload) => {
-  return await prisma.userProgress.findFirst({
+}: GetTeamStageInProgressPayload) => {
+  return await prisma.teamProgress.findFirst({
     where: {
-      userId: userId,
-      adventureId: adventureId,
-      stageId: stageId,
+      teamId,
+      adventureId,
+      stageId,
       completionTime: null,
     },
   });
@@ -42,12 +42,12 @@ export const getParticipantStageInProgress = async ({
 
 export const getCountOfIncompletePreviousStages = async (
   adventureId: Adventure["id"],
-  userId: User["id"],
+  teamId: Team["id"],
   previousStageIds: Array<Stage["id"]>,
 ) => {
-  return await prisma.userProgress.count({
+  return await prisma.teamProgress.count({
     where: {
-      userId,
+      teamId,
       adventureId,
       stageId: { in: previousStageIds },
       completionTime: null,
@@ -55,15 +55,15 @@ export const getCountOfIncompletePreviousStages = async (
   });
 };
 
-export const createUserProgress = async (
-  userId: User["id"],
+export const createTeamProgress = async (
+  teamId: Team["id"],
   adventureId: Adventure["id"],
   stageId: Stage["id"],
   startTime: Date,
 ) => {
-  return await prisma.userProgress.create({
+  return await prisma.teamProgress.create({
     data: {
-      userId,
+      teamId,
       adventureId,
       stageId,
       startTime,
@@ -71,16 +71,16 @@ export const createUserProgress = async (
   });
 };
 
-export const updateUserProgress = async (
-  userId: User["id"],
+export const updateTeamProgress = async (
+  teamId: Team["id"],
   adventureId: Adventure["id"],
   stageId: Stage["id"],
   completionTime: Date,
 ) => {
-  return prisma.userProgress.update({
+  return prisma.teamProgress.update({
     where: {
-      userProgressId: {
-        userId,
+      teamProgressId: {
+        teamId,
         adventureId,
         stageId,
       },
@@ -89,27 +89,27 @@ export const updateUserProgress = async (
   });
 };
 
-type CreateUserProgressesPayload = Array<
-  Pick<UserProgress, "userId" | "adventureId" | "stageId">
+type CreateTeamProgressesPayload = Array<
+  Pick<TeamProgress, "teamId" | "adventureId" | "stageId">
 >;
 // TODO: For signup, the start time should be the adventure start time,
 // but if we consider editing the start time on the adventure, ensure data integrity
-// here such that a user progress start time becomes out of sync. Maybe the
+// here such that a team progress start time becomes out of sync. Maybe the
 // start time for starting stages could be a special ADVENTURE_START_TIME value
-export const createUserProgresses = async (
-  data: CreateUserProgressesPayload,
+export const createTeamProgresses = async (
+  data: CreateTeamProgressesPayload,
 ) => {
-  return await prisma.userProgress.createMany({ data });
+  return await prisma.teamProgress.createMany({ data });
 };
 
-export const getUserStageStartTime = async (
-  userId: User["id"],
+export const getTeamStageStartTime = async (
+  teamId: Team["id"],
   stageId: Stage["id"],
   adventureId: Adventure["id"],
 ) => {
-  return await prisma.userProgress.findFirst({
+  return await prisma.teamProgress.findFirst({
     where: {
-      userId,
+      teamId,
       adventureId,
       stageId,
     },

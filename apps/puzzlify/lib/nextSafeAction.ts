@@ -1,7 +1,7 @@
-import { getParticipantStageInProgress } from "@/server/db/user-progress";
+import { getTeamAssignment } from "@/server/db/team-assignment";
+import { getTeamStageInProgress } from "@/server/db/team-progress";
 import { getUserId } from "@/server/helpers/getUserId";
 import { isAdventureHost } from "@/server/helpers/isAdventureHost";
-import { isAdventureParticipant } from "@/server/helpers/isAdventureParticipant";
 import { isHintHost } from "@/server/helpers/isHintHost";
 import { isStageHost } from "@/server/helpers/isStageHost";
 import { createSafeActionClient } from "next-safe-action";
@@ -10,10 +10,7 @@ import { z } from "zod";
 export const baseActionClient = createSafeActionClient({
   defineMetadataSchema: () =>
     z.object({
-      roleName: z
-        .literal("participant")
-        .or(z.literal("host"))
-        .or(z.literal("auth")),
+      roleName: z.literal("team").or(z.literal("host")).or(z.literal("auth")),
       actionName: z.string(),
     }),
 });
@@ -69,32 +66,36 @@ export const hostActionClient = userActionClient
     return await next({ ctx: { userId, adventureId, stageId } });
   });
 
-export const participantActionClient = userActionClient
+export const teamActionClient = userActionClient
   .bindArgsSchemas<[stageClientSchema: typeof bindArgsSchema]>([bindArgsSchema])
   .use(async ({ next, bindArgsClientInputs, ctx }) => {
     const bindArgs = bindArgsClientInputs[0];
     const { adventureId, stageId } = bindArgsSchema.parse(bindArgs);
     const { userId } = ctx;
 
+    let teamId;
     if (adventureId) {
-      const isParticipant = isAdventureParticipant({ userId, adventureId });
+      // TODO: I forgot an await here forever! Add linting for missing 'await' checks
+      const teamAssignment = await getTeamAssignment({ userId, adventureId });
 
-      if (!isParticipant) {
-        throw new Error("User is not a participant of this adventure");
+      if (!teamAssignment) {
+        throw new Error("User is not on a team part of this adventure");
+      }
+
+      teamId = teamAssignment.teamId;
+
+      if (stageId && adventureId && teamId) {
+        const activeStage = await getTeamStageInProgress({
+          teamId,
+          stageId,
+          adventureId,
+        });
+
+        if (!activeStage) {
+          throw new Error("This stage is not available to the user");
+        }
       }
     }
 
-    if (stageId && adventureId) {
-      const activeStage = await getParticipantStageInProgress({
-        userId,
-        stageId,
-        adventureId,
-      });
-
-      if (!activeStage) {
-        throw new Error("This stage is not available to the user");
-      }
-    }
-
-    return await next({ ctx: { userId, adventureId, stageId } });
+    return await next({ ctx: { userId, adventureId, stageId, teamId } });
   });

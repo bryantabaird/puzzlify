@@ -1,6 +1,6 @@
 "use client";
 
-import { beginAdventure } from "@/server/actions/participant/begin-adventure";
+import { beginAdventure } from "@/server/actions/team/begin-adventure";
 import useCountdown from "@/hooks/useCountdown"; // Adjust the path to where the hook is saved
 
 type Props = {
