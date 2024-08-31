@@ -25,11 +25,15 @@ const AdventureForm = ({ adventure }: Props) => {
     ? createAdventure.bind(null, {})
     : editAdventure.bind(null, { adventureId: adventure.id });
 
+  const now = new Date();
+  const nextWeek = new Date(now);
+  nextWeek.setDate(now.getDate() + 7);
+
   const { name, startDate } = adventure || { name: "", startDate: "" };
   // datetime-local input doesn't accept ISO strings or date objects
   const startDateLocalTime = startDate
     ? getLocalDateTime(new Date(startDate))
-    : "";
+    : getLocalDateTime(nextWeek);
   const defaultValues = { name, startDate: startDateLocalTime };
 
   const { form, handleSubmitWithAction } = useHookFormAction(
@@ -61,7 +65,7 @@ const AdventureForm = ({ adventure }: Props) => {
       <form onSubmit={handleSubmitWithAction}>
         <label htmlFor="name" className="block">
           <div className="label">
-            <span className="label-text">Name</span>
+            <span className="label-text">Adventure Name</span>
           </div>
           <input
             {...form.register("name")}
@@ -78,7 +82,7 @@ const AdventureForm = ({ adventure }: Props) => {
 
         <label htmlFor="startDate" className="block">
           <div className="label">
-            <span className="label-text">Start Date</span>
+            <span className="label-text">Start Time</span>
           </div>
           <input
             {...form.register("startDate", {

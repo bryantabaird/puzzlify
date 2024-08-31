@@ -41,9 +41,13 @@ export default async function Dashboard() {
                 Already have an adventure code? Jump right in and start your
                 quest!
               </p>
-              <button className="btn btn-primary w-full max-w-xs">
-                Join Adventure
-              </button>
+              <div className="w-full">
+                <Link href="/adventure/join">
+                  <button className="btn btn-primary w-full">
+                    Join Adventure
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
           <div className="divider lg:divider-horizontal">OR</div>
@@ -55,22 +59,18 @@ export default async function Dashboard() {
               <p className="mb-6">
                 Set up a new adventure and challenge your friends!
               </p>
-              <Link href="/adventure/create">
-                <button className="btn btn-secondary w-full max-w-xs">
-                  Create Adventure
-                </button>
-              </Link>
+              <div className="w-full">
+                <Link href="/adventure/create">
+                  <button className="btn btn-secondary w-full">
+                    Create Adventure
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div className="flex flex-col justify-center items-center m-4">
-        <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-
-        <Link href="/adventure/create" className="mx-2 underline">
-          Create Adventure
-        </Link>
-
         <div className="mt-6 w-full max-w-md">
           <h2 className="text-xl font-semibold mb-2">Hosted Adventures</h2>
           {hostedAdventures.length > 0 ? (

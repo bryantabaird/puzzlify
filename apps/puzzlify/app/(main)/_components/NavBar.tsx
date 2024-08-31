@@ -1,3 +1,5 @@
+import Logout from "@/components/Logout";
+
 const NavBar = () => {
   return (
     <nav>
@@ -23,7 +25,28 @@ const NavBar = () => {
             </svg>
           </label>
         </div>
-        <div className="mx-2 flex-1 px-2">Navbar Title</div>
+        <div className="flex justify-between w-full">
+          <div className="mx-2 px-2">Navbar Title</div>
+          <div className="dropdown dropdown-bottom dropdown-end">
+            <div
+              tabIndex={0}
+              role="button"
+              className="avatar online placeholder"
+            >
+              <div className="bg-neutral text-neutral-content w-12 rounded-full">
+                <span>AI</span>
+              </div>
+            </div>
+            <ul
+              tabIndex={0}
+              className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+            >
+              <li>
+                <Logout />
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </nav>
   );
