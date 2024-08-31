@@ -23,6 +23,7 @@ import { Adventure } from "@prisma/client";
 import { deleteStagesAndRelations } from "@/server/actions/host/delete-relations-and-stages";
 import { useFlowConnectHandlers } from "@/hooks/useFlowConnectHandlers";
 import { useRouter } from "next/navigation";
+import StageList from "./stage-list";
 
 type StageNode = Node<{ label: string }>;
 
@@ -54,32 +55,29 @@ const ReactLayoutFlow = ({
     nodeCount: nodes.length,
   });
 
-  const onLayout = useCallback(
-    (rankdir: string) => {
-      console.log("onLayout");
-      const layouted = getLayoutedElements(nodes, edges, { rankdir });
+  const onLayout = useCallback(() => {
+    console.log("onLayout");
+    const layouted = getLayoutedElements(nodes, edges, { rankdir: "TB" });
 
-      const origin: [number, number] = [0, 0];
+    const origin: [number, number] = [0, 0];
 
-      setNodes([
-        ...layouted.nodes.map((node: StageNode) => ({ ...node, origin })),
-      ]);
-      setEdges([...layouted.edges]);
+    setNodes([
+      ...layouted.nodes.map((node: StageNode) => ({ ...node, origin })),
+    ]);
+    setEdges([...layouted.edges]);
 
-      window.requestAnimationFrame(async () => {
-        await fitView();
-        if (!initialLayoutFinished) {
-          setInitialLayoutFinished(true);
-          setOpacity(1);
-        }
-      });
-    },
-    [nodes, edges, setNodes, setEdges, fitView, initialLayoutFinished],
-  );
+    window.requestAnimationFrame(async () => {
+      await fitView();
+      if (!initialLayoutFinished) {
+        setInitialLayoutFinished(true);
+        setOpacity(1);
+      }
+    });
+  }, [nodes, edges, setNodes, setEdges, fitView, initialLayoutFinished]);
 
   useEffect(() => {
     if (nodesInitialized && !initialLayoutFinished) {
-      onLayout("TB");
+      onLayout();
     }
   }, [nodesInitialized, initialLayoutFinished]);
 
@@ -111,7 +109,7 @@ const ReactLayoutFlow = ({
   }, []);
 
   return (
-    <div style={{ width: 1000, height: 500, opacity }}>
+    <div className="w-full h-full min-h-full" style={{ opacity }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -124,8 +122,10 @@ const ReactLayoutFlow = ({
         fitView
       >
         <Panel position="top-right">
-          <button onClick={() => onLayout("TB")}>vertical layout</button>
-          <button onClick={() => onLayout("LR")}>horizontal layout</button>
+          <button className="btn btn-primary" onClick={() => onLayout()}>
+            Magic
+          </button>
+          <StageList adventureId={adventureId} />
         </Panel>
         <Background />
         <Controls />

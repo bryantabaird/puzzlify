@@ -29,46 +29,60 @@ const StageForm = ({ adventureId, stage }: StageFormProps) => {
   );
 
   return (
-    <form
-      className="my-5 flex flex-col items-center border p-3 border-gray-200 rounded-md"
-      onSubmit={handleSubmitWithAction}
-    >
-      <label htmlFor="label" className="block">
-        Label
-      </label>
-      <input
-        {...form.register("label")}
-        className="border mx-2 border-gray-500 rounded"
-      />
-      {form.formState.errors.label ? (
-        <p>{form.formState.errors.label.message}</p>
-      ) : null}
-      <label htmlFor="riddle" className="block">
-        Riddle
-      </label>
-      <input
-        {...form.register("riddle")}
-        className="border mx-2 border-gray-500 rounded"
-      />
-      {form.formState.errors.riddle ? (
-        <p>{form.formState.errors.riddle.message}</p>
-      ) : null}
-      <label htmlFor="answer" className="block">
-        Answer
-      </label>
-      <input
-        {...form.register("answer")}
-        className="border mx-2 border-gray-500 rounded"
-      />
-      {form.formState.errors.answer ? (
-        <p>{form.formState.errors.answer.message}</p>
-      ) : null}
-      <button
-        type="submit"
-        className="bg-orange-300 mt-4 rounded flex justify-center items-center w-36"
-      >
-        {mode === "create" ? "Create Stage" : "Edit Stage"}
-      </button>
+    <form onSubmit={handleSubmitWithAction}>
+      <div className="flex flex-col gap-2">
+        <div>
+          <label
+            className={`input input-bordered ${form.formState.errors.label ? "input-error" : ""} flex items-center gap-2 mb-2`}
+          >
+            Name
+            <input type="text" className="grow" {...form.register("label")} />
+          </label>
+          {form.formState.errors.label ? (
+            <div className="label">
+              <span className="label-text-alt text-error">
+                {form.formState.errors.label.message}
+              </span>
+            </div>
+          ) : null}
+        </div>
+
+        <div>
+          <label
+            className={`input input-bordered ${form.formState.errors.riddle ? "input-error" : ""} flex items-center gap-2 mb-2`}
+          >
+            Riddle
+            <input type="text" className="grow" {...form.register("riddle")} />
+          </label>
+          {form.formState.errors.riddle ? (
+            <div className="label">
+              <span className="label-text-alt text-error">
+                {form.formState.errors.riddle.message}
+              </span>
+            </div>
+          ) : null}
+        </div>
+
+        <div>
+          <label
+            className={`input input-bordered ${form.formState.errors.answer ? "input-error" : ""} flex items-center gap-2 mb-2`}
+          >
+            Answer
+            <input type="text" className="grow" {...form.register("answer")} />
+          </label>
+          {form.formState.errors.answer ? (
+            <div className="label">
+              <span className="label-text-alt text-error">
+                {form.formState.errors.answer.message}
+              </span>
+            </div>
+          ) : null}
+        </div>
+
+        <button type="submit" className="btn btn-primary w-full">
+          {mode === "create" ? "Create Stage" : "Update Stage"}
+        </button>
+      </div>
     </form>
   );
 };

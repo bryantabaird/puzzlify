@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 import { Adventure, Hint, Stage } from "@prisma/client";
 import { use, useEffect, useState } from "react";
+import DeleteHintForm from "./DeleteHintForm";
 
 type HintProps = {
   adventureId: Adventure["id"];
@@ -49,42 +50,56 @@ const HintForm = ({ adventureId, stageId, hint }: HintProps) => {
   }, [isSubmitSuccess]);
 
   return (
-    <>
-      <form
-        className="my-5 flex flex-col items-center border p-3 border-gray-200 rounded-md"
-        onSubmit={handleSubmitWithAction}
-      >
-        <label htmlFor="hint" className="block">
-          Hint
-        </label>
-        <input
-          {...form.register("hint")}
-          className="border mx-2 border-gray-500 rounded"
-        />
-        {form.formState.errors.hint ? (
-          <p>{form.formState.errors.hint.message}</p>
-        ) : null}
+    <div className="flex flex-row gap-2">
+      <form onSubmit={handleSubmitWithAction}>
+        <div className="flex flex-row gap-2">
+          <div>
+            <label
+              htmlFor="hint"
+              className={`input input-bordered ${form.formState.errors.hint ? "input-error" : ""} flex items-center gap-2 mb-2`}
+            >
+              Hint
+              <input {...form.register("hint")} />
+            </label>
+            {form.formState.errors.hint ? (
+              <div className="label">
+                <span className="label-text-alt text-error">
+                  {form.formState.errors.hint.message}
+                </span>
+              </div>
+            ) : null}
+          </div>
 
-        <label htmlFor="delay" className="block">
-          Delay
-        </label>
-        <input
-          {...form.register("delay")}
-          type="number"
-          className="border mx-2 border-gray-500 rounded"
-        />
-        {form.formState.errors.delay ? (
-          <p>{form.formState.errors.delay.message}</p>
-        ) : null}
+          <div>
+            <label
+              htmlFor="delay"
+              className={`input input-bordered ${form.formState.errors.delay ? "input-error" : ""} flex items-center gap-2 mb-2`}
+            >
+              Delay
+              <input {...form.register("delay")} type="number" />
+            </label>
+            {form.formState.errors.delay ? (
+              <div className="label">
+                <span className="label-text-alt text-error">
+                  {form.formState.errors.delay.message}
+                </span>
+              </div>
+            ) : null}
+          </div>
 
-        <button
-          type="submit"
-          className="bg-orange-300 mt-4 rounded flex justify-center items-center w-36"
-        >
-          {mode === "create" ? "Create Hint" : "Edit Hint"}
-        </button>
+          <button type="submit" className="btn btn-secondary">
+            {mode === "create" ? "Create Hint" : "Edit Hint"}
+          </button>
+        </div>
       </form>
-    </>
+      {mode === "edit" && hint && (
+        <DeleteHintForm
+          adventureId={adventureId}
+          stageId={stageId}
+          hintId={hint.id}
+        />
+      )}
+    </div>
   );
 };
 

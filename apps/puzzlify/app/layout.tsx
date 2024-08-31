@@ -1,3 +1,5 @@
+import "./globals.css";
+
 export default function RootLayout({
   children,
 }: {
@@ -6,9 +8,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <main className="flex min-h-screen flex-col items-center">
-          {children}
-        </main>
+        <main className="flex h-screen flex-col items-center">{children}</main>
       </body>
     </html>
   );

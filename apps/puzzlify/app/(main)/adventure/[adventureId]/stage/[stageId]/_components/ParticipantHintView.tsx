@@ -4,7 +4,7 @@ import GetHintForm from "@/components/GetHintForm";
 import useCountdown from "@/hooks/useCountdown";
 import { Adventure, Hint, Stage } from "@prisma/client";
 
-type HostStageViewProps = {
+type Props = {
   hintId: Hint["id"];
   stageId: Stage["id"];
   adventureId: Adventure["id"];
@@ -18,7 +18,7 @@ export default function ParticipantHintView({
   adventureId,
   delay,
   startDate,
-}: HostStageViewProps) {
+}: Props) {
   const hintReleaseTime = new Date(startDate.getTime() + delay * 1000);
   const timeRemaining = useCountdown(hintReleaseTime);
 

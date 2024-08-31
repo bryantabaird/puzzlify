@@ -20,10 +20,7 @@ const DeleteHintForm = ({ adventureId, stageId, hintId }: HintProps) => {
   return (
     <>
       <form action={deleteHintWithIds}>
-        <button
-          type="submit"
-          className="bg-orange-300 mt-4 rounded flex justify-center items-center w-36"
-        >
+        <button type="submit" className="btn btn-accent">
           Delete Hint
         </button>
       </form>
