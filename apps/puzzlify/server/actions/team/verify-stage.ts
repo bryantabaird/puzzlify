@@ -17,7 +17,7 @@ export const verifyStage = stageAdventureActionClient
   .schema(riddleSubmission)
   .metadata({ roleName: "team", actionName: "verify-stage" })
   .action(async ({ parsedInput, ctx }) => {
-    const { userId, adventureId, stageId } = ctx;
+    const { teamId, adventureId, stageId } = ctx;
     const { answer } = parsedInput;
 
     const stage = await getStageValidationData(stageId);
@@ -46,25 +46,25 @@ export const verifyStage = stageAdventureActionClient
             );
 
             const incompletePreviousStagesCount =
-              await getCountOfIncompletePreviousStages(
+              await getCountOfIncompletePreviousStages({
                 adventureId,
-                userId,
+                teamId,
                 previousStageIds,
-              );
+              });
 
             if (incompletePreviousStagesCount === 0) {
-              await createTeamProgress(
-                userId,
+              await createTeamProgress({
+                teamId,
                 adventureId,
-                nextStage.toStageId,
-                now,
-              );
+                stageId: nextStage.toStageId,
+                startTime: now,
+              });
             }
           }),
         );
 
         // Update the user progress entry for the current stage
-        await updateTeamProgress(userId, adventureId, stageId, now);
+        await updateTeamProgress(teamId, adventureId, stageId, now);
 
         // TODO: Does this revalidate the path for all users or just
         // the current user? Only needs to be the current user

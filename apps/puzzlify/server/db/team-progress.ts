@@ -3,10 +3,14 @@
 import prisma from "@/lib/prisma";
 import { Adventure, Stage, TeamProgress, Team } from "@prisma/client";
 
-export const getTeamStagesInProgress = async (
-  teamId: Team["id"],
-  adventureId: Adventure["id"],
-) => {
+type GetTeamStageInProgressParams = {
+  teamId: Team["id"];
+  adventureId: Adventure["id"];
+};
+export const getTeamStagesInProgress = async ({
+  teamId,
+  adventureId,
+}: GetTeamStageInProgressParams) => {
   return await prisma.teamProgress.findMany({
     where: {
       teamId,
@@ -40,11 +44,15 @@ export const getTeamStageInProgress = async ({
   });
 };
 
-export const getCountOfIncompletePreviousStages = async (
-  adventureId: Adventure["id"],
-  teamId: Team["id"],
-  previousStageIds: Array<Stage["id"]>,
-) => {
+export const getCountOfIncompletePreviousStages = async ({
+  adventureId,
+  teamId,
+  previousStageIds,
+}: {
+  adventureId: Adventure["id"];
+  teamId: Team["id"];
+  previousStageIds: Array<Stage["id"]>;
+}) => {
   return await prisma.teamProgress.count({
     where: {
       teamId,
@@ -55,12 +63,17 @@ export const getCountOfIncompletePreviousStages = async (
   });
 };
 
-export const createTeamProgress = async (
-  teamId: Team["id"],
-  adventureId: Adventure["id"],
-  stageId: Stage["id"],
-  startTime: Date,
-) => {
+export const createTeamProgress = async ({
+  teamId,
+  adventureId,
+  stageId,
+  startTime,
+}: {
+  teamId: Team["id"];
+  adventureId: Adventure["id"];
+  stageId: Stage["id"];
+  startTime: Date;
+}) => {
   return await prisma.teamProgress.create({
     data: {
       teamId,
@@ -102,11 +115,15 @@ export const createTeamProgresses = async (
   return await prisma.teamProgress.createMany({ data });
 };
 
-export const getTeamStageStartTime = async (
-  teamId: Team["id"],
-  stageId: Stage["id"],
-  adventureId: Adventure["id"],
-) => {
+export const getTeamStageStartTime = async ({
+  teamId,
+  stageId,
+  adventureId,
+}: {
+  teamId: Team["id"];
+  adventureId: Adventure["id"];
+  stageId: Stage["id"];
+}) => {
   return await prisma.teamProgress.findFirst({
     where: {
       teamId,

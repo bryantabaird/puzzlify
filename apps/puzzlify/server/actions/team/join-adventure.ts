@@ -16,6 +16,8 @@ export const joinAdventure = userActionClient
 
     const { teamName } = parsedInput;
 
+    // TODO: This action should know if the adventure id is valid. Need
+    // to think through more the userActionClient vs teamActionClient here
     if (!adventureId) {
       throw new Error("Adventure ID is required");
     }

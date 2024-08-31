@@ -1,6 +1,8 @@
 import { auth } from "@/auth";
 import Link from "next/link";
 import { getTeamStagesInProgress } from "@/server/db/team-progress";
+import { getUserId } from "@/server/helpers/getUserId";
+import { getTeamId } from "@/server/helpers/getTeamId";
 
 type DashboardPageProps = {
   params: {
@@ -9,8 +11,8 @@ type DashboardPageProps = {
 };
 
 export default async function DashboardPage({ params }: DashboardPageProps) {
-  const session = await auth();
-  const userId = session?.user?.id;
+  const userId = await getUserId();
+  const teamId = await getTeamId(userId, params.adventureId);
 
   if (!userId) {
     return (
@@ -20,10 +22,10 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     );
   }
 
-  const stagesInProgress = await getTeamStagesInProgress(
-    userId,
-    params.adventureId,
-  );
+  const stagesInProgress = await getTeamStagesInProgress({
+    teamId,
+    adventureId: params.adventureId,
+  });
 
   if (stagesInProgress.length === 0) {
     return (

@@ -3,6 +3,7 @@
 import { PrismaClient } from "@prisma/client";
 import { getTeamStageStartTime } from "../db/team-progress";
 import { getUserId } from "../helpers/getUserId";
+import { getTeamId } from "../helpers/getTeamId";
 
 const prisma = new PrismaClient();
 
@@ -25,20 +26,20 @@ export const getHintIfAvailable = async (
     throw new Error("Hint not found");
   }
 
-  console.log("ids", userId, stageId, adventureId);
+  const teamId = await getTeamId(userId, adventureId);
 
-  const userProgress = await getTeamStageStartTime(
-    userId,
+  const teamProgress = await getTeamStageStartTime({
+    teamId,
     stageId,
     adventureId,
-  );
+  });
 
-  if (!userProgress) {
-    throw new Error("User progress not found for this stage");
+  if (!teamProgress) {
+    throw new Error("Team progress not found for this stage");
   }
 
   const hintAccessTime = new Date(
-    new Date(userProgress.startTime).getTime() + hint.delay * 1000,
+    new Date(teamProgress.startTime).getTime() + hint.delay * 1000,
   );
 
   const currentTime = new Date();

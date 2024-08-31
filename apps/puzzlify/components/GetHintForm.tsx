@@ -13,6 +13,7 @@ type Props = {
 const GetHintForm = ({ hintId, stageId, adventureId }: Props) => {
   const [hintContent, setHintContent] = useState<string | null>(null);
 
+  // TODO: Ensure hints are not available client-side before the hint release time
   const handleGetHint = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 

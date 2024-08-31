@@ -50,10 +50,14 @@ export const updateAdventureDb = async (
   });
 };
 
-export const getHostAdventureId = async (
-  adventureId: Adventure["id"],
-  userId: string,
-) => {
+type GetHostAdventureIdParams = {
+  adventureId: Adventure["id"];
+  userId: User["id"];
+};
+export const getHostAdventureId = async ({
+  adventureId,
+  userId,
+}: GetHostAdventureIdParams) => {
   return await prisma.adventure.findFirst({
     where: {
       id: adventureId,
