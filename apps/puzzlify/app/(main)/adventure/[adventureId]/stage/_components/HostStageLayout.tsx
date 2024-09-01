@@ -23,7 +23,8 @@ import { Adventure } from "@prisma/client";
 import { deleteStagesAndRelations } from "@/server/actions/host/delete-relations-and-stages";
 import { useFlowConnectHandlers } from "@/hooks/useFlowConnectHandlers";
 import { useRouter } from "next/navigation";
-import StageList from "./stage-list";
+import StageList from "./HostStageList";
+import { START_NODE_ID } from "@/utils/getGraphFromAdventure";
 
 type StageNode = Node<{ label: string }>;
 
@@ -55,6 +56,8 @@ const ReactLayoutFlow = ({
     nodeCount: nodes.length,
   });
 
+  console.log("edges render", edges);
+
   const onLayout = useCallback(() => {
     console.log("onLayout");
     const layouted = getLayoutedElements(nodes, edges, { rankdir: "TB" });
@@ -85,24 +88,31 @@ const ReactLayoutFlow = ({
     async ({ nodes, edges }) => {
       console.log("onBeforeDelete");
 
-      const edgesIds = edges.map((edge) => edge.id);
-      const nodesIds = nodes.map((node) => node.id);
+      const edgeIds = edges.map((edge) => edge.id);
+      const nodeIds = nodes.map((node) => node.id);
+
+      console.log("edgeIds", edgeIds);
 
       await deleteStagesAndRelations(
         { adventureId },
-        { stageRelationIds: edgesIds, stageIds: nodesIds },
+        {
+          stageRelationIds: edgeIds.filter(
+            (edgeId) => !edgeId.startsWith(START_NODE_ID),
+          ),
+          stageIds: nodeIds.filter((nodeId) => nodeId !== START_NODE_ID),
+        },
       );
 
-      return { nodes, edges };
+      return { nodes: nodes.filter(({ id }) => id !== START_NODE_ID), edges };
     },
-    [],
+    [adventureId],
   );
 
   const router = useRouter();
 
   const onDelete: OnDelete = useCallback(() => {
     router.replace(`/adventure/${adventureId}/edit/stage`);
-  }, []);
+  }, [adventureId, router]);
 
   const handleNodesChange: OnNodesChange<StageNode> = useCallback((changes) => {
     onNodesChange(changes);

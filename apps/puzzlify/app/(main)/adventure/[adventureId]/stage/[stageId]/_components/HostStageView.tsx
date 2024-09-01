@@ -1,90 +1,44 @@
-import DeleteStageForm from "@/components/DeleteStageForm";
-import { type Prisma, Hint, StageRelation } from "@prisma/client";
-import Link from "next/link";
+import HintForm from "@/components/HintForm";
+import StageForm from "@/components/StageForm";
+import { getStageWithHints } from "@/server/db/stage";
+import React from "react";
 
-type StageWithLinks = Prisma.StageGetPayload<{
-  include: {
-    hints: true;
-    previousStages: {
-      include: {
-        fromStage: true;
-      };
-    };
-    nextStages: {
-      include: {
-        toStage: true;
-      };
-    };
-  };
-}>;
-
-type HostStageViewProps = {
-  stage: StageWithLinks;
+type EditStageProps = {
   adventureId: string;
+  stageId: string;
 };
 
-export default async function HostStageView({
+export default async function EditStage({
+  stageId,
   adventureId,
-  stage,
-}: HostStageViewProps) {
-  return (
-    <div>
-      <h1>{stage.riddle}</h1>
-      <pre>{JSON.stringify(stage, null, 4)}</pre>
-      <Link
-        href={`/adventure/${adventureId}/stage/${stage.id}/edit`}
-        className="mx-2 underline"
-      >
-        Edit Stage
-      </Link>
-      <DeleteStageForm adventureId={adventureId} stageId={stage.id} />
+}: EditStageProps) {
+  const stage = await getStageWithHints(stageId);
 
-      <h2>Navigation</h2>
-      <div className="flex">
-        <div className="w-1/2">
-          <h3>Previous Stages</h3>
-          <ul>
-            {stage.previousStages.map((relation: StageRelation) => (
-              <li key={relation.fromStageId}>
-                <Link
-                  href={`/adventure/${adventureId}/stage/${relation.fromStageId}`}
-                >
-                  {relation.fromStageId}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="w-1/2">
-          <h3>Next Stages</h3>
-          <ul>
-            {stage.nextStages.map((relation: StageRelation) => (
-              <li key={relation.toStageId}>
-                <Link
-                  href={`/adventure/${adventureId}/stage/${relation.toStageId}`}
-                >
-                  {relation.toStageId}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+  if (!stage) {
+    return (
+      <div>
+        <h1>Stage not found</h1>
       </div>
+    );
+  }
 
-      <h2>Hints</h2>
-      <ul>
-        {stage.hints.map((hint: Hint) => (
-          <li key={hint.id}>
-            <p>
-              <strong>Hint:</strong> {hint.hint}
-            </p>
-            <p>
-              <strong>Delay (seconds):</strong> {hint.delay}
-            </p>
-          </li>
-        ))}
-      </ul>
+  return (
+    <div className="flex flex-col flex-1 p-10 gap-10">
+      <StageForm adventureId={adventureId} stage={stage} />
+      <HintForm adventureId={adventureId} stageId={stageId} />
+      <div>
+        {stage.hints.map((hint) => {
+          return (
+            <React.Fragment key={hint.id}>
+              <HintForm
+                adventureId={adventureId}
+                stageId={stageId}
+                hint={hint}
+              />
+            </React.Fragment>
+          );
+        })}
+      </div>
     </div>
   );
 }

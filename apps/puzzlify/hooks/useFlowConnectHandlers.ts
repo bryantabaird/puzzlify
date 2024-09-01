@@ -1,5 +1,6 @@
 import { createStage } from "@/server/actions/host/create-stage";
 import { createStageRelation } from "@/server/actions/host/create-stage-relation";
+import { START_NODE_ID } from "@/utils/getGraphFromAdventure";
 import { Adventure } from "@prisma/client";
 import {
   addEdge,
@@ -33,24 +34,27 @@ export const useFlowConnectHandlers = ({
   const onConnect: OnConnect = useCallback(
     async (params) => {
       console.log("onConnect");
+      console.log("params", params);
       // reset the start node on connections
       connectingNodeId.current = null;
 
-      const stageRelationResponse = await createStageRelation(
-        { adventureId },
-        { fromStageId: params.source, toStageId: params.target },
-      );
-
-      const stageRelationId = stageRelationResponse?.data?.stageRelationId;
-
-      if (!stageRelationId) {
-        console.error("Failed to create stage relation");
-        // TODO: try catch instead?
-        return;
+      let newEdgeId = `${params.source}-${params.target}`;
+      if (params.source !== START_NODE_ID) {
+        const stageRelationResponse = await createStageRelation(
+          { adventureId },
+          { fromStageId: params.source, toStageId: params.target },
+        );
+        const stageRelationId = stageRelationResponse?.data?.stageRelationId;
+        if (!stageRelationId) {
+          console.error("Failed to create stage relation");
+          // TODO: try catch instead?
+          return;
+        }
+        newEdgeId = stageRelationId;
       }
 
       const edge: Edge = {
-        id: stageRelationId,
+        id: newEdgeId,
         source: params.source,
         target: params.target,
         animated: true,
@@ -69,6 +73,7 @@ export const useFlowConnectHandlers = ({
   const onConnectEnd: OnConnectEnd = useCallback(
     async (event) => {
       console.log("onConnectEnd");
+      console.log("connectingNodeId.current", connectingNodeId.current);
       if (!connectingNodeId.current) return;
 
       let targetIsPane = false;
@@ -76,6 +81,7 @@ export const useFlowConnectHandlers = ({
         targetIsPane = event.target.classList.contains("react-flow__pane");
       }
 
+      // TODO: see if supported on touch devices
       if (targetIsPane && event instanceof MouseEvent) {
         const label = `Stage ${nodeCount + 1}`;
         const createStageResponse = await createStage(
@@ -86,22 +92,26 @@ export const useFlowConnectHandlers = ({
 
         if (!stageId) {
           console.error("Failed to create stage");
-          // TODO: transactional, rollback stage creation
           return;
         }
 
-        const createStageRelationResponse = await createStageRelation(
-          { adventureId },
-          { fromStageId: connectingNodeId.current, toStageId: stageId },
-        );
+        let newEdgeId = `${connectingNodeId.current}-${stageId}`;
+        if (connectingNodeId.current !== START_NODE_ID) {
+          const createStageRelationResponse = await createStageRelation(
+            { adventureId },
+            { fromStageId: connectingNodeId.current, toStageId: stageId },
+          );
 
-        const createStageRelationId =
-          createStageRelationResponse?.data?.stageRelationId;
+          const createStageRelationId =
+            createStageRelationResponse?.data?.stageRelationId;
 
-        if (!createStageRelationId) {
-          console.error("Failed to create stage relation");
-          // TODO: transactional, rollback stagerelation and stage creation
-          return;
+          if (!createStageRelationId) {
+            console.error("Failed to create stage relation");
+            // TODO: transactional, rollback stagerelation and stage creation
+            return;
+          }
+
+          newEdgeId = createStageRelationId;
         }
 
         const newNode: StageNode = {
@@ -115,7 +125,7 @@ export const useFlowConnectHandlers = ({
         };
 
         const newEdge = {
-          id: createStageRelationId,
+          id: newEdgeId,
           source: connectingNodeId.current,
           target: stageId,
           animated: true,

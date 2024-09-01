@@ -1,19 +1,16 @@
-import { auth } from "@/auth";
-import Link from "next/link";
-import { getTeamStagesInProgress } from "@/server/db/team-progress";
 import { getUserId } from "@/server/helpers/getUserId";
-import { getTeamId } from "@/server/helpers/getTeamId";
+import { isAdventureHost } from "@/server/helpers/isAdventureHost";
+import TeamStagesView from "./_components/TeamStagesView";
+import HostStagesView from "./_components/HostStagesView";
 
-type DashboardPageProps = {
-  params: {
-    adventureId: string;
-  };
-};
-
-export default async function DashboardPage({ params }: DashboardPageProps) {
+export default async function StagesPage({
+  params: { adventureId },
+}: {
+  params: { adventureId: string };
+}) {
   const userId = await getUserId();
-  const teamId = await getTeamId(userId, params.adventureId);
 
+  // TODO: This (and others) shouldn't be necessary
   if (!userId) {
     return (
       <div>
@@ -22,34 +19,14 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     );
   }
 
-  const stagesInProgress = await getTeamStagesInProgress({
-    teamId,
-    adventureId: params.adventureId,
+  const isHost = await isAdventureHost({
+    adventureId: adventureId,
+    userId,
   });
 
-  if (stagesInProgress.length === 0) {
-    return (
-      <div>
-        <h1>No stages currently in progress</h1>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <h1>Stages in Progress</h1>
-      <ul>
-        {stagesInProgress.map((progress) => (
-          <li key={progress.stage.id}>
-            <Link
-              href={`/adventure/${params.adventureId}/stage/${progress.stage.id}`}
-              className="underline"
-            >
-              {progress.stage.riddle}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+  return isHost ? (
+    <HostStagesView adventureId={adventureId} userId={userId} />
+  ) : (
+    <TeamStagesView adventureId={adventureId} userId={userId} />
   );
 }

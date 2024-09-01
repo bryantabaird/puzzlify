@@ -25,5 +25,5 @@ export const editStage = hostStageActionClient
       return { error: userFacingErrorMessage };
     }
 
-    redirect(`/adventure/${adventureId}`);
+    redirect(`/adventure/${adventureId}/stage`);
   });

@@ -27,12 +27,11 @@ export default async function ViewStagePage({ params }: ViewStagePageProps) {
     throw new Error("Stage not found");
   }
 
-  const teamId = await getTeamId(userId, adventureId);
-
   if (isHost) {
-    return <HostStageView adventureId={adventureId} stage={stage} />;
+    return <HostStageView adventureId={adventureId} stageId={stage.id} />;
   } else {
     let startDate;
+    const teamId = await getTeamId(userId, adventureId);
     if (stage.hints.length > 0) {
       const teamProgress = await getTeamStageStartTime({
         teamId,

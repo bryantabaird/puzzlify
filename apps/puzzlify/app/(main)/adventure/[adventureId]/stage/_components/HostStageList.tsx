@@ -11,10 +11,7 @@ const StageList = ({ adventureId }: { adventureId: string }) => {
     <ul>
       {nodes.map((node) => (
         <li key={node.id}>
-          <Link
-            replace
-            href={`/adventure/${adventureId}/edit/stage/${node.id}`}
-          >
+          <Link href={`/adventure/${adventureId}/stage/${node.id}`}>
             {node.data.label}
           </Link>
         </li>

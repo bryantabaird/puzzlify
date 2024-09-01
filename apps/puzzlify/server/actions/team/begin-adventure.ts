@@ -26,6 +26,8 @@ export const beginAdventure = teamAdventureActionClient
     // TODO: Ensure that all adventures have at least one stage before starting
     const adventure = await getAdventureStartDateTime(adventureId);
 
+    console.log();
+
     if (!adventure) {
       throw new Error("Adventure not found");
     }
@@ -38,6 +40,8 @@ export const beginAdventure = teamAdventureActionClient
     }
 
     const startStages = await getStartStages(adventureId);
+
+    console.log("startStages", startStages);
 
     const teamProgressEntries = startStages.map((stage) => ({
       teamId: teamId,
