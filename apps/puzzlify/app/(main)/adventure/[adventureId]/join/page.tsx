@@ -4,7 +4,7 @@ import JoinAdventureForm from "@/components/JoinAdventureForm";
 import { getUserId } from "@/server/helpers/getUserId";
 import { getAdventureWithStages } from "@/server/db/adventure";
 import { Adventure } from "@prisma/client";
-import { isAdventureParticipant } from "@/server/helpers/isAdventureParticipant";
+import { getTeamAssignment } from "@/server/db/team-assignment";
 
 export default async function JoinAdventure({
   params,
@@ -24,9 +24,10 @@ export default async function JoinAdventure({
     );
   }
 
-  const isParticipant = await isAdventureParticipant({ adventureId, userId });
+  const teamAssignment = await getTeamAssignment({ adventureId, userId });
+  const isTeamInAdventure = teamAssignment !== null;
 
-  if (isParticipant) {
+  if (isTeamInAdventure) {
     return (
       // TODO: Update the UI here to redirect to the dashboard. Users don't need
       // to join an adventure they are already a part of.

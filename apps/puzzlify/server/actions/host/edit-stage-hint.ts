@@ -1,7 +1,7 @@
 "use server";
 
 import { hintSchema } from "@/schemas/stage";
-import { hostActionClient } from "@/lib/nextSafeAction";
+import { hostHintActionClient } from "@/lib/next-safe-action";
 import { updateHintDb } from "@/server/db/hint";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -9,16 +9,11 @@ import { redirect } from "next/navigation";
 // TODO: /adventure/undefined/stage/28f09d72-a727-45ba-a8ad-7bb2761cce66
 // Make sure this link doesn't work
 
-export const editHint = hostActionClient
+export const editHint = hostHintActionClient
   .schema(hintSchema)
   .metadata({ roleName: "host", actionName: "edit-hint" })
-  .action(async ({ parsedInput, bindArgsParsedInputs }) => {
+  .action(async ({ parsedInput, ctx: { adventureId, stageId, hintId } }) => {
     const { hint, delay } = parsedInput;
-    const [{ hintId, stageId, adventureId }] = bindArgsParsedInputs;
-
-    if (!adventureId || !stageId || !hintId) {
-      throw new Error("Adventure ID, Stage ID, and Hint ID are required");
-    }
 
     try {
       await updateHintDb(hintId, { hint, delay });

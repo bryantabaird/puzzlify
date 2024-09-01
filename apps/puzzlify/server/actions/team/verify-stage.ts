@@ -1,32 +1,24 @@
 "use server";
 
 import { riddleSubmission } from "@/schemas/riddle";
-import { participantActionClient } from "@/lib/nextSafeAction";
+import { stageAdventureActionClient } from "@/lib/next-safe-action";
 import { getStageValidationData } from "@/server/db/stage";
 import { getNextStagesWithNextedPreviousStages } from "@/server/db/stage-relation";
 import {
   getCountOfIncompletePreviousStages,
-  createUserProgress,
-  updateUserProgress,
-} from "@/server/db/user-progress";
+  createTeamProgress,
+  updateTeamProgress,
+} from "@/server/db/team-progress";
 import { compareInput } from "@/server/helpers/hashInput";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export const verifyStage = participantActionClient
+export const verifyStage = stageAdventureActionClient
   .schema(riddleSubmission)
-  .metadata({ roleName: "participant", actionName: "verify-stage" })
+  .metadata({ roleName: "team", actionName: "verify-stage" })
   .action(async ({ parsedInput, ctx }) => {
-    const { userId, adventureId, stageId } = ctx;
+    const { teamId, adventureId, stageId } = ctx;
     const { answer } = parsedInput;
-
-    if (!stageId) {
-      return { message: "Stage id not provided" };
-    }
-
-    if (!adventureId) {
-      return { message: "Adventure id not provided" };
-    }
 
     const stage = await getStageValidationData(stageId);
 
@@ -54,25 +46,25 @@ export const verifyStage = participantActionClient
             );
 
             const incompletePreviousStagesCount =
-              await getCountOfIncompletePreviousStages(
+              await getCountOfIncompletePreviousStages({
                 adventureId,
-                userId,
+                teamId,
                 previousStageIds,
-              );
+              });
 
             if (incompletePreviousStagesCount === 0) {
-              await createUserProgress(
-                userId,
+              await createTeamProgress({
+                teamId,
                 adventureId,
-                nextStage.toStageId,
-                now,
-              );
+                stageId: nextStage.toStageId,
+                startTime: now,
+              });
             }
           }),
         );
 
         // Update the user progress entry for the current stage
-        await updateUserProgress(userId, adventureId, stageId, now);
+        await updateTeamProgress(teamId, adventureId, stageId, now);
 
         // TODO: Does this revalidate the path for all users or just
         // the current user? Only needs to be the current user

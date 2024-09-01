@@ -1,5 +1,5 @@
 import { ReactFlowProvider } from "@xyflow/react";
-import ReactFlowLayout from "./_components/react-flow-layout";
+import ReactFlowLayout from "../../stage/_components/HostStageLayout";
 import { getAdventureLayout } from "@/server/fetchers/get-adventure-layout";
 import getGraphFromAdventure from "@/utils/getGraphFromAdventure";
 

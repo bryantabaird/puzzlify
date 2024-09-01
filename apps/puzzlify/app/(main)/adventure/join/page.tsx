@@ -1,4 +1,4 @@
-import { getParticipantAdventures } from "@/server/db/adventure";
+import { getTeamAdventures } from "@/server/db/adventure";
 import { getUserId } from "@/server/helpers/getUserId";
 import Link from "next/link";
 
@@ -13,7 +13,7 @@ export default async function JoinAdventure() {
     );
   }
 
-  const adventures = await getParticipantAdventures(userId);
+  const adventures = await getTeamAdventures(userId);
 
   return (
     <div className="flex flex-col justify-center items-center flex-grow">

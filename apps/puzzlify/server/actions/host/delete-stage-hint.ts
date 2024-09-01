@@ -1,31 +1,15 @@
 "use server";
 
-import { hostActionClient } from "@/lib/nextSafeAction";
+import { hostHintActionClient } from "@/lib/next-safe-action";
 import { deleteHintDb } from "@/server/db/hint";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-export const deleteHint = hostActionClient
+export const deleteHint = hostHintActionClient
   .schema(z.object({}))
   .metadata({ roleName: "host", actionName: "delete-hint" })
-  .action(async ({ bindArgsParsedInputs }) => {
-    const [{ adventureId, stageId, hintId }] = bindArgsParsedInputs;
-
-    console.log("deleting");
-
-    if (!stageId) {
-      throw new Error("Stage ID is required");
-    }
-
-    if (!adventureId) {
-      throw new Error("Adventure ID is required");
-    }
-
-    if (!hintId) {
-      throw new Error("Hint ID is required");
-    }
-
+  .action(async ({ ctx: { adventureId, stageId, hintId } }) => {
     try {
       await deleteHintDb(hintId);
     } catch (error) {

@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Adventure, User } from "@prisma/client";
+import { Adventure, Team, User } from "@prisma/client";
 
 export const getAdventureWithStages = async (adventureId: Adventure["id"]) => {
   return prisma.adventure.findUnique({
@@ -50,10 +50,14 @@ export const updateAdventureDb = async (
   });
 };
 
-export const getHostAdventureId = async (
-  adventureId: Adventure["id"],
-  userId: string,
-) => {
+type GetHostAdventureIdParams = {
+  adventureId: Adventure["id"];
+  userId: User["id"];
+};
+export const getHostAdventureId = async ({
+  adventureId,
+  userId,
+}: GetHostAdventureIdParams) => {
   return await prisma.adventure.findFirst({
     where: {
       id: adventureId,
@@ -69,8 +73,8 @@ export const getHostAdventures = async (userId: string) => {
   });
 };
 
-// TODO: Update user model to include participant adventures
-export const getParticipantAdventures = async (userId: string) => {
+// TODO: Update this
+export const getTeamAdventures = async (userId: string) => {
   return await prisma.adventure.findMany({
     where: {
       NOT: {
@@ -80,28 +84,53 @@ export const getParticipantAdventures = async (userId: string) => {
   });
 };
 
-export const addParticipantToAdventure = async (
-  userId: User["id"],
-  adventureId: Adventure["id"],
-) => {
+type AddTeamToAdventureParams = {
+  teamId: Team["id"];
+  adventureId: Adventure["id"];
+};
+export const addTeamToAdventure = async ({
+  teamId,
+  adventureId,
+}: AddTeamToAdventureParams) => {
   return await prisma.adventure.update({
     where: { id: adventureId },
     data: {
-      participants: {
-        connect: { id: userId },
+      teams: {
+        connect: { id: teamId },
       },
     },
   });
 };
 
-export const getParticipantAdventureId = async (
+export const getUserAdventureTeam = async ({
+  userId,
+  adventureId,
+}: {
+  userId: User["id"];
+  adventureId: Adventure["id"];
+}) => {
+  return await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      teams: {
+        select: {
+          adventures: {
+            where: { id: adventureId },
+          },
+        },
+      },
+    },
+  });
+};
+
+export const getTeamAdventureId = async (
   userId: User["id"],
   adventureId: Adventure["id"],
 ) => {
   return await prisma.adventure.findFirst({
     where: {
       id: adventureId,
-      participants: {
+      teams: {
         some: {
           id: userId,
         },

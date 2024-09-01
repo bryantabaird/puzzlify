@@ -74,7 +74,7 @@ const AdventureForm = ({ adventure }: Props) => {
         </label>
         {form.formState.errors.name ? (
           <div className="label">
-            <span className="label-text-alt text-error">
+            <span className="label-text-alt">
               {form.formState.errors.name.message}
             </span>
           </div>
@@ -96,7 +96,7 @@ const AdventureForm = ({ adventure }: Props) => {
         </label>
         {form.formState.errors.startDate ? (
           <div className="label">
-            <span className="label-text-alt text-error">
+            <span className="label-text-alt">
               {form.formState.errors.startDate.message}
             </span>
           </div>

@@ -1,16 +1,14 @@
 "use server";
 
-import { hostActionClient } from "@/lib/nextSafeAction";
+import { hostAdventureActionClient } from "@/lib/next-safe-action";
 import { deleteStageRelationsSchema } from "@/schemas/stage-relation";
 import { deleteStageRelationsAndStagesDb } from "@/server/db/transactions";
 import { revalidatePath } from "next/cache";
 
-export const deleteStagesAndRelations = hostActionClient
+export const deleteStagesAndRelations = hostAdventureActionClient
   .schema(deleteStageRelationsSchema)
   .metadata({ roleName: "host", actionName: "delete-stage-relation" })
-  .action(async ({ parsedInput, bindArgsParsedInputs }) => {
-    const [{ adventureId, stageId }] = bindArgsParsedInputs;
-
+  .action(async ({ parsedInput, ctx: { adventureId } }) => {
     const { stageRelationIds, stageIds } = parsedInput;
 
     if (!adventureId) {

@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { Prisma, Stage } from "@prisma/client";
 import { deleteStageRelationsFromStageDb } from "./stage-relation";
+import { deleteHintsFromStagesDb } from "./hint";
 
 export type StageWithPreviousAndNextStages = Awaited<
   ReturnType<typeof getStageWithPreviousAndNextStages>
@@ -67,14 +68,17 @@ export const deleteStageDb = async (stageId: string) => {
   });
 };
 
-type DeleteStagesDbParams = {
-  stageIds: string[];
-  prismaClient?: Prisma.TransactionClient;
-};
+// TODO: Prevent delete either if adventure started
+// or if a team has arrived at this stage after start
 export const deleteStagesDb = async ({
   stageIds,
   prismaClient = prisma,
-}: DeleteStagesDbParams) => {
+}: {
+  stageIds: string[];
+  prismaClient?: Prisma.TransactionClient;
+}) => {
+  // TODO: Make transactional
+  await deleteHintsFromStagesDb(stageIds);
   return await prismaClient.stage.deleteMany({
     where: {
       id: { in: stageIds },

@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Hint } from "@prisma/client";
+import { Hint, Stage } from "@prisma/client";
 
 type CreateHintPayload = Pick<Hint, "stageId" | "hint" | "delay">;
 export const createHintDb = async (data: CreateHintPayload) => {
@@ -11,6 +11,12 @@ export const createHintDb = async (data: CreateHintPayload) => {
 export const deleteHintDb = async (hintId: string) => {
   return await prisma.hint.delete({
     where: { id: hintId },
+  });
+};
+
+export const deleteHintsFromStagesDb = async (stageIds: Array<Stage["id"]>) => {
+  return await prisma.hint.deleteMany({
+    where: { stageId: { in: stageIds } },
   });
 };
 

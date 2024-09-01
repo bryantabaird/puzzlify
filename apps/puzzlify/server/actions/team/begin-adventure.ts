@@ -1,26 +1,32 @@
 "use server";
 
-import { participantActionClient } from "@/lib/nextSafeAction";
+import { teamAdventureActionClient } from "@/lib/next-safe-action";
 import { getAdventureStartDateTime } from "@/server/db/adventure";
 import { getStartStages } from "@/server/db/stage";
-import { createUserProgresses } from "@/server/db/user-progress";
+import { createTeamProgresses } from "@/server/db/team-progress";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-export const beginAdventure = participantActionClient
+export const beginAdventure = teamAdventureActionClient
   .schema(z.object({}))
-  .metadata({ roleName: "participant", actionName: "begin-adventure" })
+  .metadata({ roleName: "team", actionName: "begin-adventure" })
   .action(async ({ bindArgsParsedInputs, ctx }) => {
-    const { userId } = ctx;
+    const { teamId } = ctx;
     const { adventureId } = bindArgsParsedInputs[0];
 
     if (!adventureId) {
       throw new Error("Adventure ID is required");
     }
 
+    if (!teamId) {
+      throw new Error("Team ID is required");
+    }
+
     // TODO: Ensure that all adventures have at least one stage before starting
     const adventure = await getAdventureStartDateTime(adventureId);
+
+    console.log();
 
     if (!adventure) {
       throw new Error("Adventure not found");
@@ -35,13 +41,15 @@ export const beginAdventure = participantActionClient
 
     const startStages = await getStartStages(adventureId);
 
-    const userProgressEntries = startStages.map((stage) => ({
-      userId: userId,
+    console.log("startStages", startStages);
+
+    const teamProgressEntries = startStages.map((stage) => ({
+      teamId: teamId,
       adventureId: adventureId,
       stageId: stage.id,
     }));
 
-    await createUserProgresses(userProgressEntries);
+    await createTeamProgresses(teamProgressEntries);
 
     revalidatePath(`/adventure/${adventureId}`);
     redirect(`/adventure/${adventureId}/stage`);

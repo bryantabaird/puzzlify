@@ -4,10 +4,12 @@ import bcryptjs from "bcryptjs";
 const prisma = new PrismaClient();
 
 const seed = async () => {
-  await prisma.userProgress.deleteMany();
+  await prisma.teamAssignment.deleteMany();
+  await prisma.teamProgress.deleteMany();
   await prisma.hint.deleteMany();
   await prisma.stageRelation.deleteMany();
   await prisma.stage.deleteMany();
+  await prisma.team.deleteMany();
   await prisma.adventure.deleteMany();
   await prisma.user.deleteMany();
 

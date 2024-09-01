@@ -12,7 +12,7 @@ type Props = {
   startDate: Date;
 };
 
-export default function ParticipantHintView({
+export default function TeamHintView({
   hintId,
   stageId,
   adventureId,

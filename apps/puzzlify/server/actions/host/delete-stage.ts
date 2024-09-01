@@ -1,27 +1,15 @@
 "use server";
 
-import { hostActionClient } from "@/lib/nextSafeAction";
+import { hostStageActionClient } from "@/lib/next-safe-action";
 import { deleteStageDb } from "@/server/db/stage";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-export const deleteStage = hostActionClient
+export const deleteStage = hostStageActionClient
   .schema(z.object({}))
   .metadata({ roleName: "host", actionName: "delete-stage" })
-  .action(async ({ bindArgsParsedInputs }) => {
-    const [{ adventureId, stageId }] = bindArgsParsedInputs;
-
-    console.log("deleting");
-
-    if (!stageId) {
-      throw new Error("Stage ID is required");
-    }
-
-    if (!adventureId) {
-      throw new Error("Adventure ID is required");
-    }
-
+  .action(async ({ ctx: { adventureId, stageId } }) => {
     try {
       await deleteStageDb(stageId);
     } catch (error) {

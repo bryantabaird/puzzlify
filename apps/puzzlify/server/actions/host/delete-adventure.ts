@@ -1,20 +1,14 @@
 "use server";
 
-import { hostActionClient } from "@/lib/nextSafeAction";
+import { hostAdventureActionClient } from "@/lib/next-safe-action";
 import { deleteAdventureDb } from "@/server/db/adventure";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-export const deleteAdventure = hostActionClient
+export const deleteAdventure = hostAdventureActionClient
   .schema(z.object({}))
   .metadata({ roleName: "host", actionName: "delete-adventure" })
-  .action(async ({ bindArgsParsedInputs }) => {
-    const [{ adventureId }] = bindArgsParsedInputs;
-
-    if (!adventureId) {
-      throw new Error("Adventure ID is required");
-    }
-
+  .action(async ({ ctx: { adventureId } }) => {
     try {
       await deleteAdventureDb(adventureId);
     } catch (error) {

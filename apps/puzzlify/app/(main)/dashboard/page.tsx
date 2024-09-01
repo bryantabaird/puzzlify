@@ -1,9 +1,6 @@
 import { auth } from "@/auth";
 import DeleteAdventureForm from "@/components/DeleteAdventureForm";
-import {
-  getHostAdventures,
-  getParticipantAdventures,
-} from "@/server/db/adventure";
+import { getHostAdventures, getTeamAdventures } from "@/server/db/adventure";
 import Link from "next/link";
 
 export default async function Dashboard() {
@@ -21,7 +18,7 @@ export default async function Dashboard() {
 
   const [hostedAdventures, adventures] = await Promise.all([
     await getHostAdventures(session.user.id),
-    await getParticipantAdventures(session.user.id),
+    await getTeamAdventures(session.user.id),
   ]);
 
   return (
