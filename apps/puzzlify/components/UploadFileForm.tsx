@@ -1,10 +1,16 @@
 "use client";
 
+import { addAssetToStage } from "@/server/actions/host/add-asset-to-stage";
 import { getSignedAssetUploadUrl } from "@/server/actions/user/get-signed-asset-upload-url";
+import { useParams } from "next/navigation";
 import React, { useState } from "react";
 
 export default function UploadFileForm() {
   const [file, setFile] = useState<File>();
+  const { adventureId, stageId } = useParams<{
+    adventureId: string;
+    stageId: string;
+  }>();
 
   // TODO: typing
   // @ts-expect-error
@@ -23,10 +29,12 @@ export default function UploadFileForm() {
     }
 
     try {
-      const { assetUploadUrl } = await getSignedAssetUploadUrl();
+      const { assetUploadUrl, assetId } = await getSignedAssetUploadUrl({
+        adventureId,
+        stageId,
+      });
       console.log("url", assetUploadUrl);
 
-      // Step 4: Upload the file to S3 using the presigned URL
       const uploadResponse = await fetch(assetUploadUrl, {
         method: "PUT",
         headers: {
@@ -36,7 +44,14 @@ export default function UploadFileForm() {
       });
 
       if (uploadResponse.ok) {
-        alert("File uploaded successfully!");
+        // TODO: Consider transactionalizing
+        try {
+          await addAssetToStage({ adventureId, stageId }, { assetId });
+          alert("File uploaded successfully.");
+        } catch (error) {
+          console.error("Error adding asset to stage", error);
+          alert("Failed to add asset to stage.");
+        }
       } else {
         alert("Failed to upload file.");
       }

@@ -107,7 +107,12 @@ const seed = async () => {
       hostId: "1",
       startDate: new Date(new Date().getTime() + 10 * 1000),
       stages: {
-        connect: [stage1, stage2a, stage2b, stage3],
+        connect: [
+          { id: stage1.id },
+          { id: stage2a.id },
+          { id: stage2b.id },
+          { id: stage3.id },
+        ],
       },
     },
   });

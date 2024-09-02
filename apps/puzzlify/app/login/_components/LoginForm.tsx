@@ -3,7 +3,6 @@
 import { login } from "@/server/actions";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { getSignedAssetUrl } from "@/server/actions/user/get-signed-asset-retrieval-url";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -70,17 +69,6 @@ const LoginForm = () => {
           />
         </label>
         <button className="btn btn-primary w-full">Login</button>
-      </form>
-      <br />
-      <form
-        onSubmit={() =>
-          getSignedAssetUrl({
-            adventureId: "adventure-id-2",
-            stageId: "stage-id-1",
-          })
-        }
-      >
-        <button className="btn btn-primary w-full">Test Url</button>
       </form>
     </>
   );

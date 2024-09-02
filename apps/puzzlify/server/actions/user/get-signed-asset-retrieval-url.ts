@@ -13,15 +13,15 @@ if (!key) {
   throw new Error("No private key found");
 }
 
-export const getSignedAssetUrl = ({
+export const getStageFileUrls = ({
   adventureId,
   stageId,
+  assetIds,
 }: {
   adventureId: Adventure["id"];
   stageId: Stage["id"];
+  assetIds: Stage["assetIds"];
 }) => {
-  const assetIds = ["treasure2.png"];
-
   const signedUrlsMap = assetIds.map((assetId) => {
     const url = `${cloudfrontDistributionDomain}/${adventureId}/${stageId}/${assetId}`;
 
