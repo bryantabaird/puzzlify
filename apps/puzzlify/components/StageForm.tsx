@@ -20,7 +20,12 @@ const StageForm = ({ adventureId, stage }: StageFormProps) => {
     : editStage.bind(null, { adventureId, stageId: stage.id });
 
   const { riddle, label } = stage || { riddle: "", answer: "", label: "" };
-  const defaultValues = { riddle: riddle || "", answer: "", label };
+  const defaultValues = {
+    riddle: riddle || "",
+    answer: "",
+    label,
+    file: undefined,
+  };
 
   const { form, handleSubmitWithAction } = useHookFormAction(
     boundUpdateStage,

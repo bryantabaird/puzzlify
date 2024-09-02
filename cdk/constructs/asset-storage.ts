@@ -11,20 +11,26 @@ import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
  * key to CloudFront. Private key to be used to sign urls
  */
 const PUBLIC_KEY_ID = "K10SXXCDTNL72X";
+const BUCKET_NAME = "adventure-app-stage-images";
 
 export class AssetStorage extends Construct {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id);
 
-    // 1. Create an S3 Bucket for storing stage images (Private)
     const stageImagesBucket = new s3.Bucket(this, "StageImagesBucket", {
-      bucketName: "adventure-app-stage-images",
+      bucketName: BUCKET_NAME,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
-      autoDeleteObjects: true,
+      versioned: true,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      cors: [
+        {
+          allowedMethods: [s3.HttpMethods.PUT],
+          allowedOrigins: ["http://localhost:3000"],
+          allowedHeaders: ["*"],
+        },
+      ],
     });
 
-    // 2. Create a CloudFront Key Group
     const keyGroup = new cloudfront.KeyGroup(this, "CloudFrontKeyGroup", {
       items: [
         cloudfront.PublicKey.fromPublicKeyId(
@@ -35,16 +41,13 @@ export class AssetStorage extends Construct {
       ],
     });
 
-    // 3. Create an Origin Access Identity for CloudFront
     const originAccessIdentity = new cloudfront.OriginAccessIdentity(
       this,
       "OAI",
     );
 
-    // 4. Grant CloudFront access to the S3 bucket
     stageImagesBucket.grantRead(originAccessIdentity);
 
-    // 5. Create the CloudFront distribution
     const distribution = new cloudfront.CloudFrontWebDistribution(
       this,
       "StageImagesDistribution",
@@ -79,7 +82,6 @@ export class AssetStorage extends Construct {
       },
     );
 
-    // 6. Output the S3 bucket name and CloudFront distribution URL
     new cdk.CfnOutput(this, "StageImagesBucketName", {
       value: stageImagesBucket.bucketName,
     });
