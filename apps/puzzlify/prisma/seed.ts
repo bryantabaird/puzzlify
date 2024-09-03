@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 
 const seed = async () => {
   await prisma.teamAssignment.deleteMany();
+  await prisma.asset.deleteMany();
   await prisma.teamProgress.deleteMany();
   await prisma.hint.deleteMany();
   await prisma.stageRelation.deleteMany();

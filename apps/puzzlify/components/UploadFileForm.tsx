@@ -1,6 +1,7 @@
 "use client";
 
-import { addAssetToStage } from "@/server/actions/host/add-asset-to-stage";
+import { createAsset } from "@/server/actions/host/create-asset";
+import { getStageFileUrl } from "@/server/actions/user/get-signed-asset-retrieval-url";
 import { getSignedAssetUploadUrl } from "@/server/actions/user/get-signed-asset-upload-url";
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
@@ -33,7 +34,6 @@ export default function UploadFileForm() {
         adventureId,
         stageId,
       });
-      console.log("url", assetUploadUrl);
 
       const uploadResponse = await fetch(assetUploadUrl, {
         method: "PUT",
@@ -46,7 +46,11 @@ export default function UploadFileForm() {
       if (uploadResponse.ok) {
         // TODO: Consider transactionalizing
         try {
-          await addAssetToStage({ adventureId, stageId }, { assetId });
+          const url = await getStageFileUrl({ adventureId, stageId, assetId });
+
+          console.log("url", url);
+
+          await createAsset({ adventureId, stageId }, { url, id: assetId });
           alert("File uploaded successfully.");
         } catch (error) {
           console.error("Error adding asset to stage", error);

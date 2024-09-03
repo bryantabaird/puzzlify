@@ -2,7 +2,7 @@ import RiddleForm from "@/components/RiddleForm";
 import { type StageWithPreviousAndNextStages } from "@/server/db/stage";
 import { Hint } from "@prisma/client";
 import TeamHintView from "./TeamHintView";
-import { getStageFileUrls } from "@/server/actions/user/get-signed-asset-retrieval-url";
+import { getStageAssets } from "@/server/db/asset";
 
 type TeamStageProps = {
   stage: NonNullable<StageWithPreviousAndNextStages>;
@@ -15,18 +15,14 @@ export default async function TeamStageView({
   adventureId,
   startDate,
 }: TeamStageProps) {
-  const presignedImageUrls = await getStageFileUrls({
-    adventureId,
-    stageId: stage.id,
-    assetIds: stage.assetIds,
-  });
+  const assets = await getStageAssets({ stageId: stage.id });
 
   return (
     <>
       <RiddleForm stage={stage} adventureId={adventureId} />
       {/* TODO: Not only images */}
-      {presignedImageUrls.map(({ assetId, signedUrl }) => (
-        <img key={assetId} src={signedUrl} />
+      {assets.map(({ id, url }) => (
+        <img key={id} src={url} />
       ))}
       <div>
         <h2>Hints</h2>

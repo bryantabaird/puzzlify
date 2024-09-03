@@ -4,14 +4,9 @@ export const stageSchema = z.object({
   label: z.string().min(1, { message: "Stage name is required" }),
   riddle: z.string().min(1, { message: "Please provide a riddle" }).nullable(),
   answer: z.string().min(1, { message: "Please provide an answer" }).nullable(),
-  assetIds: z.array(z.string()).default([]),
 });
 
 export type Stage = z.infer<typeof stageSchema>;
-
-export const assetIdSchema = z.object({
-  assetId: z.string().uuid({ message: "Invalid asset ID" }),
-});
 
 export const hintSchema = z.object({
   hint: z.string().min(1, "Hint is required"),

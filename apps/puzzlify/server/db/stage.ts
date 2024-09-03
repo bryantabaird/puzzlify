@@ -99,23 +99,6 @@ export const updateStageDb = async (
   });
 };
 
-export const addAssetToStageDb = async ({
-  stageId,
-  assetId,
-}: {
-  stageId: Stage["id"];
-  assetId: Stage["assetIds"][number];
-}) => {
-  await prisma.stage.update({
-    where: { id: stageId },
-    data: {
-      assetIds: {
-        push: assetId,
-      },
-    },
-  });
-};
-
 export const getHostStageId = async (stageId: string, userId: string) => {
   return await prisma.stage.findFirst({
     where: {

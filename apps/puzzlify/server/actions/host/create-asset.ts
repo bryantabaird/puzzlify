@@ -1,19 +1,21 @@
 "use server";
 
-import { assetIdSchema } from "@/schemas/stage";
+import { assetSchema } from "@/schemas/asset";
 import { hostStageActionClient } from "@/lib/next-safe-action";
-import { addAssetToStageDb } from "@/server/db/stage";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { createAssetDb } from "@/server/db/asset";
 
-export const addAssetToStage = hostStageActionClient
-  .schema(assetIdSchema)
-  .metadata({ roleName: "host", actionName: "add-action-to-stage" })
+export const createAsset = hostStageActionClient
+  .schema(assetSchema)
+  .metadata({ roleName: "host", actionName: "create-asset" })
   .action(async ({ parsedInput, ctx: { adventureId, stageId } }) => {
-    const { assetId } = parsedInput;
+    const { url, id } = parsedInput;
 
     try {
-      await addAssetToStageDb({ stageId, assetId });
+      console.log("createAsset", { stageId, url, id });
+      const x = await createAssetDb({ stageId, url, id });
+      console.log("createAsset", x);
 
       revalidatePath(`/adventure/${adventureId}/stage`);
     } catch (error) {
