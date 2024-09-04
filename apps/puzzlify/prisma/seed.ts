@@ -7,6 +7,7 @@ const seed = async () => {
   await prisma.asset.deleteMany();
   await prisma.teamAdventure.deleteMany();
   await prisma.teamUser.deleteMany();
+  await prisma.userAdventure.deleteMany();
   await prisma.teamProgress.deleteMany();
   await prisma.hint.deleteMany();
   await prisma.stageRelation.deleteMany();
@@ -40,11 +41,11 @@ const seed = async () => {
     });
   }
 
-  await prisma.tier.create({
+  const freeTier = await prisma.tier.create({
     data: {
       id: "FREE",
       name: "Free",
-      maxTeamCount: 2,
+      maxTeamCount: 1,
     },
   });
 
@@ -53,6 +54,7 @@ const seed = async () => {
       name: "Test Adventure",
       hostId: "1",
       id: "adventure-id-1",
+      maxTeamCount: freeTier.maxTeamCount,
       startDate: new Date(new Date().getTime() + 10 * 1000),
     },
   });
@@ -116,6 +118,7 @@ const seed = async () => {
       id: adventureId,
       name: "Test Adventure",
       hostId: "1",
+      maxTeamCount: freeTier.maxTeamCount,
       startDate: new Date(new Date().getTime() + 10 * 1000),
       stages: {
         connect: [

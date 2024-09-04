@@ -52,6 +52,7 @@ model Adventure {
   dateCreated     DateTime        @default(now())
   name            String
   startDate       DateTime
+  maxTeamCount    Int
   stages          Stage[]         @relation("AdventureStages")
   stageRelations  StageRelation[] @relation("AdventureStageRelations")
   tier            Tier            @relation(fields: [tierId], references: [id])
@@ -132,15 +133,15 @@ model TeamUser {
 }
 
 model TeamAdventure {
-  id          String    @id @default(uuid())
-  team        Team      @relation(fields: [teamId], references: [id])
-  teamId      String
+  id     String @id @default(uuid())
+  team   Team   @relation(fields: [teamId], references: [id])
+  teamId String
 
   adventure   Adventure @relation(fields: [adventureId], references: [id])
   adventureId String
 
-  createdAt   DateTime  @default(now())
-  waitlisted  Boolean   @default(false)
+  createdAt  DateTime @default(now())
+  waitlisted Boolean  @default(false)
 
   @@unique([teamId, adventureId]) // Ensure a team can only join an adventure once
 }

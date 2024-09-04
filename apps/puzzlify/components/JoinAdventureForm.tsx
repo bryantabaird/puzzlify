@@ -1,7 +1,7 @@
 "use client";
 
 import { createTeamSchema } from "@/schemas/adventure";
-import { createTeamAndJoinAdventure } from "@/server/actions/team/join-adventure";
+import { createTeamAndJoinAdventure } from "@/server/actions/team/create-team-and-join-adventure";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 import { Adventure } from "@prisma/client";

@@ -4,6 +4,8 @@ import { adventureSchema } from "@/schemas/adventure";
 import { userActionClient } from "@/lib/next-safe-action";
 import { revalidatePath } from "next/cache";
 import { createAdventureDb } from "@/server/db/adventure";
+import { getTier } from "@/server/db/tier";
+import { TierId } from "@prisma/client";
 
 export const createAdventure = userActionClient
   .schema(adventureSchema)
@@ -11,7 +13,18 @@ export const createAdventure = userActionClient
   .action(async ({ parsedInput, ctx: { userId } }) => {
     const { name, startDate } = parsedInput;
 
-    const data = { name, hostId: userId, startDate: new Date(startDate) };
+    const tier = await getTier({ tierId: TierId.FREE });
+
+    if (!tier) {
+      throw new Error("Tier not found");
+    }
+
+    const data = {
+      maxTeamCount: tier.maxTeamCount,
+      name,
+      hostId: userId,
+      startDate: new Date(startDate),
+    };
 
     try {
       const adventure = await createAdventureDb(data);

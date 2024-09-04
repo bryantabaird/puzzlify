@@ -8,6 +8,7 @@ import {
   createTeamAdventure,
   getTeamAdventure,
 } from "@/server/db/team-adventure";
+import { createAdventureUsers } from "@/server/db/user-adventure";
 import { revalidatePath } from "next/cache";
 
 export const createTeamAndJoinAdventure = userActionClient
@@ -51,6 +52,13 @@ export const createTeamAndJoinAdventure = userActionClient
       adventureId,
       waitlisted: isWaitlisted,
     });
+
+    if (!isWaitlisted) {
+      await createAdventureUsers({
+        userIds: [userId],
+        adventureId,
+      });
+    }
 
     revalidatePath(`/adventure/${adventureId}`);
   });

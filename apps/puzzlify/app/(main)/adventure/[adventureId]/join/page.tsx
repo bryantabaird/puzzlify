@@ -4,7 +4,7 @@ import JoinAdventureForm from "@/components/JoinAdventureForm";
 import { getUserId } from "@/server/helpers/getUserId";
 import { getAdventureWithStages } from "@/server/db/adventure";
 import { Adventure } from "@prisma/client";
-import { getUserAdventure } from "@/server/db/user";
+import { getUserAdventure } from "@/server/db/user-adventure";
 
 export default async function JoinAdventure({
   params,

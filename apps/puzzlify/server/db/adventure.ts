@@ -31,15 +31,27 @@ export const getAdventureTeamData = async (adventureId: Adventure["id"]) => {
 };
 
 export const getAdventureTeams = async (adventureId: Adventure["id"]) => {
-  return await prisma.adventure.findUnique({
-    where: { id: adventureId },
-    select: {
-      teams: true,
+  return await prisma.teamAdventure.findMany({
+    where: { adventureId },
+    include: {
+      team: {
+        select: {
+          id: true,
+          name: true,
+          users: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      },
     },
   });
 };
 
-export const getFullAdventure = async (adventureId: Adventure["id"]) => {
+export type AdventureTeams = Awaited<ReturnType<typeof getAdventureTeams>>;
+
+export const getAdventureStats = async (adventureId: Adventure["id"]) => {
   return prisma.adventure.findUnique({
     where: { id: adventureId },
     include: {
@@ -66,8 +78,9 @@ export const getAdventureLayoutDb = async (adventureId: Adventure["id"]) => {
   });
 };
 
-type CreateAdventurePayload = Pick<Adventure, "name" | "hostId" | "startDate">;
-export const createAdventureDb = async (data: CreateAdventurePayload) => {
+export const createAdventureDb = async (
+  data: Pick<Adventure, "name" | "hostId" | "startDate" | "maxTeamCount">,
+) => {
   return await prisma.adventure.create({ data });
 };
 

@@ -24,3 +24,18 @@ export const getTeamUserFromAdventureUser = async ({
     },
   });
 };
+
+export const createTeamUser = async ({
+  userId,
+  teamId,
+}: {
+  userId: User["id"];
+  teamId: string;
+}) => {
+  return await prisma.teamUser.create({
+    data: {
+      userId,
+      teamId,
+    },
+  });
+};

@@ -1,15 +1,15 @@
 import { getAdventureTeams } from "@/server/db/adventure";
 import { Adventure, TeamAdventure } from "@prisma/client";
-import HostTeamEdit from "./HostTeamEdit";
+import HostTeamTable from "./HostTeamTable";
 
 export default async function HostTeamsView({
   adventureId,
 }: {
   adventureId: Adventure["id"];
 }) {
-  const adventureTeamData = await getAdventureTeams(adventureId);
+  const teams = await getAdventureTeams(adventureId);
 
-  if (!adventureTeamData) {
+  if (!teams) {
     return (
       <div>
         <h1>Error retrieving adventure data</h1>
@@ -17,11 +17,10 @@ export default async function HostTeamsView({
     );
   }
 
-  const { teams } = adventureTeamData;
-
   return (
     <>
-      {teams.map((team: TeamAdventure) => {
+      <HostTeamTable teams={teams} />
+      {/* {teams.map((team: TeamAdventure) => {
         return (
           <>
             <span>{team.id}</span>
@@ -32,7 +31,7 @@ export default async function HostTeamsView({
             />
           </>
         );
-      })}
+      })} */}
     </>
   );
 }
