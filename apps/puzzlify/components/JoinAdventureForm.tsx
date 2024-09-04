@@ -1,7 +1,7 @@
 "use client";
 
-import { joinAdventureSchema } from "@/schemas/adventure";
-import { joinAdventure } from "@/server/actions/team/join-adventure";
+import { createTeamSchema } from "@/schemas/adventure";
+import { createTeamAndJoinAdventure } from "@/server/actions/team/join-adventure";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 import { Adventure } from "@prisma/client";
@@ -11,13 +11,16 @@ type Props = {
 };
 
 const JoinAdventureForm = ({ adventureId }: Props) => {
-  const joinAdventureWithIds = joinAdventure.bind(null, { adventureId });
+  const createTeamAndJoinAdventureWithIds = createTeamAndJoinAdventure.bind(
+    null,
+    { adventureId },
+  );
 
   const defaultValues = { teamName: "" };
 
   const { form, handleSubmitWithAction } = useHookFormAction(
-    joinAdventureWithIds,
-    zodResolver(joinAdventureSchema),
+    createTeamAndJoinAdventureWithIds,
+    zodResolver(createTeamSchema),
     { formProps: { defaultValues } },
   );
 

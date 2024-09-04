@@ -13,9 +13,7 @@ export const createAsset = hostStageActionClient
     const { url, id } = parsedInput;
 
     try {
-      console.log("createAsset", { stageId, url, id });
-      const x = await createAssetDb({ stageId, url, id });
-      console.log("createAsset", x);
+      await createAssetDb({ stageId, url, id });
 
       revalidatePath(`/adventure/${adventureId}/stage`);
     } catch (error) {

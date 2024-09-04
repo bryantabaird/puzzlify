@@ -4,8 +4,9 @@ import bcryptjs from "bcryptjs";
 const prisma = new PrismaClient();
 
 const seed = async () => {
-  await prisma.teamAssignment.deleteMany();
   await prisma.asset.deleteMany();
+  await prisma.teamAdventure.deleteMany();
+  await prisma.teamUser.deleteMany();
   await prisma.teamProgress.deleteMany();
   await prisma.hint.deleteMany();
   await prisma.stageRelation.deleteMany();
@@ -13,6 +14,7 @@ const seed = async () => {
   await prisma.team.deleteMany();
   await prisma.adventure.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.tier.deleteMany();
 
   const users = [
     {
@@ -37,6 +39,14 @@ const seed = async () => {
       data: user,
     });
   }
+
+  await prisma.tier.create({
+    data: {
+      id: "FREE",
+      name: "Free",
+      maxTeamCount: 2,
+    },
+  });
 
   await prisma.adventure.create({
     data: {

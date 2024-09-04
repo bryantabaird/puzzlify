@@ -4,7 +4,7 @@ import { getStageWithPreviousAndNextStages } from "@/server/db/stage";
 import { getTeamStageStartTime } from "@/server/db/team-progress";
 import TeamStageView from "./_components/TeamStageView";
 import HostStageView from "./_components/HostStageView";
-import { getTeamId } from "@/server/helpers/getTeamId";
+import { getTeamUserFromAdventureUser } from "@/server/db/team-user";
 
 type ViewStagePageProps = {
   params: {
@@ -31,10 +31,18 @@ export default async function ViewStagePage({ params }: ViewStagePageProps) {
     return <HostStageView adventureId={adventureId} stageId={stage.id} />;
   } else {
     let startDate;
-    const teamId = await getTeamId(userId, adventureId);
+    const teamUser = await getTeamUserFromAdventureUser({
+      userId,
+      adventureId,
+    });
+
+    if (!teamUser) {
+      throw new Error("User is not on a team that is part of this adventure");
+    }
+
     if (stage.hints.length > 0) {
       const teamProgress = await getTeamStageStartTime({
-        teamId,
+        teamId: teamUser.teamId,
         stageId,
         adventureId,
       });

@@ -1,6 +1,10 @@
 "use server";
 
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  PutObjectCommandInput,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Adventure, Stage } from "@prisma/client";
 import { randomUUID } from "crypto";
@@ -11,16 +15,18 @@ const BUCKET_NAME = "adventure-app-stage-images";
 export const getSignedAssetUploadUrl = async ({
   adventureId,
   stageId,
+  contentType,
 }: {
   adventureId: Adventure["id"];
   stageId: Stage["id"];
+  contentType: string;
 }) => {
   const assetId = randomUUID();
 
-  const params = {
+  const params: PutObjectCommandInput = {
     Bucket: BUCKET_NAME,
     Key: `${adventureId}/${stageId}/${assetId}`,
-    ContentType: "application/octet-stream",
+    ContentType: contentType,
   };
 
   try {

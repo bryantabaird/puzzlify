@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getTeamStagesInProgress } from "@/server/db/team-progress";
-import { getTeamId } from "@/server/helpers/getTeamId";
 import { Adventure, User } from "@prisma/client";
+import { getTeamUserFromAdventureUser } from "@/server/db/team-user";
 
 export default async function TeamStagesView({
   userId,
@@ -10,10 +10,14 @@ export default async function TeamStagesView({
   userId: User["id"];
   adventureId: Adventure["id"];
 }) {
-  const teamId = await getTeamId(userId, adventureId);
+  const teamUser = await getTeamUserFromAdventureUser({ userId, adventureId });
+
+  if (!teamUser) {
+    throw new Error("User is not on a team that is part of this adventure");
+  }
 
   const stagesInProgress = await getTeamStagesInProgress({
-    teamId,
+    teamId: teamUser.teamId,
     adventureId,
   });
 

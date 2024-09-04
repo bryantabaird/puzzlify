@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const joinAdventureSchema = z.object({
+export const createTeamSchema = z.object({
   teamName: z
     .string()
     .min(3, { message: "Team name must be at least 3 characters long" })
@@ -11,8 +11,11 @@ export const joinAdventureSchema = z.object({
     }),
 });
 
-// TODO: Phase 2, consider a sophisticated schema for multiple users per team
-export type JoinAdventure = z.infer<typeof joinAdventureSchema>;
+export type CreateTeamSchema = z.infer<typeof createTeamSchema>;
+
+export const removeTeamFromAdventureSchema = z.object({
+  teamId: z.string().uuid(),
+});
 
 export const adventureSchema = z.object({
   name: z.string().min(1, { message: "An adventure must have a name" }),

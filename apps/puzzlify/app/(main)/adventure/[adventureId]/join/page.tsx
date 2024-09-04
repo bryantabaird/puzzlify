@@ -4,7 +4,7 @@ import JoinAdventureForm from "@/components/JoinAdventureForm";
 import { getUserId } from "@/server/helpers/getUserId";
 import { getAdventureWithStages } from "@/server/db/adventure";
 import { Adventure } from "@prisma/client";
-import { getTeamAssignment } from "@/server/db/team-assignment";
+import { getUserAdventure } from "@/server/db/user";
 
 export default async function JoinAdventure({
   params,
@@ -24,17 +24,23 @@ export default async function JoinAdventure({
     );
   }
 
-  const teamAssignment = await getTeamAssignment({ adventureId, userId });
-  const isTeamInAdventure = teamAssignment !== null;
+  /**
+   * If a user is in the adventure, UI should redirect
+   * If a user is NOT in the adventure, they should create a team and join the adventure
+   */
 
-  if (isTeamInAdventure) {
+  const userAdventure = await getUserAdventure({
+    userId,
+    adventureId: adventureId,
+  });
+
+  if (userAdventure) {
     return (
-      // TODO: Update the UI here to redirect to the dashboard. Users don't need
-      // to join an adventure they are already a part of.
       <div className="flex justify-center items-center h-full">
         <div className="card w-96 bg-base-200 shadow-2xl mt-20 mb-20">
           <div className="card-body">
             <div className="items-center mt-2">
+              You are already in this adventure!
               <Link href={`/adventure/${adventureId}`}>
                 <a className="btn btn-primary">Go to adventure</a>
               </Link>

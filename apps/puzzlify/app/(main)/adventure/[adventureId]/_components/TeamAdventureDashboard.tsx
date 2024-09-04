@@ -1,7 +1,7 @@
 import JoinAdventureForm from "@/components/JoinAdventureForm";
 import BeginAdventureForm from "@/components/BeginAdventureForm";
 import { Adventure, User } from "@prisma/client";
-import { getTeamAssignment } from "@/server/db/team-assignment";
+import { getUserAdventure } from "@/server/db/user";
 
 type Props = {
   userId: User["id"];
@@ -12,12 +12,12 @@ export default async function TeamAdventureDashboard({
   userId,
   adventure,
 }: Props) {
-  const teamAssignment = await getTeamAssignment({
+  const userAdventure = await getUserAdventure({
     userId,
     adventureId: adventure.id,
   });
 
-  const isTeamInAdventure = teamAssignment !== null;
+  const isTeamInAdventure = userAdventure !== null;
 
   if (isTeamInAdventure) {
     const startDate = adventure.startDate;

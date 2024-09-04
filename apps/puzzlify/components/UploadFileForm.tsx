@@ -6,6 +6,8 @@ import { getSignedAssetUploadUrl } from "@/server/actions/user/get-signed-asset-
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
 
+const allowedFileTypes = ["image/jpeg", "image/png", "image/gif", "image/jpg"];
+
 export default function UploadFileForm() {
   const [file, setFile] = useState<File>();
   const { adventureId, stageId } = useParams<{
@@ -33,6 +35,7 @@ export default function UploadFileForm() {
       const { assetUploadUrl, assetId } = await getSignedAssetUploadUrl({
         adventureId,
         stageId,
+        contentType: file.type,
       });
 
       const uploadResponse = await fetch(assetUploadUrl, {
@@ -47,8 +50,6 @@ export default function UploadFileForm() {
         // TODO: Consider transactionalizing
         try {
           const url = await getStageFileUrl({ adventureId, stageId, assetId });
-
-          console.log("url", url);
 
           await createAsset({ adventureId, stageId }, { url, id: assetId });
           alert("File uploaded successfully.");
@@ -67,7 +68,12 @@ export default function UploadFileForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input type="file" onChange={handleFileChange} required />
+      <input
+        type="file"
+        onChange={handleFileChange}
+        required
+        accept={allowedFileTypes.join(", ")}
+      />
       <button type="submit" className="btn">
         Upload to S3
       </button>
