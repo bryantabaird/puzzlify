@@ -16,36 +16,52 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
+enum TierId {
+  FREE
+  BASIC
+  PREMIUM
+  ENTERPRISE
+}
+
+model Tier {
+  id           TierId      @id
+  name         String
+  maxTeamCount Int
+  adventures   Adventure[]
+}
+
 model User {
-  id               String           @id @default(uuid())
-  email            String           @unique
+  id               String          @id @default(uuid())
+  email            String          @unique
   password         String
-  hostedAdventures Adventure[]      @relation("HostAdventures")
-  teams            Team[]
-  teamAssignments  TeamAssignment[]
+  hostedAdventures Adventure[]     @relation("HostAdventures")
+  teams            TeamUser[]
+  adventures       UserAdventure[]
 }
 
 model Team {
-  id          String           @id @default(uuid())
-  name        String
-  users       User[]
-  adventures  Adventure[]      @relation("TeamAdventures")
-  progresses  TeamProgress[]
-  assignments TeamAssignment[]
+  id         String          @id @default(uuid())
+  name       String
+  adventures TeamAdventure[]
+  progresses TeamProgress[]
+  users      TeamUser[]
 }
 
 model Adventure {
-  id              String           @id @default(uuid())
-  dateCreated     DateTime         @default(now())
+  id              String          @id @default(uuid())
+  dateCreated     DateTime        @default(now())
   name            String
   startDate       DateTime
-  stages          Stage[]          @relation("AdventureStages")
-  stageRelations  StageRelation[]  @relation("AdventureStageRelations")
+  maxTeamCount    Int
+  stages          Stage[]         @relation("AdventureStages")
+  stageRelations  StageRelation[] @relation("AdventureStageRelations")
+  tier            Tier            @relation(fields: [tierId], references: [id])
+  tierId          TierId          @default(FREE)
   hostId          String
-  host            User             @relation("HostAdventures", fields: [hostId], references: [id])
-  teams           Team[]           @relation("TeamAdventures")
+  host            User            @relation("HostAdventures", fields: [hostId], references: [id])
+  teams           TeamAdventure[]
+  users           UserAdventure[]
   stageProgresses TeamProgress[]
-  teamAssignments TeamAssignment[]
 }
 
 model Stage {
@@ -54,12 +70,21 @@ model Stage {
   riddle          String?
   answer          String?
   status          String          @default("draft")
+  assets          Asset[]
   hints           Hint[]          @relation("StageHints")
   adventureId     String
   adventure       Adventure       @relation("AdventureStages", fields: [adventureId], references: [id])
   stageProgresses TeamProgress[]
   previousStages  StageRelation[] @relation("PreviousStages")
   nextStages      StageRelation[] @relation("NextStages")
+}
+
+model Asset {
+  id          String   @id
+  url         String
+  stageId     String
+  stage       Stage    @relation(fields: [stageId], references: [id])
+  dateCreated DateTime @default(now())
 }
 
 model StageRelation {
@@ -97,15 +122,36 @@ model TeamProgress {
   @@unique(name: "teamProgressId", [teamId, adventureId, stageId])
 }
 
-model TeamAssignment {
-  id          String @id @default(uuid())
-  userId      String
+model TeamUser {
+  id     String @id @default(uuid())
+  team   Team   @relation(fields: [teamId], references: [id])
+  teamId String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@unique([teamId, userId]) // Ensure a user can only be part of a team once
+}
+
+model TeamAdventure {
+  id     String @id @default(uuid())
+  team   Team   @relation(fields: [teamId], references: [id])
+  teamId String
+
+  adventure   Adventure @relation(fields: [adventureId], references: [id])
   adventureId String
-  teamId      String
 
-  user      User      @relation(fields: [userId], references: [id])
-  adventure Adventure @relation(fields: [adventureId], references: [id])
-  team      Team      @relation(fields: [teamId], references: [id])
+  createdAt  DateTime @default(now())
+  waitlisted Boolean  @default(false)
 
-  @@unique([userId, adventureId])
+  @@unique([teamId, adventureId]) // Ensure a team can only join an adventure once
+}
+
+model UserAdventure {
+  id          String    @id @default(uuid())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  adventure   Adventure @relation(fields: [adventureId], references: [id])
+  adventureId String
+
+  @@unique([userId, adventureId]) // Ensure a user cannot join multiple teams in the same adventure
 }

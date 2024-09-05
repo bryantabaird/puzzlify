@@ -1,45 +1,58 @@
-import { Adventure, Stage } from "@prisma/client";
+import { getWaitlistedUsersCount } from "@/server/db/team-adventure";
+import { Adventure, Stage, TeamAdventure, Tier } from "@prisma/client";
 import Link from "next/link";
 
 type Props = {
-  adventure: Adventure & { stages: Stage[] };
+  adventure: Adventure & {
+    stages: Stage[];
+    teams: TeamAdventure[];
+    tier: Tier;
+  };
 };
 
-const HostAdventureDashboard = ({ adventure }: Props) => {
+export default function HostAdventureDashboard({ adventure }: Props) {
+  const totalStages = adventure.stages.length;
+  const teamsSignedUp = adventure.teams.length;
+  const maxTeamCount = adventure.tier.maxTeamCount;
+  const isUserCountError = teamsSignedUp > maxTeamCount;
+  const isUserCountWarning = teamsSignedUp > maxTeamCount * 0.25;
+
   return (
     <div className="p-4">
       <div className="grid auto-rows-fr grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* TODO: Render as warning color when threshold is maybe 20% or so */}
         <div className="stat bg-base-300 rounded-box">
-          <div className="stat-title text-base-content">Users Signed Up</div>
-          <div className="stat-value text-accent">12 / 20</div>
+          <div className="stat-title text-base-content">Teams Signed Up</div>
+          <div
+            className={`stat-value ${isUserCountError ? "text-error" : isUserCountWarning ? "text-warning" : "text-accent"}`}
+          >
+            {teamsSignedUp} / {maxTeamCount}
+          </div>
           <div className="stat-actions">
-            <button className="btn btn-sm btn-primary">View</button>
+            <button
+              className={`btn btn-sm ${isUserCountError ? "btn-error" : isUserCountWarning ? "btn-warning" : "btn-primary"}`}
+            >
+              View
+            </button>
           </div>
         </div>
 
         <div className="stat bg-base-300 shadow-md rounded-box">
           <div className="stat-title text-base-content">Total Stages</div>
-          <div className="stat-value text-accent">12</div>
+          <div className="stat-value text-accent">{totalStages}</div>
           <div className="stat-actions">
-            <button className="btn btn-sm btn-primary">View</button>
+            <button className="btn btn-sm btn-primary">
+              <Link href={`/adventure/${adventure.id}/stage`}>View</Link>
+            </button>
           </div>
         </div>
 
-        {/* TODO: Error color if greater than 0 */}
-        <div className="stat bg-base-300 shadow-md rounded-box">
-          <div className="stat-title text-base-content">Users on Waitlist</div>
-          <div className="stat-value text-accent">3</div>
-          <div className="stat-actions">
-            <button className="btn btn-sm btn-primary">View</button>
-          </div>
-        </div>
-
-        <div className="stat bg-base-300 shadow-md rounded-box">
-          <div className="stat-title text-base-content">Time Remaining</div>
-          <div className="stat-value text-accent">10h 5s</div>
-          <div className="stat-actions">
-            <button className="btn btn-sm btn-primary">View</button>
+        <div className="col-span-2 sm:col-span-2">
+          <div className="stat bg-base-300 shadow-md rounded-box">
+            <div className="stat-title text-base-content">Time Remaining</div>
+            <div className="stat-value text-accent">10h 5s</div>
+            <div className="stat-actions">
+              <button className="btn btn-sm btn-primary">View</button>
+            </div>
           </div>
         </div>
 
@@ -57,36 +70,4 @@ const HostAdventureDashboard = ({ adventure }: Props) => {
       </div>
     </div>
   );
-
-  // return (
-  //   <>
-  //     <Link href={`/adventure/${adventure.id}/edit`} className="mx-2 underline">
-  //       Edit Adventure
-  //     </Link>
-  //     <h2>Stages</h2>
-  //     <ul>
-  //       {adventure.stages.map((stage: Stage) => (
-  //         <li key={stage.id}>
-  //           <p>
-  //             <strong>Riddle:</strong> {stage.riddle}
-  //           </p>
-  //           <p>
-  //             <strong>Answer:</strong> {stage.answer}
-  //           </p>
-  //           <Link href={`/adventure/${adventure.id}/stage/${stage.id}`}>
-  //             View Stage
-  //           </Link>
-  //         </li>
-  //       ))}
-  //     </ul>
-  //     <Link
-  //       href={`/adventure/${adventure.id}/stage/create`}
-  //       className="mx-2 underline"
-  //     >
-  //       Create Stage
-  //     </Link>
-  //   </>
-  // );
-};
-
-export default HostAdventureDashboard;
+}

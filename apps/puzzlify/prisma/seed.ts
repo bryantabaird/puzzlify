@@ -4,7 +4,10 @@ import bcryptjs from "bcryptjs";
 const prisma = new PrismaClient();
 
 const seed = async () => {
-  await prisma.teamAssignment.deleteMany();
+  await prisma.asset.deleteMany();
+  await prisma.teamAdventure.deleteMany();
+  await prisma.teamUser.deleteMany();
+  await prisma.userAdventure.deleteMany();
   await prisma.teamProgress.deleteMany();
   await prisma.hint.deleteMany();
   await prisma.stageRelation.deleteMany();
@@ -12,6 +15,7 @@ const seed = async () => {
   await prisma.team.deleteMany();
   await prisma.adventure.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.tier.deleteMany();
 
   const users = [
     {
@@ -37,11 +41,20 @@ const seed = async () => {
     });
   }
 
+  const freeTier = await prisma.tier.create({
+    data: {
+      id: "FREE",
+      name: "Free",
+      maxTeamCount: 1,
+    },
+  });
+
   await prisma.adventure.create({
     data: {
       name: "Test Adventure",
       hostId: "1",
       id: "adventure-id-1",
+      maxTeamCount: freeTier.maxTeamCount,
       startDate: new Date(new Date().getTime() + 10 * 1000),
     },
   });
@@ -105,9 +118,15 @@ const seed = async () => {
       id: adventureId,
       name: "Test Adventure",
       hostId: "1",
+      maxTeamCount: freeTier.maxTeamCount,
       startDate: new Date(new Date().getTime() + 10 * 1000),
       stages: {
-        connect: [stage1, stage2a, stage2b, stage3],
+        connect: [
+          { id: stage1.id },
+          { id: stage2a.id },
+          { id: stage2b.id },
+          { id: stage3.id },
+        ],
       },
     },
   });

@@ -1,26 +1,19 @@
 import prisma from "@/lib/prisma";
-import { Adventure, User } from "@prisma/client";
+import { User } from "@prisma/client";
 
-type CreateTeamPayload = {
-  name: string;
-  adventureId: Adventure["id"];
-  userId: User["id"];
-};
 export const createTeam = async ({
   name,
-  adventureId,
   userId,
-}: CreateTeamPayload) => {
+}: {
+  name: string;
+  userId: User["id"];
+}) => {
   return await prisma.team.create({
     data: {
       name,
-      adventures: {
-        connect: { id: adventureId },
-      },
-      assignments: {
+      users: {
         create: {
-          userId: userId,
-          adventureId: adventureId,
+          user: { connect: { id: userId } },
         },
       },
     },

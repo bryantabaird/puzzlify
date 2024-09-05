@@ -1,4 +1,4 @@
-import { getAdventureWithStages } from "@/server/db/adventure";
+import { getAdventureStats } from "@/server/db/adventure";
 import TeamAdventureDashboard from "./_components/TeamAdventureDashboard";
 import HostAdventureDashboard from "./_components/HostAdventureDashboard";
 import { getUserId } from "@/server/helpers/getUserId";
@@ -11,7 +11,7 @@ export default async function ViewAdventurePage({
   const userId = await getUserId();
 
   const adventureId = params.adventureId;
-  const adventure = await getAdventureWithStages(adventureId);
+  const adventure = await getAdventureStats(adventureId);
 
   if (!adventure) {
     return (

@@ -21,9 +21,7 @@ export const baseActionClient = createSafeActionClient({
 });
 
 export const userActionClient = baseActionClient
-  .bindArgsSchemas<
-    [stageClientSchema: typeof baseBindArgsSchema]
-  >([baseBindArgsSchema])
+  .bindArgsSchemas<[schema: typeof baseBindArgsSchema]>([baseBindArgsSchema])
   .use(userMiddlewareFn);
 
 // TODO: zod-prisma-types
@@ -50,8 +48,6 @@ export const hostHintActionClient = hostStageActionClient
     [bindArgsSchema: typeof baseBindArgsSchema]
   >([baseBindArgsSchema])
   .use(hostHintMiddlewareFn);
-
-// export const teamActionClient =
 
 export const teamAdventureActionClient = userActionClient
   .bindArgsSchemas<

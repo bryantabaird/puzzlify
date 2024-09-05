@@ -3,7 +3,8 @@
 import { PrismaClient } from "@prisma/client";
 import { getTeamStageStartTime } from "../db/team-progress";
 import { getUserId } from "../helpers/getUserId";
-import { getTeamId } from "../helpers/getTeamId";
+import { get } from "http";
+import { getTeamUserFromAdventureUser } from "../db/team-user";
 
 const prisma = new PrismaClient();
 
@@ -26,10 +27,15 @@ export const getHintIfAvailable = async (
     throw new Error("Hint not found");
   }
 
-  const teamId = await getTeamId(userId, adventureId);
+  // TODO: Consolidate to a getTeamId helper
+  const teamUser = await getTeamUserFromAdventureUser({ userId, adventureId });
+
+  if (!teamUser) {
+    throw new Error("User is not on a team that is part of this adventure");
+  }
 
   const teamProgress = await getTeamStageStartTime({
-    teamId,
+    teamId: teamUser.teamId,
     stageId,
     adventureId,
   });

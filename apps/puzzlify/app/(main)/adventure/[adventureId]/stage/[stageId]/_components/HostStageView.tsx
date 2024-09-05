@@ -1,5 +1,6 @@
 import HintForm from "@/components/HintForm";
 import StageForm from "@/components/StageForm";
+import UploadFileForm from "@/components/UploadFileForm";
 import { getStageWithHints } from "@/server/db/stage";
 import React from "react";
 
@@ -25,6 +26,7 @@ export default async function EditStage({
   return (
     <div className="flex flex-col flex-1 p-10 gap-10">
       <StageForm adventureId={adventureId} stage={stage} />
+      <UploadFileForm />
       <HintForm adventureId={adventureId} stageId={stageId} />
       <div>
         {stage.hints.map((hint) => {
