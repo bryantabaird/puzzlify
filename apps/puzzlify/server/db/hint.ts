@@ -1,5 +1,3 @@
-"use server";
-
 import prisma from "@/lib/prisma";
 import { Hint, Stage } from "@prisma/client";
 

@@ -1,4 +1,4 @@
-import AdventureForm from "@/components/AdventureForm";
+import AdventureForm from "../[adventureId]/_components/AdventureForm";
 
 export default function CreateAdventurePage() {
   return (

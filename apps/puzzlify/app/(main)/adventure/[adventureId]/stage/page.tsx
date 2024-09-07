@@ -2,6 +2,12 @@ import { getUserId } from "@/server/helpers/getUserId";
 import { isAdventureHost } from "@/server/helpers/isAdventureHost";
 import TeamStagesView from "./_components/TeamStagesView";
 import HostStagesView from "./_components/HostStagesView";
+import { getAdventureIds } from "@/server/db/adventure";
+
+export async function generateStaticParams() {
+  const adventureIds = await getAdventureIds();
+  return adventureIds.map(({ id }) => ({ adventureId: id }));
+}
 
 export default async function StagesPage({
   params: { adventureId },

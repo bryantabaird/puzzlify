@@ -111,7 +111,7 @@ const ReactLayoutFlow = ({
   const router = useRouter();
 
   const onDelete: OnDelete = useCallback(() => {
-    router.replace(`/adventure/${adventureId}/edit/stage`);
+    router.replace(`/adventure/${adventureId}/stage`);
   }, [adventureId, router]);
 
   const handleNodesChange: OnNodesChange<StageNode> = useCallback((changes) => {

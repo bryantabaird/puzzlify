@@ -1,7 +1,12 @@
-import { getAdventureStats } from "@/server/db/adventure";
+import { getAdventureIds, getAdventureStats } from "@/server/db/adventure";
 import TeamAdventureDashboard from "./_components/TeamAdventureDashboard";
 import HostAdventureDashboard from "./_components/HostAdventureDashboard";
 import { getUserId } from "@/server/helpers/getUserId";
+
+export async function generateStaticParams() {
+  const adventureIds = await getAdventureIds();
+  return adventureIds.map(({ id }) => ({ adventureId: id }));
+}
 
 export default async function ViewAdventurePage({
   params,

@@ -31,7 +31,7 @@ export default function HostAdventureDashboard({ adventure }: Props) {
             <button
               className={`btn btn-sm ${isUserCountError ? "btn-error" : isUserCountWarning ? "btn-warning" : "btn-primary"}`}
             >
-              View
+              <Link href={`/adventure/${adventure.id}/teams`}>View</Link>
             </button>
           </div>
         </div>

@@ -5,14 +5,6 @@ import Link from "next/link";
 export default async function JoinAdventure() {
   const userId = await getUserId();
 
-  if (!userId) {
-    return (
-      <div>
-        <h1>Sign in to join an adventure</h1>
-      </div>
-    );
-  }
-
   const adventures = await getTeamAdventures(userId);
 
   return (

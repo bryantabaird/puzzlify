@@ -1,9 +1,14 @@
-"use server";
-
 import prisma from "@/lib/prisma";
 import { Prisma, Stage } from "@prisma/client";
 import { deleteStageRelationsFromStageDb } from "./stage-relation";
 import { deleteHintsFromStagesDb } from "./hint";
+
+export const getStageIds = async (adventureId: string) => {
+  return await prisma.stage.findMany({
+    where: { adventureId },
+    select: { id: true },
+  });
+};
 
 export type StageWithPreviousAndNextStages = Awaited<
   ReturnType<typeof getStageWithPreviousAndNextStages>
