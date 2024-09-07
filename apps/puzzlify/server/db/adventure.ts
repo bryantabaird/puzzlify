@@ -1,10 +1,15 @@
-"use server";
-
 import prisma from "@/lib/prisma";
-import { Adventure, Team, User } from "@prisma/client";
+import { Adventure, User } from "@prisma/client";
+
+export const getAdventureIds = async () => {
+  return await prisma.adventure.findMany({
+    select: { id: true },
+  });
+};
 
 export const getAdventureWithStages = async (adventureId: Adventure["id"]) => {
-  return prisma.adventure.findUnique({
+  // TODO: lint check, I missed the await here and linting didn't complain
+  return await prisma.adventure.findUnique({
     where: { id: adventureId },
     include: {
       stages: true,
@@ -52,7 +57,7 @@ export const getAdventureTeams = async (adventureId: Adventure["id"]) => {
 export type AdventureTeams = Awaited<ReturnType<typeof getAdventureTeams>>;
 
 export const getAdventureStats = async (adventureId: Adventure["id"]) => {
-  return prisma.adventure.findUnique({
+  return await prisma.adventure.findUnique({
     where: { id: adventureId },
     include: {
       teams: true,
@@ -65,7 +70,7 @@ export const getAdventureStats = async (adventureId: Adventure["id"]) => {
 export type AdventureLayout = Awaited<ReturnType<typeof getAdventureLayoutDb>>;
 
 export const getAdventureLayoutDb = async (adventureId: Adventure["id"]) => {
-  return prisma.adventure.findUnique({
+  return await prisma.adventure.findUnique({
     where: { id: adventureId },
     include: {
       stages: {

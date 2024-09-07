@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 import { Adventure } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import FlowSelector from "../../create/_components/FlowSelector";
 
 type Props = {
   adventure?: Adventure;
@@ -45,7 +46,7 @@ const AdventureForm = ({ adventure }: Props) => {
       actionProps: {
         onSuccess: (response) => {
           if (response.data) {
-            router.push(`/adventure/${response.data.adventureId}`);
+            router.push(`/adventure/${response.data.adventureId}/stage`);
           } else {
             // TODO: Update form there was an error try again
           }
@@ -101,6 +102,8 @@ const AdventureForm = ({ adventure }: Props) => {
             </span>
           </div>
         ) : null}
+
+        <FlowSelector />
 
         {isSubmitting ? (
           <button

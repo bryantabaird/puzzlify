@@ -30,7 +30,7 @@ export default async function HostStagesView({
   return (
     <div className="flex flex-col lg:flex-row flex-1">
       <ReactFlowProvider>
-        <div className="lg:w-1/3 lg:h-full w-full h-1/2">
+        <div className="lg:w-1/2 lg:h-full w-full h-1/2">
           <HostStageLayout
             adventureId={adventureId}
             initialNodes={initialNodes}

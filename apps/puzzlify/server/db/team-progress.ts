@@ -1,5 +1,3 @@
-"use server";
-
 import prisma from "@/lib/prisma";
 import { Adventure, Stage, TeamProgress, Team } from "@prisma/client";
 

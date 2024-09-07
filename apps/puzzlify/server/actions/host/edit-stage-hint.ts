@@ -23,6 +23,6 @@ export const editHint = hostHintActionClient
       return { error: userFacingErrorMessage };
     }
 
-    revalidatePath(`/adventure/${adventureId}/edit/stage/${stageId}`);
-    redirect(`/adventure/${adventureId}/edit/stage/${stageId}`);
+    revalidatePath(`/adventure/${adventureId}/stage/${stageId}`);
+    redirect(`/adventure/${adventureId}/stage/${stageId}`);
   });

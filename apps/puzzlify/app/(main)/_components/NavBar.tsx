@@ -1,4 +1,5 @@
 import Logout from "@/components/Logout";
+import AdventureDropdown from "./AdventureDropdown";
 
 const NavBar = () => {
   return (
@@ -27,24 +28,27 @@ const NavBar = () => {
         </div>
         <div className="flex justify-between w-full">
           <div className="mx-2 px-2">Navbar Title</div>
-          <div className="dropdown dropdown-bottom dropdown-end">
-            <div
-              tabIndex={0}
-              role="button"
-              className="avatar online placeholder"
-            >
-              <div className="bg-neutral text-neutral-content w-12 rounded-full">
-                <span>AI</span>
+          <div className="flex justify-center items-center">
+            <AdventureDropdown />
+            <div className="dropdown dropdown-bottom dropdown-end">
+              <div
+                tabIndex={0}
+                role="button"
+                className="avatar online placeholder"
+              >
+                <div className="bg-neutral text-neutral-content w-12 rounded-full">
+                  <span>AI</span>
+                </div>
               </div>
+              <ul
+                tabIndex={0}
+                className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+              >
+                <li>
+                  <Logout />
+                </li>
+              </ul>
             </div>
-            <ul
-              tabIndex={0}
-              className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-            >
-              <li>
-                <Logout />
-              </li>
-            </ul>
           </div>
         </div>
       </div>
