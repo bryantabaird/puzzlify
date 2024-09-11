@@ -41,6 +41,7 @@ const AdventureForm = ({ adventure }: Props) => {
     // TODO: A bad schema here isn't showing errors
     zodResolver(adventureSchema),
     {
+      // @ts-ignore TODO: AdventureForm might be legacy
       formProps: { defaultValues },
       actionProps: {
         onSuccess: (response) => {

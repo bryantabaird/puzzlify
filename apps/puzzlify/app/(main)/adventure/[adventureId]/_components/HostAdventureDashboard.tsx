@@ -1,4 +1,3 @@
-import { getWaitlistedUsersCount } from "@/server/db/team-adventure";
 import { Adventure, Stage, TeamAdventure, Tier } from "@prisma/client";
 import Link from "next/link";
 
@@ -49,7 +48,7 @@ export default function HostAdventureDashboard({ adventure }: Props) {
         <div className="col-span-2 sm:col-span-2">
           <div className="stat bg-base-300 shadow-md rounded-box">
             <div className="stat-title text-base-content">Time Remaining</div>
-            <div className="stat-value text-accent">10h 5s</div>
+            <div className="stat-value text-accent">7d 10h 5s</div>
             <div className="stat-actions">
               <button className="btn btn-sm btn-primary">View</button>
             </div>

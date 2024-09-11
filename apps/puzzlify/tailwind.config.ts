@@ -45,6 +45,10 @@ const config: Config = {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -58,6 +62,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [daisyui, require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate")],
 };
 export default config;

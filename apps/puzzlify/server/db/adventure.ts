@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Adventure, Team, User } from "@prisma/client";
+import { Adventure, User } from "@prisma/client";
 
 export const getAdventureWithStages = async (adventureId: Adventure["id"]) => {
   return prisma.adventure.findUnique({
@@ -52,14 +52,25 @@ export const getAdventureTeams = async (adventureId: Adventure["id"]) => {
 export type AdventureTeams = Awaited<ReturnType<typeof getAdventureTeams>>;
 
 export const getAdventureStats = async (adventureId: Adventure["id"]) => {
-  return prisma.adventure.findUnique({
-    where: { id: adventureId },
-    include: {
-      teams: true,
-      stages: true,
-      tier: true,
-    },
-  });
+  try {
+    const adventure = await prisma.adventure.findUnique({
+      where: { id: adventureId },
+      include: {
+        teams: true,
+        stages: true,
+        tier: true,
+      },
+    });
+
+    if (!adventure) {
+      throw new Error("Adventure not found");
+    }
+
+    return adventure;
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
 };
 
 export type AdventureLayout = Awaited<ReturnType<typeof getAdventureLayoutDb>>;

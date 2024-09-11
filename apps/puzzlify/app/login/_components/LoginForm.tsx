@@ -1,77 +1,106 @@
 "use client";
 
-import { login } from "@/server/actions";
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { login } from "@/server/actions";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UserSchema, userSchema } from "@/schemas/user";
 
-const LoginForm = () => {
+export default function LoginForm() {
+  const form = useForm({
+    resolver: zodResolver(userSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
   const router = useRouter();
-  const [error, setError] = useState("");
 
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function onSubmit({ email, password }: UserSchema) {
     try {
-      const formData = new FormData(event.currentTarget);
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("password", password);
 
       const response = await login(formData);
 
       if (response.error) {
         console.error(response.error);
-        setError(response.error.message);
       } else {
         router.push("/dashboard");
       }
     } catch (e) {
       console.error(e);
-      setError("Check your credentials.");
     }
   }
 
   return (
-    <>
-      {error && <div className="mb-4 text-sm text-error">{error}</div>}
-      <form onSubmit={onSubmit}>
-        <label className="input input-bordered flex items-center gap-2 mb-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            className="w-4 h-4 opacity-70"
-          >
-            <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
-            <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
-          </svg>
-          <input
-            type="email"
-            className="grow"
-            placeholder="Email"
-            name="email"
-          />
-        </label>
-        <label className="input input-bordered flex items-center gap-2 mb-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            className="w-4 h-4 opacity-70"
-          >
-            <path
-              fillRule="evenodd"
-              d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <input
-            type="password"
-            className="grow"
-            placeholder="Password"
-            name="password"
-          />
-        </label>
-        <button className="btn btn-primary w-full">Login</button>
-      </form>
-    </>
+    <div className="flex h-screen items-center justify-center bg-gray-100">
+      <Card className="w-full max-w-md p-4 shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-center text-2xl font-bold">
+            Login
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {/* Email Field */}
+              <FormField
+                name="email"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="you@example.com"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* Password Field */}
+              <FormField
+                name="password"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="••••••••"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* Submit Button */}
+              <Button type="submit" className="w-full">
+                Sign In
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
   );
-};
-
-export default LoginForm;
+}
