@@ -17,9 +17,11 @@ export default async function EditAdventure({
     );
   }
 
+  const currentDateTime = new Date();
+
   return (
     <>
-      <AdventureForm adventure={adventure} />
+      <AdventureForm currentDateTime={currentDateTime} adventure={adventure} />
     </>
   );
 }

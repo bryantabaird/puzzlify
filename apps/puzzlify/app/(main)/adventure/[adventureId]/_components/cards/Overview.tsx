@@ -5,7 +5,6 @@ import React from "react";
 import {
   Bar,
   BarChart,
-  Rectangle,
   ResponsiveContainer,
   type TooltipProps,
   Tooltip,
@@ -20,10 +19,6 @@ const CustomTooltip = ({
   label,
 }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
-    console.log("payload", payload);
-    console.log("active", active);
-    console.log("label", label);
-
     const teams = payload.map((pld) => pld.value)[0];
 
     const teamsLabel = teams && teams > 1 ? "teams" : "team";

@@ -3,9 +3,9 @@ import { type NavItem } from "@/types";
 
 export const NavItems: NavItem[] = [
   {
-    title: "Dashboard",
+    title: "Adventures",
     icon: LayoutDashboard,
-    href: "/",
+    href: "/adventure",
     color: "text-sky-500",
   },
   {
@@ -19,7 +19,7 @@ export const NavItems: NavItem[] = [
         title: "Example-01",
         icon: BookOpenCheck,
         color: "text-red-500",
-        href: "/example/employees",
+        href: "/adventure/adventure-id-1",
       },
       {
         title: "Example-02",

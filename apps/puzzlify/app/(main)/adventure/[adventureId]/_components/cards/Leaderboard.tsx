@@ -1,8 +1,14 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
+import { Adventure } from "@prisma/client";
 
-export default function LeaderboardCard() {
+export default function LeaderboardCard({
+  adventureId,
+}: {
+  adventureId: Adventure["id"];
+}) {
   const leaderboardData = [
     {
       name: "Olivia Martin",
@@ -40,7 +46,12 @@ export default function LeaderboardCard() {
     <Card className="col-span-3">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
         <CardTitle>Leaderboard</CardTitle>
-        <Button variant="secondary">View All</Button>
+        <Link
+          href={`/adventure/${adventureId}/leaderboard`}
+          className={buttonVariants({ variant: "outline" })}
+        >
+          View
+        </Link>
       </CardHeader>
       <CardContent>
         <div className="space-y-8">

@@ -89,9 +89,11 @@ export const getAdventureLayoutDb = async (adventureId: Adventure["id"]) => {
   });
 };
 
-export const createAdventureDb = async (
-  data: Pick<Adventure, "name" | "hostId" | "startDate" | "maxTeamCount">,
-) => {
+export type CreateAdventurePayload = Pick<
+  Adventure,
+  "name" | "hostId" | "startDate" | "flow"
+>;
+export const createAdventureDb = async (data: CreateAdventurePayload) => {
   return await prisma.adventure.create({ data });
 };
 

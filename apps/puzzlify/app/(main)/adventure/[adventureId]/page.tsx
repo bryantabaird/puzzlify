@@ -9,6 +9,8 @@ import StartTimeCard from "./_components/cards/StartTime";
 import OverviewCard from "./_components/cards/Overview";
 import { getAdventureStats } from "@/server/db/adventure";
 import LeaderboardCard from "./_components/cards/Leaderboard";
+import { Suspense } from "react";
+import AdventureSwitcherWrapper from "@/components/layout/adventure-switcher-wrapper";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -30,7 +32,9 @@ export default async function Dashboard({
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
             <div className="flex items-center space-x-2">
-              <Button>Download</Button>
+              <Suspense fallback="Loading...">
+                <AdventureSwitcherWrapper adventureId={adventureId} />
+              </Suspense>
             </div>
           </div>
           <Tabs defaultValue="overview" className="space-y-4">
@@ -52,13 +56,13 @@ export default async function Dashboard({
                   <StartTimeCard />
                 </div>
               </div>
-              <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-7">
+              <div className="grid gap-4 grid-cols-2 xl:grid-cols-7">
                 <OverviewCard />
-                <LeaderboardCard />
+                <LeaderboardCard adventureId={adventureId} />
               </div>
             </TabsContent>
             <TabsContent value="analytics" className="space-y-4">
-              <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
+              <div className="grid gap-4 lg:grid-cols-2 grid-cols-4">
                 <Card>
                   <CardHeader>
                     <CardTitle>Analytics</CardTitle>
