@@ -54,7 +54,17 @@ const seed = async () => {
       name: "Test Adventure",
       hostId: "1",
       id: "adventure-id-1",
-      maxTeamCount: freeTier.maxTeamCount,
+      flow: "LINEAR",
+      startDate: new Date(new Date().getTime() + 10 * 1000),
+    },
+  });
+
+  await prisma.adventure.create({
+    data: {
+      name: "Test Adventure 3",
+      hostId: "1",
+      id: "adventure-id-3",
+      flow: "PARALLEL",
       startDate: new Date(new Date().getTime() + 10 * 1000),
     },
   });
@@ -118,7 +128,7 @@ const seed = async () => {
       id: adventureId,
       name: "Test Adventure",
       hostId: "1",
-      maxTeamCount: freeTier.maxTeamCount,
+      flow: "PARALLEL",
       startDate: new Date(new Date().getTime() + 10 * 1000),
       stages: {
         connect: [

@@ -1,29 +1,22 @@
 import { auth } from "@/auth";
 import DeleteAdventureForm from "@/components/DeleteAdventureForm";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { getHostAdventures, getTeamAdventures } from "@/server/db/adventure";
+import { getUserId } from "@/server/helpers/getUserId";
 import Link from "next/link";
 
 export default async function Dashboard() {
-  // Fetch the session to get the user ID
-  const session = await auth();
-
-  if (!session || !session.user?.id) {
-    return (
-      <div className="flex flex-col justify-center items-center m-4">
-        <h1>Dashboard</h1>
-        <p>You need to be logged in to view your adventures.</p>
-      </div>
-    );
-  }
+  const userId = await getUserId();
 
   const [hostedAdventures, adventures] = await Promise.all([
-    await getHostAdventures(session.user.id),
-    await getTeamAdventures(session.user.id),
+    await getHostAdventures(userId),
+    await getTeamAdventures(userId),
   ]);
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-col gap-4 p-40">
+      <div className="flex flex-col gap-4 m-40">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold">Welcome to Adventure Quest!</h1>
           <p className="mt-2">Choose your path to begin your adventure.</p>
@@ -40,14 +33,13 @@ export default async function Dashboard() {
               </p>
               <div className="w-full">
                 <Link href="/adventure/join">
-                  <button className="btn btn-primary w-full">
-                    Join Adventure
-                  </button>
+                  <Button>Join Adventure</Button>
                 </Link>
               </div>
             </div>
           </div>
-          <div className="divider lg:divider-horizontal">OR</div>
+          <Separator orientation="vertical" />
+
           <div className="card bg-base-300 rounded-box grid flex-1 place-items-center">
             <div className="flex-1 flex flex-col items-center justify-center p-8">
               <h2 className="text-2xl font-semibold mb-4">
@@ -58,9 +50,7 @@ export default async function Dashboard() {
               </p>
               <div className="w-full">
                 <Link href="/adventure/create">
-                  <button className="btn btn-secondary w-full">
-                    Create Adventure
-                  </button>
+                  <Button>Create Adventure</Button>
                 </Link>
               </div>
             </div>

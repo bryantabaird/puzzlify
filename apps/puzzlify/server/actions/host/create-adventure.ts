@@ -3,7 +3,10 @@
 import { adventureSchema } from "@/schemas/adventure";
 import { userActionClient } from "@/lib/next-safe-action";
 import { revalidatePath } from "next/cache";
-import { createAdventureDb } from "@/server/db/adventure";
+import {
+  createAdventureDb,
+  CreateAdventurePayload,
+} from "@/server/db/adventure";
 import { getTier } from "@/server/db/tier";
 import { TierId } from "@prisma/client";
 
@@ -19,11 +22,11 @@ export const createAdventure = userActionClient
       throw new Error("Tier not found");
     }
 
-    const data = {
-      maxTeamCount: tier.maxTeamCount,
+    const data: CreateAdventurePayload = {
       name,
       hostId: userId,
       startDate: new Date(startDate),
+      flow: "LINEAR",
     };
 
     try {

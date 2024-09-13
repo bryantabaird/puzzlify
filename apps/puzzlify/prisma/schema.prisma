@@ -23,6 +23,11 @@ enum TierId {
   ENTERPRISE
 }
 
+enum FlowType {
+  LINEAR
+  PARALLEL
+}
+
 model Tier {
   id           TierId      @id
   name         String
@@ -52,16 +57,17 @@ model Adventure {
   dateCreated     DateTime        @default(now())
   name            String
   startDate       DateTime
-  maxTeamCount    Int
+  published       Boolean         @default(false)
+  flow            FlowType
   stages          Stage[]         @relation("AdventureStages")
   stageRelations  StageRelation[] @relation("AdventureStageRelations")
+  stageProgresses TeamProgress[]
   tier            Tier            @relation(fields: [tierId], references: [id])
   tierId          TierId          @default(FREE)
   hostId          String
   host            User            @relation("HostAdventures", fields: [hostId], references: [id])
   teams           TeamAdventure[]
   users           UserAdventure[]
-  stageProgresses TeamProgress[]
 }
 
 model Stage {

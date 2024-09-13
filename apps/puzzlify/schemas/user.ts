@@ -5,3 +5,5 @@ export const userSchema = z.object({
   // TODO: Add password requirements
   password: z.string().min(1, { message: "Password is required" }),
 });
+
+export type UserSchema = z.infer<typeof userSchema>;

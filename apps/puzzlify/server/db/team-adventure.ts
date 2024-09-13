@@ -16,17 +16,6 @@ export const getTeamAdventure = async ({
   });
 };
 
-export const getWaitlistedUsersCount = async (adventureId: string) => {
-  const waitlistedTeams = await prisma.teamAdventure.count({
-    where: {
-      adventureId,
-      waitlisted: true,
-    },
-  });
-
-  return waitlistedTeams;
-};
-
 export const createTeamAdventure = async ({
   teamId,
   adventureId,
