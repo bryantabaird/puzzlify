@@ -1,3 +1,4 @@
+// TODO: remove @xyflow/react or actualy use it
 import { ReactFlowProvider } from "@xyflow/react";
 import ReactFlowLayout from "../../stage/_components/HostStageLayout";
 import { getAdventureLayout } from "@/server/fetchers/get-adventure-layout";
