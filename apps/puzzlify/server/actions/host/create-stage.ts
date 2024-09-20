@@ -17,6 +17,8 @@ export const createStage = hostAdventureActionClient
     const stagePayload = { label, adventureId, riddle, answer: hashedAnswer };
 
     try {
+      // TODO: Remove in favor of the new createPuzzle flow
+      // @ts-expect-error
       const stage = await createStageDb(stagePayload);
       revalidatePath(`/adventure/${adventureId}`);
 

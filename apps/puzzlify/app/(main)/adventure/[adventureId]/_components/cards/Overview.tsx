@@ -12,6 +12,9 @@ import {
   YAxis,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Adventure } from "@prisma/client";
+import Link from "next/link";
+import { ChartNoAxesCombined } from "lucide-react";
 
 const CustomTooltip = ({
   active,
@@ -71,41 +74,48 @@ const data = [
   },
 ];
 
-export default function OverviewCard() {
+export default function OverviewCard({
+  adventureId,
+}: {
+  adventureId: Adventure["id"];
+}) {
   return (
-    <Card className="col-span-4">
-      <CardHeader>
-        <CardTitle>Overview</CardTitle>
-      </CardHeader>
-      <CardContent className="pl-2">
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={data}>
-            <XAxis
-              dataKey="puzzleName"
-              stroke="#888888"
-              fontSize={12}
-              tickLine={false}
-              axisLine={false}
-            />
-            <YAxis
-              stroke="#888888"
-              fontSize={12}
-              tickLine={false}
-              axisLine={false}
-            />
-            <Tooltip
-              content={<CustomTooltip />}
-              cursor={{ fill: "transparent" }}
-            />
-            {/* <Tooltip /> */}
-            <Bar
-              dataKey="numberOfTeamsCompleted"
-              radius={[4, 4, 0, 0]}
-              className="fill-primary"
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </CardContent>
+    <Card className="col-span-4 transition-all ease-in-out duration-300 hover:bg-muted focus:border-ring">
+      <Link href={`/adventure/${adventureId}/leaderboard`}>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
+          <CardTitle>Overview</CardTitle>
+          <ChartNoAxesCombined />
+        </CardHeader>
+        <CardContent className="pl-2">
+          <ResponsiveContainer width="100%" height={350}>
+            <BarChart data={data}>
+              <XAxis
+                dataKey="puzzleName"
+                stroke="#888888"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                stroke="#888888"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
+              <Tooltip
+                content={<CustomTooltip />}
+                cursor={{ fill: "transparent" }}
+              />
+              {/* <Tooltip /> */}
+              <Bar
+                dataKey="numberOfTeamsCompleted"
+                radius={[4, 4, 0, 0]}
+                className="fill-primary"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Link>
     </Card>
   );
 }

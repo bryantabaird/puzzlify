@@ -32,10 +32,12 @@ export default function UploadFileForm() {
     }
 
     try {
-      const { assetUploadUrl, assetId } = await getSignedAssetUploadUrl({
+      const assetId = self.crypto.randomUUID();
+      const { assetUploadUrl } = await getSignedAssetUploadUrl({
         adventureId,
         stageId,
         contentType: file.type,
+        assetId,
       });
 
       const uploadResponse = await fetch(assetUploadUrl, {

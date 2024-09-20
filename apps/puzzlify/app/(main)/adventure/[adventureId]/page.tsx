@@ -53,11 +53,11 @@ export default async function Dashboard({
                 <TeamsCard adventure={adventure} />
                 <StagesCard adventure={adventure} />
                 <div className="col-span-2 sm:col-span-2">
-                  <StartTimeCard />
+                  <StartTimeCard adventureId={adventureId} />
                 </div>
               </div>
               <div className="grid gap-4 grid-cols-2 xl:grid-cols-7">
-                <OverviewCard />
+                <OverviewCard adventureId={adventureId} />
                 <LeaderboardCard adventureId={adventureId} />
               </div>
             </TabsContent>
