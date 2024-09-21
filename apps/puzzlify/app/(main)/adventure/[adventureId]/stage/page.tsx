@@ -1,7 +1,6 @@
 import { getUserId } from "@/server/helpers/getUserId";
 import { isAdventureHost } from "@/server/helpers/isAdventureHost";
 import TeamStagesView from "./_components/TeamStagesView";
-import HostStagesView from "./_components/HostStagesView";
 
 export default async function StagesPage({
   params: { adventureId },
@@ -25,7 +24,8 @@ export default async function StagesPage({
   });
 
   return isHost ? (
-    <HostStagesView adventureId={adventureId} userId={userId} />
+    // TODO: Delete
+    <p>Delete me</p>
   ) : (
     <TeamStagesView adventureId={adventureId} userId={userId} />
   );
