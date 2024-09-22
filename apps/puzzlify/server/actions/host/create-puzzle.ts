@@ -1,30 +1,36 @@
 "use server";
 
-import { stageSchema } from "@/schemas/stage";
 import { hostAdventureActionClient } from "@/lib/next-safe-action";
 import { createStageDb } from "@/server/db/stage";
 import hashInput from "@/server/helpers/hashInput";
 import { revalidatePath } from "next/cache";
+import { puzzleFormSchema } from "@/schemas/puzzle";
+import { createHintDb } from "@/server/db/hint";
 
-export const createStage = hostAdventureActionClient
-  .schema(stageSchema)
-  .metadata({ roleName: "host", actionName: "create-stage" })
+export const createPuzzle = hostAdventureActionClient
+  .schema(puzzleFormSchema)
+  .metadata({ roleName: "host", actionName: "create-puzzle" })
   .action(async ({ parsedInput, ctx: { adventureId } }) => {
-    const { riddle, answer, label } = parsedInput;
+    const { riddle, answer, label, assets, hints } = parsedInput;
 
     const hashedAnswer = answer ? await hashInput(answer) : null;
 
     const stagePayload = { label, adventureId, riddle, answer: hashedAnswer };
 
     try {
-      // TODO: Remove in favor of the new createPuzzle flow
-      // @ts-expect-error
-      const stage = await createStageDb(stagePayload);
+      const { id: stageId } = await createStageDb(stagePayload);
+
+      await Promise.all(
+        hints.map(async ({ hint, delay }) => {
+          await createHintDb({ stageId, hint, delay });
+        }),
+      );
+
       revalidatePath(`/adventure/${adventureId}`);
 
-      return { stageId: stage.id };
+      return { stageId };
     } catch (error) {
-      const userFacingErrorMessage = "Failed to add stage";
+      const userFacingErrorMessage = "Failed to add puzzle";
       console.error(userFacingErrorMessage, error);
       return { error: userFacingErrorMessage };
     }

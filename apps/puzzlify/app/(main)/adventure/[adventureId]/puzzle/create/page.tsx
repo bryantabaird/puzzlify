@@ -1,4 +1,4 @@
-import StageForm from "@/components/StageForm";
+import PuzzlePage from "../_components/PuzzlePage";
 import { getAdventureWithStages } from "@/server/db/adventure";
 
 export default async function CreateStagePage({
@@ -17,11 +17,5 @@ export default async function CreateStagePage({
     );
   }
 
-  return (
-    <div>
-      <h1>{adventure.name}</h1>
-      <pre>{JSON.stringify(adventure, null, 4)}</pre>
-      <StageForm adventureId={adventure.id} />
-    </div>
-  );
+  return <PuzzlePage adventureId={adventureId} />;
 }

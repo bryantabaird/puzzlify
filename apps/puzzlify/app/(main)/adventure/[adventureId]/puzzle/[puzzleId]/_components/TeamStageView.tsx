@@ -36,7 +36,7 @@ export default async function TeamStageView({
               <li key={hint.id}>
                 <TeamHintView
                   hintId={hint.id}
-                  stageId={stage.id}
+                  puzzleId={stage.id}
                   adventureId={adventureId}
                   delay={hint.delay}
                   startDate={startDate}

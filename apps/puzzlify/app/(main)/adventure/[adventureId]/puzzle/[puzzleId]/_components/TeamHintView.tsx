@@ -6,7 +6,7 @@ import { Adventure, Hint, Stage } from "@prisma/client";
 
 type Props = {
   hintId: Hint["id"];
-  stageId: Stage["id"];
+  puzzleId: Stage["id"];
   adventureId: Adventure["id"];
   delay: Hint["delay"];
   startDate: Date;
@@ -14,7 +14,7 @@ type Props = {
 
 export default function TeamHintView({
   hintId,
-  stageId,
+  puzzleId,
   adventureId,
   delay,
   startDate,
@@ -29,7 +29,7 @@ export default function TeamHintView({
       ) : (
         <GetHintForm
           hintId={hintId}
-          stageId={stageId}
+          stageId={puzzleId}
           adventureId={adventureId}
         />
       )}

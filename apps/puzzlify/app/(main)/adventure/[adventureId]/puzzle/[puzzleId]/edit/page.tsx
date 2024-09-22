@@ -7,13 +7,13 @@ import React from "react";
 type EditStageProps = {
   params: {
     adventureId: string;
-    stageId: string;
+    puzzleId: string;
   };
 };
 
 export default async function EditStage({ params }: EditStageProps) {
-  const { stageId, adventureId } = params;
-  const stage = await getStageWithHints(stageId);
+  const { puzzleId, adventureId } = params;
+  const stage = await getStageWithHints(puzzleId);
 
   if (!stage) {
     return (
@@ -27,15 +27,19 @@ export default async function EditStage({ params }: EditStageProps) {
     <>
       <StageForm adventureId={adventureId} stage={stage} />
       <br />
-      <HintForm adventureId={adventureId} stageId={params.stageId} />
+      <HintForm adventureId={adventureId} stageId={params.puzzleId} />
       <br />
       {stage.hints.map((hint) => {
         return (
           <React.Fragment key={hint.id}>
-            <HintForm adventureId={adventureId} stageId={stageId} hint={hint} />
+            <HintForm
+              adventureId={adventureId}
+              stageId={puzzleId}
+              hint={hint}
+            />
             <DeleteHintForm
               adventureId={adventureId}
-              stageId={stageId}
+              stageId={puzzleId}
               hintId={hint.id}
             />
           </React.Fragment>

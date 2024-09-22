@@ -165,6 +165,13 @@ export const getTeamAdventureId = async (
   });
 };
 
+export const getAdventureName = async (adventureId: Adventure["id"]) => {
+  return await prisma.adventure.findUnique({
+    where: { id: adventureId },
+    select: { name: true },
+  });
+};
+
 export const getAdventureStartDateTime = async (
   adventureId: Adventure["id"],
 ) => {

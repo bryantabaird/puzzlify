@@ -121,3 +121,27 @@ export const getStartStages = async (adventureId: string) => {
     },
   });
 };
+
+export const getAdventureStages = async (adventureId: string) => {
+  return await prisma.stage.findMany({
+    where: { adventureId },
+    select: {
+      id: true,
+      label: true,
+      previousStages: {
+        select: {
+          fromStage: {
+            select: { id: true },
+          },
+        },
+      },
+      nextStages: {
+        select: {
+          toStage: {
+            select: { id: true },
+          },
+        },
+      },
+    },
+  });
+};

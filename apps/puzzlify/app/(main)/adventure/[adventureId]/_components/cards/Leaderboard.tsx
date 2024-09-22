@@ -1,8 +1,14 @@
 import React from "react";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import Link from "next/link";
 import { Adventure } from "@prisma/client";
+import { Medal } from "lucide-react";
 
 export default function LeaderboardCard({
   adventureId,
@@ -43,39 +49,36 @@ export default function LeaderboardCard({
   ];
 
   return (
-    <Card className="col-span-3">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
-        <CardTitle>Leaderboard</CardTitle>
-        <Link
-          href={`/adventure/${adventureId}/leaderboard`}
-          className={buttonVariants({ variant: "outline" })}
-        >
-          View
-        </Link>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-8">
-          {leaderboardData.map((participant, index) => (
-            <div key={index} className="flex items-center">
-              {/* Rank as a styled number instead of avatar */}
-              <div className="flex items-center justify-center h-9 w-9 bg-gray-200 rounded-full">
-                <span className="font-bold text-gray-700">
-                  {participant.rank}
-                </span>
+    <Card className="col-span-3 transition-all ease-in-out duration-300 hover:bg-muted focus:border-ring">
+      <Link href={`/adventure/${adventureId}/leaderboard`}>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
+          <CardTitle>Leaderboard</CardTitle>
+          <Medal />
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-8">
+            {leaderboardData.map((participant, index) => (
+              <div key={index} className="flex items-center">
+                {/* Rank as a styled number instead of avatar */}
+                <div className="flex items-center justify-center h-9 w-9 bg-gray-200 rounded-full">
+                  <span className="font-bold text-gray-700">
+                    {participant.rank}
+                  </span>
+                </div>
+                <div className="ml-4 space-y-1">
+                  <p className="text-sm font-medium leading-none">
+                    {participant.name}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {participant.timeSpent}
+                  </p>
+                </div>
+                <div className="ml-auto font-medium">{participant.level}</div>
               </div>
-              <div className="ml-4 space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  {participant.name}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {participant.timeSpent}
-                </p>
-              </div>
-              <div className="ml-auto font-medium">{participant.level}</div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
+            ))}
+          </div>
+        </CardContent>
+      </Link>
     </Card>
   );
 }

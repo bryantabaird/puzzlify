@@ -5,6 +5,7 @@ import { getUserId } from "@/server/helpers/getUserId";
 import { getAdventureWithStages } from "@/server/db/adventure";
 import { Adventure } from "@prisma/client";
 import { getUserAdventure } from "@/server/db/user-adventure";
+import { buttonVariants } from "@/components/ui/button";
 
 export default async function JoinAdventure({
   params,
@@ -41,8 +42,11 @@ export default async function JoinAdventure({
           <div className="card-body">
             <div className="items-center mt-2">
               You are already in this adventure!
-              <Link href={`/adventure/${adventureId}`}>
-                <a className="btn btn-primary">Go to adventure</a>
+              <Link
+                href={`/adventure/${adventureId}`}
+                className={buttonVariants()}
+              >
+                Go to adventure
               </Link>
             </div>
           </div>

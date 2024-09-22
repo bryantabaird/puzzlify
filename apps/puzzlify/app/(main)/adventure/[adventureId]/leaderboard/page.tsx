@@ -1,5 +1,5 @@
-import { Progress, columns } from "./_components/columns";
-import { DataTable } from "./_components/data-table";
+import { Progress, columns } from "./_components/leaderboard-table/columns";
+import { DataTable } from "./_components/leaderboard-table/data-table";
 
 async function getData(): Promise<Progress[]> {
   const mockData = [];
@@ -20,7 +20,7 @@ export default async function DemoPage() {
   const data = await getData();
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto">
       <DataTable columns={columns} data={data} />
     </div>
   );

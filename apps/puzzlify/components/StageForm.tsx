@@ -6,6 +6,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 import { stageSchema } from "@/schemas/stage";
 import { editStage } from "@/server/actions/host/edit-stage";
+import { Input } from "@/components/ui/input";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 
 type StageFormProps = {
   adventureId: Adventure["id"];
@@ -34,61 +44,55 @@ const StageForm = ({ adventureId, stage }: StageFormProps) => {
   );
 
   return (
-    <form onSubmit={handleSubmitWithAction}>
-      <div className="flex flex-col gap-2">
-        <div>
-          <label
-            className={`input input-bordered ${form.formState.errors.label ? "input-error" : ""} flex items-center gap-2 mb-2`}
-          >
-            Name
-            <input type="text" className="grow" {...form.register("label")} />
-          </label>
-          {form.formState.errors.label ? (
-            <div className="label">
-              <span className="label-text-alt text-error">
-                {form.formState.errors.label.message}
-              </span>
-            </div>
-          ) : null}
-        </div>
+    <Form {...form}>
+      <form onSubmit={handleSubmitWithAction} className="flex flex-col gap-2">
+        <FormField
+          control={form.control}
+          name="label"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-        <div>
-          <label
-            className={`input input-bordered ${form.formState.errors.riddle ? "input-error" : ""} flex items-center gap-2 mb-2`}
-          >
-            Riddle
-            <input type="text" className="grow" {...form.register("riddle")} />
-          </label>
-          {form.formState.errors.riddle ? (
-            <div className="label">
-              <span className="label-text-alt text-error">
-                {form.formState.errors.riddle.message}
-              </span>
-            </div>
-          ) : null}
-        </div>
+        <FormField
+          control={form.control}
+          name="riddle"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Riddle</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-        <div>
-          <label
-            className={`input input-bordered ${form.formState.errors.answer ? "input-error" : ""} flex items-center gap-2 mb-2`}
-          >
-            Answer
-            <input type="text" className="grow" {...form.register("answer")} />
-          </label>
-          {form.formState.errors.answer ? (
-            <div className="label">
-              <span className="label-text-alt text-error">
-                {form.formState.errors.answer.message}
-              </span>
-            </div>
-          ) : null}
-        </div>
+        <FormField
+          control={form.control}
+          name="answer"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Answer</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-        <button type="submit" className="btn btn-primary w-full">
+        <Button type="submit" className="btn btn-primary w-full">
           {mode === "create" ? "Create Stage" : "Update Stage"}
-        </button>
-      </div>
-    </form>
+        </Button>
+      </form>
+    </Form>
   );
 };
 

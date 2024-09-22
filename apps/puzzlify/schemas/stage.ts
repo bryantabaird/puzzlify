@@ -2,8 +2,8 @@ import { z } from "zod";
 
 export const stageSchema = z.object({
   label: z.string().min(1, { message: "Stage name is required" }),
-  riddle: z.string().min(1, { message: "Please provide a riddle" }).nullable(),
-  answer: z.string().min(1, { message: "Please provide an answer" }).nullable(),
+  riddle: z.string().min(1, { message: "Please provide a riddle" }).optional(),
+  answer: z.string().min(1, { message: "Please provide an answer" }).optional(),
 });
 
 export type Stage = z.infer<typeof stageSchema>;

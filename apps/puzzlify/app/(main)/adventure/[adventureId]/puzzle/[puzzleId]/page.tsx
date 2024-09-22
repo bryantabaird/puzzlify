@@ -8,27 +8,27 @@ import { getTeamUserFromAdventureUser } from "@/server/db/team-user";
 
 type ViewStagePageProps = {
   params: {
-    stageId: string;
+    puzzleId: string;
     adventureId: string;
   };
 };
 
 export default async function ViewStagePage({ params }: ViewStagePageProps) {
   const adventureId = params.adventureId;
-  const stageId = params.stageId;
+  const puzzleId = params.puzzleId;
 
   const userId = await getUserId();
 
   const isHost = await isAdventureHost({ adventureId, userId });
 
-  const stage = await getStageWithPreviousAndNextStages(stageId);
+  const stage = await getStageWithPreviousAndNextStages(puzzleId);
 
   if (!stage) {
     throw new Error("Stage not found");
   }
 
   if (isHost) {
-    return <HostStageView adventureId={adventureId} stageId={stage.id} />;
+    return <HostStageView adventureId={adventureId} puzzleId={stage.id} />;
   } else {
     let startDate;
     const teamUser = await getTeamUserFromAdventureUser({
@@ -43,7 +43,7 @@ export default async function ViewStagePage({ params }: ViewStagePageProps) {
     if (stage.hints.length > 0) {
       const teamProgress = await getTeamStageStartTime({
         teamId: teamUser.teamId,
-        stageId,
+        stageId: puzzleId,
         adventureId,
       });
 
