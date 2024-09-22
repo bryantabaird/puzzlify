@@ -1,8 +1,8 @@
 import { createMiddleware } from "next-safe-action";
-import { stageBindArgsSchema, adventureBindArgsSchema } from "./schemas";
+import { puzzleBindArgsSchema, adventureBindArgsSchema } from "./schemas";
 import { Team, User } from "@prisma/client";
 import { getTeamUserFromAdventureUser } from "@/server/db/team-user";
-import { getTeamStageInProgress } from "@/server/db/team-progress";
+import { getTeamPuzzleInProgress } from "@/server/db/team-progress";
 
 export const teamAdventureMiddlewareFn = createMiddleware<{
   ctx: { userId: User["id"] };
@@ -21,21 +21,21 @@ export const teamAdventureMiddlewareFn = createMiddleware<{
   return await next({ ctx: { adventureId, teamId: teamUser.teamId } });
 });
 
-export const stageAdventureMiddlewareFn = createMiddleware<{
+export const puzzleAdventureMiddlewareFn = createMiddleware<{
   ctx: { userId: User["id"]; teamId: Team["id"] };
 }>().define(async ({ next, ctx: { teamId }, bindArgsClientInputs }) => {
   const bindArgs = bindArgsClientInputs[0];
-  const { stageId, adventureId } = stageBindArgsSchema.parse(bindArgs);
+  const { puzzleId, adventureId } = puzzleBindArgsSchema.parse(bindArgs);
 
-  const activeStage = await getTeamStageInProgress({
+  const activePuzzle = await getTeamPuzzleInProgress({
     teamId,
-    stageId,
+    puzzleId,
     adventureId,
   });
 
-  if (!activeStage) {
-    throw new Error("This stage is not available to the user");
+  if (!activePuzzle) {
+    throw new Error("This puzzle is not available to the user");
   }
 
-  return await next({ ctx: { stageId } });
+  return await next({ ctx: { puzzleId } });
 });

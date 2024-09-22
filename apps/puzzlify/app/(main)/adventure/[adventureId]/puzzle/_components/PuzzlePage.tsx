@@ -55,10 +55,10 @@ export default function CreatePuzzlePage({
       formProps: { defaultValues },
       actionProps: {
         onSuccess: async ({ data, input }) => {
-          if (data?.stageId) {
+          if (data?.puzzleId) {
             uploadAssets({
               adventureId,
-              stageId: data.stageId,
+              puzzleId: data.puzzleId,
               fileAssets: fileAssetsRef.current,
             });
           }

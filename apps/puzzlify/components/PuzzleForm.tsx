@@ -1,11 +1,11 @@
 "use client";
 
-import { Adventure, Stage } from "@prisma/client";
-import { createStage } from "@/server/actions/host/create-stage";
+import { Adventure, Puzzle } from "@prisma/client";
+import { createPuzzle } from "@/server/actions/host/create-puzzle";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
-import { stageSchema } from "@/schemas/stage";
-import { editStage } from "@/server/actions/host/edit-stage";
+import { puzzleSchema } from "@/schemas/puzzle";
+import { editPuzzle } from "@/server/actions/host/edit-puzzle";
 import { Input } from "@/components/ui/input";
 import {
   Form,
@@ -17,19 +17,19 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 
-type StageFormProps = {
+type PuzzleFormProps = {
   adventureId: Adventure["id"];
-  stage?: Stage;
+  puzzle?: Puzzle;
 };
 
-const StageForm = ({ adventureId, stage }: StageFormProps) => {
-  const mode = stage ? "edit" : "create";
+const PuzzleForm = ({ adventureId, puzzle }: PuzzleFormProps) => {
+  const mode = puzzle ? "edit" : "create";
 
-  const boundUpdateStage = !stage
-    ? createStage.bind(null, { adventureId })
-    : editStage.bind(null, { adventureId, stageId: stage.id });
+  const boundUpdatePuzzle = !puzzle
+    ? createPuzzle.bind(null, { adventureId })
+    : editPuzzle.bind(null, { adventureId, puzzleId: puzzle.id });
 
-  const { riddle, label } = stage || { riddle: "", answer: "", label: "" };
+  const { riddle, label } = puzzle || { riddle: "", answer: "", label: "" };
   const defaultValues = {
     riddle: riddle || "",
     answer: "",
@@ -38,8 +38,8 @@ const StageForm = ({ adventureId, stage }: StageFormProps) => {
   };
 
   const { form, handleSubmitWithAction } = useHookFormAction(
-    boundUpdateStage,
-    zodResolver(stageSchema),
+    boundUpdatePuzzle,
+    zodResolver(puzzleSchema),
     { formProps: { defaultValues } },
   );
 
@@ -89,11 +89,11 @@ const StageForm = ({ adventureId, stage }: StageFormProps) => {
         />
 
         <Button type="submit" className="btn btn-primary w-full">
-          {mode === "create" ? "Create Stage" : "Update Stage"}
+          {mode === "create" ? "Create Puzzle" : "Update Puzzle"}
         </Button>
       </form>
     </Form>
   );
 };
 
-export default StageForm;
+export default PuzzleForm;

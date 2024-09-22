@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { getHintIfAvailable } from "@/server/fetchers/get-hint";
-import { Hint, Stage } from "@prisma/client";
+import { Hint, Puzzle } from "@prisma/client";
 
 type Props = {
   adventureId: Hint["id"];
   hintId: Hint["id"];
-  stageId: Stage["id"];
+  puzzleId: Puzzle["id"];
 };
 
-const GetHintForm = ({ hintId, stageId, adventureId }: Props) => {
+const GetHintForm = ({ hintId, puzzleId, adventureId }: Props) => {
   const [hintContent, setHintContent] = useState<string | null>(null);
 
   // TODO: Ensure hints are not available client-side before the hint release time
@@ -18,7 +18,7 @@ const GetHintForm = ({ hintId, stageId, adventureId }: Props) => {
     e.preventDefault();
 
     try {
-      const hint = await getHintIfAvailable(hintId, stageId, adventureId);
+      const hint = await getHintIfAvailable(hintId, puzzleId, adventureId);
       if (hint) {
         setHintContent(hint);
       }

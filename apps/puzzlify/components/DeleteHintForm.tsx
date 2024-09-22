@@ -1,19 +1,19 @@
 "use client";
 // TODO: Can I remove use client?
 
-import { deleteHint } from "@/server/actions/host/delete-stage-hint";
-import { Adventure, Hint, Stage } from "@prisma/client";
+import { deleteHint } from "@/server/actions/host/delete-puzzle-hint";
+import { Adventure, Hint, Puzzle } from "@prisma/client";
 
 type HintProps = {
   adventureId: Adventure["id"];
-  stageId: Stage["id"];
+  puzzleId: Puzzle["id"];
   hintId: Hint["id"];
 };
 
-const DeleteHintForm = ({ adventureId, stageId, hintId }: HintProps) => {
+const DeleteHintForm = ({ adventureId, puzzleId, hintId }: HintProps) => {
   const deleteHintWithIds = deleteHint.bind(null, {
     adventureId,
-    stageId,
+    puzzleId,
     hintId,
   });
 

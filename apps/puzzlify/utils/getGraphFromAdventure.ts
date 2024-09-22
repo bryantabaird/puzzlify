@@ -1,11 +1,11 @@
 import { AdventureLayout } from "@/server/db/adventure";
 import type { Node, Edge } from "@xyflow/react";
 
-type StageNode = Node<{ label: string }>;
+type PuzzleNode = Node<{ label: string }>;
 
 export const START_NODE_ID = "pseudo-start";
 
-const getStartNodes = (nodes: StageNode[], edges: Edge[]) => {
+const getStartNodes = (nodes: PuzzleNode[], edges: Edge[]) => {
   const sourceNodeIds = new Set<string>();
   const targetNodeIds = new Set<string>();
 
@@ -30,22 +30,22 @@ const getStartNodes = (nodes: StageNode[], edges: Edge[]) => {
 
 const convertAdventureResponse = (
   adventure: NonNullable<AdventureLayout>,
-): { nodes: StageNode[]; edges: Edge[] } => {
-  const nodes: StageNode[] = [];
+): { nodes: PuzzleNode[]; edges: Edge[] } => {
+  const nodes: PuzzleNode[] = [];
   const edges: Edge[] = [];
 
-  adventure.stages.forEach((stage, idx) => {
+  adventure.puzzles.forEach((puzzle, idx) => {
     nodes.push({
-      id: stage.id,
-      data: { label: stage.label },
+      id: puzzle.id,
+      data: { label: puzzle.label },
       position: { x: 100 * idx, y: 100 * idx },
     });
 
-    stage.nextStages.forEach((relation) => {
+    puzzle.nextPuzzles.forEach((relation) => {
       edges.push({
         id: relation.id,
-        source: relation.fromStageId,
-        target: relation.toStageId,
+        source: relation.fromPuzzleId,
+        target: relation.toPuzzleId,
         animated: true,
       });
     });

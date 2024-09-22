@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import JoinAdventureForm from "@/components/JoinAdventureForm";
 import { getUserId } from "@/server/helpers/getUserId";
-import { getAdventureWithStages } from "@/server/db/adventure";
+import { getAdventureWithPuzzles } from "@/server/db/adventure";
 import { Adventure } from "@prisma/client";
 import { getUserAdventure } from "@/server/db/user-adventure";
 import { buttonVariants } from "@/components/ui/button";
@@ -15,7 +15,7 @@ export default async function JoinAdventure({
   const userId = await getUserId();
 
   const adventureId = params.adventureId;
-  const adventure = await getAdventureWithStages(adventureId);
+  const adventure = await getAdventureWithPuzzles(adventureId);
 
   if (!adventure) {
     return (

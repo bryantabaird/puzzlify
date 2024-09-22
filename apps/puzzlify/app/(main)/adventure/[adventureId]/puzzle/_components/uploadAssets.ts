@@ -1,5 +1,5 @@
 import { createAsset } from "@/server/actions/host/create-asset";
-import { getStageFileUrl } from "@/server/actions/user/get-signed-asset-retrieval-url";
+import { getPuzzleFileUrl } from "@/server/actions/user/get-signed-asset-retrieval-url";
 import { getSignedAssetUploadUrl } from "@/server/actions/user/get-signed-asset-upload-url";
 
 export type FileAsset = {
@@ -9,13 +9,13 @@ export type FileAsset = {
 
 type UploadAssetProps = {
   adventureId: string;
-  stageId: string;
+  puzzleId: string;
   fileAssets: Array<FileAsset>;
 };
 
 export default async function uploadAssets({
   adventureId,
-  stageId,
+  puzzleId,
   fileAssets,
 }: UploadAssetProps) {
   try {
@@ -23,7 +23,7 @@ export default async function uploadAssets({
     const uploadPromises = fileAssets.map(async ({ file, assetId }) => {
       const { assetUploadUrl } = await getSignedAssetUploadUrl({
         adventureId,
-        stageId,
+        puzzleId,
         contentType: file.type,
         assetId: assetId,
       });
@@ -36,14 +36,18 @@ export default async function uploadAssets({
 
       if (uploadResponse.ok) {
         try {
-          const url = await getStageFileUrl({ adventureId, stageId, assetId });
-          await createAsset({ adventureId, stageId }, { url, id: assetId });
+          const url = await getPuzzleFileUrl({
+            adventureId,
+            puzzleId,
+            assetId,
+          });
+          await createAsset({ adventureId, puzzleId }, { url, id: assetId });
           return { status: "fulfilled", file };
         } catch (error) {
-          console.error("Error adding asset to stage", error);
+          console.error("Error adding asset to puzzle", error);
           return {
             status: "rejected",
-            reason: "Failed to add asset to stage.",
+            reason: "Failed to add asset to puzzle.",
           };
         }
       } else {

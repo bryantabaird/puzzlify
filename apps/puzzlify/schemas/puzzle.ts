@@ -23,3 +23,25 @@ export const puzzleFormSchema = z.object({
 });
 
 export type PuzzleForm = z.infer<typeof puzzleFormSchema>;
+
+export const puzzleSchema = z.object({
+  label: z.string().min(1, { message: "Puzzle name is required" }),
+  riddle: z.string().min(1, { message: "Please provide a riddle" }).optional(),
+  answer: z.string().min(1, { message: "Please provide an answer" }).optional(),
+});
+
+export type Puzzle = z.infer<typeof puzzleSchema>;
+
+export const hintSchema = z.object({
+  hint: z.string().min(1, "Hint is required"),
+  delay: z.coerce
+    .number({
+      required_error: "Delay value is required",
+      invalid_type_error: "Delay value must be a number",
+    })
+    .int()
+    .positive("Delay must be greater than 0")
+    .min(0),
+});
+
+export type Hint = z.infer<typeof hintSchema>;

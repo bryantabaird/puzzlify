@@ -1,7 +1,7 @@
 "use server";
 
 import { PrismaClient } from "@prisma/client";
-import { getTeamStageStartTime } from "../db/team-progress";
+import { getTeamPuzzleStartTime } from "../db/team-progress";
 import { getUserId } from "../helpers/getUserId";
 import { get } from "http";
 import { getTeamUserFromAdventureUser } from "../db/team-user";
@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 
 export const getHintIfAvailable = async (
   hintId: string,
-  stageId: string,
+  puzzleId: string,
   adventureId: string,
 ) => {
   const userId = await getUserId();
@@ -34,14 +34,14 @@ export const getHintIfAvailable = async (
     throw new Error("User is not on a team that is part of this adventure");
   }
 
-  const teamProgress = await getTeamStageStartTime({
+  const teamProgress = await getTeamPuzzleStartTime({
     teamId: teamUser.teamId,
-    stageId,
+    puzzleId,
     adventureId,
   });
 
   if (!teamProgress) {
-    throw new Error("Team progress not found for this stage");
+    throw new Error("Team progress not found for this puzzle");
   }
 
   const hintAccessTime = new Date(

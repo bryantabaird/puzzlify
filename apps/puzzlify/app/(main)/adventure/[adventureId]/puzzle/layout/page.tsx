@@ -1,21 +1,23 @@
 import { Adventure } from "@prisma/client";
 import Builder from "./_components/drag-drop/Builder";
-import { getAdventureStages } from "@/server/db/stage";
+import { getAdventurePuzzles } from "@/server/db/puzzle";
 
 export default async function PuzzleLayout({
   params: { adventureId },
 }: {
   params: { adventureId: Adventure["id"] };
 }) {
-  const rawPuzzles = await getAdventureStages(adventureId);
+  const rawPuzzles = await getAdventurePuzzles(adventureId);
 
   const puzzles = rawPuzzles.map((rawPuzzle) => ({
     id: rawPuzzle.id,
     label: rawPuzzle.label,
-    previousStageIds: rawPuzzle.previousStages.map(
-      (relation) => relation.fromStage.id,
+    previousPuzzleIds: rawPuzzle.previousPuzzles.map(
+      (relation) => relation.fromPuzzle.id,
     ),
-    nextStageIds: rawPuzzle.nextStages.map((relation) => relation.toStage.id),
+    nextPuzzleIds: rawPuzzle.nextPuzzles.map(
+      (relation) => relation.toPuzzle.id,
+    ),
   }));
 
   return <Builder initialPuzzles={puzzles} />;

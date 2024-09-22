@@ -2,17 +2,17 @@ import { createSafeActionClient } from "next-safe-action";
 import {
   hostAdventureMiddlewareFn,
   hostHintMiddlewareFn,
-  hostStageMiddlewareFn,
+  hostPuzzleMiddlewareFn,
 } from "./middleware-host";
 import {
   adventureBindArgsSchema,
   baseBindArgsSchema,
   metadataSchema,
-  stageBindArgsSchema,
+  puzzleBindArgsSchema,
 } from "./schemas";
 import { userMiddlewareFn } from "./middleware-user";
 import {
-  stageAdventureMiddlewareFn,
+  puzzleAdventureMiddlewareFn,
   teamAdventureMiddlewareFn,
 } from "./middleware-team";
 
@@ -37,13 +37,13 @@ export const hostAdventureActionClient = userActionClient
   >([adventureBindArgsSchema])
   .use(hostAdventureMiddlewareFn);
 
-export const hostStageActionClient = hostAdventureActionClient
+export const hostPuzzleActionClient = hostAdventureActionClient
   .bindArgsSchemas<
-    [bindArgsSchema: typeof stageBindArgsSchema]
-  >([stageBindArgsSchema])
-  .use(hostStageMiddlewareFn);
+    [bindArgsSchema: typeof puzzleBindArgsSchema]
+  >([puzzleBindArgsSchema])
+  .use(hostPuzzleMiddlewareFn);
 
-export const hostHintActionClient = hostStageActionClient
+export const hostHintActionClient = hostPuzzleActionClient
   .bindArgsSchemas<
     [bindArgsSchema: typeof baseBindArgsSchema]
   >([baseBindArgsSchema])
@@ -55,8 +55,8 @@ export const teamAdventureActionClient = userActionClient
   >([adventureBindArgsSchema])
   .use(teamAdventureMiddlewareFn);
 
-export const stageAdventureActionClient = teamAdventureActionClient
+export const puzzleAdventureActionClient = teamAdventureActionClient
   .bindArgsSchemas<
-    [bindArgsSchema: typeof stageBindArgsSchema]
-  >([stageBindArgsSchema])
-  .use(stageAdventureMiddlewareFn);
+    [bindArgsSchema: typeof puzzleBindArgsSchema]
+  >([puzzleBindArgsSchema])
+  .use(puzzleAdventureMiddlewareFn);

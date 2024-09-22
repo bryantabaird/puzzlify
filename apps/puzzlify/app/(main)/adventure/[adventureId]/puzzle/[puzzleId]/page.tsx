@@ -1,19 +1,19 @@
 import { getUserId } from "@/server/helpers/getUserId";
 import { isAdventureHost } from "@/server/helpers/isAdventureHost";
-import { getStageWithPreviousAndNextStages } from "@/server/db/stage";
-import { getTeamStageStartTime } from "@/server/db/team-progress";
-import TeamStageView from "./_components/TeamStageView";
-import HostStageView from "./_components/HostStageView";
+import { getPuzzleWithPreviousAndNextPuzzles } from "@/server/db/puzzle";
+import { getTeamPuzzleStartTime } from "@/server/db/team-progress";
+import TeamPuzzleView from "./_components/TeamPuzzleView";
+import HostPuzzleView from "./_components/HostPuzzleView";
 import { getTeamUserFromAdventureUser } from "@/server/db/team-user";
 
-type ViewStagePageProps = {
+type ViewPuzzlePageProps = {
   params: {
     puzzleId: string;
     adventureId: string;
   };
 };
 
-export default async function ViewStagePage({ params }: ViewStagePageProps) {
+export default async function ViewPuzzlePage({ params }: ViewPuzzlePageProps) {
   const adventureId = params.adventureId;
   const puzzleId = params.puzzleId;
 
@@ -21,14 +21,14 @@ export default async function ViewStagePage({ params }: ViewStagePageProps) {
 
   const isHost = await isAdventureHost({ adventureId, userId });
 
-  const stage = await getStageWithPreviousAndNextStages(puzzleId);
+  const puzzle = await getPuzzleWithPreviousAndNextPuzzles(puzzleId);
 
-  if (!stage) {
-    throw new Error("Stage not found");
+  if (!puzzle) {
+    throw new Error("Puzzle not found");
   }
 
   if (isHost) {
-    return <HostStageView adventureId={adventureId} puzzleId={stage.id} />;
+    return <HostPuzzleView adventureId={adventureId} puzzleId={puzzle.id} />;
   } else {
     let startDate;
     const teamUser = await getTeamUserFromAdventureUser({
@@ -40,23 +40,23 @@ export default async function ViewStagePage({ params }: ViewStagePageProps) {
       throw new Error("User is not on a team that is part of this adventure");
     }
 
-    if (stage.hints.length > 0) {
-      const teamProgress = await getTeamStageStartTime({
+    if (puzzle.hints.length > 0) {
+      const teamProgress = await getTeamPuzzleStartTime({
         teamId: teamUser.teamId,
-        stageId: puzzleId,
+        puzzleId: puzzleId,
         adventureId,
       });
 
       startDate = teamProgress?.startTime;
       if (!startDate) {
-        throw new Error("User has not started this stage");
+        throw new Error("User has not started this puzzle");
       }
     }
 
     return (
-      <TeamStageView
+      <TeamPuzzleView
         adventureId={adventureId}
-        stage={stage}
+        puzzle={puzzle}
         startDate={startDate}
       />
     );

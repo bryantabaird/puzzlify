@@ -1,20 +1,18 @@
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Adventure, Stage, TeamAdventure, Tier } from "@prisma/client";
-import { cn } from "@/lib/utils";
+import { Adventure, Puzzle, TeamAdventure, Tier } from "@prisma/client";
 import { Users } from "lucide-react";
 import Link from "next/link";
 
 type Props = {
   adventure: Adventure & {
-    stages: Stage[];
+    puzzles: Puzzle[];
     teams: TeamAdventure[];
     tier: Tier;
   };
 };
 
 export default function TeamsCard({ adventure }: Props) {
-  const totalStages = adventure.stages.length;
   const teamsSignedUp = 99; //adventure.teams.length;
   const maxTeamCount = 200; //adventure.tier.maxTeamCount;
 

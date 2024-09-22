@@ -1,7 +1,7 @@
 "use server";
 
 import { getSignedUrl } from "@aws-sdk/cloudfront-signer"; // ESM
-import { Adventure, Asset, Stage } from "@prisma/client";
+import { Adventure, Asset, Puzzle } from "@prisma/client";
 
 const cloudfrontDistributionDomain = "https://doz3dod0wo07o.cloudfront.net";
 
@@ -13,16 +13,16 @@ if (!key) {
   throw new Error("No private key found");
 }
 
-export const getStageFileUrl = async ({
+export const getPuzzleFileUrl = async ({
   adventureId,
-  stageId,
+  puzzleId,
   assetId,
 }: {
   adventureId: Adventure["id"];
-  stageId: Stage["id"];
+  puzzleId: Puzzle["id"];
   assetId: Asset["id"];
 }) => {
-  const url = `${cloudfrontDistributionDomain}/${adventureId}/${stageId}/${assetId}`;
+  const url = `${cloudfrontDistributionDomain}/${adventureId}/${puzzleId}/${assetId}`;
 
   const signedUrl = await getSignedUrl({
     url,

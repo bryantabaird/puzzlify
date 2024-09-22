@@ -1,17 +1,17 @@
 import { Adventure } from "@prisma/client";
 import PuzzlesView from "./_components/PuzzlesView";
-import { getAdventureStages } from "@/server/db/stage";
+import { getAdventurePuzzles } from "@/server/db/puzzle";
 
 export default async function PuzzlesPage({
   params: { adventureId },
 }: {
   params: { adventureId: Adventure["id"] };
 }) {
-  const stages = await getAdventureStages(adventureId);
+  const puzzles = await getAdventurePuzzles(adventureId);
 
-  if (!stages) {
-    return <div>No stages found for this adventure</div>;
+  if (!puzzles) {
+    return <div>No puzzles found for this adventure</div>;
   }
 
-  return <PuzzlesView puzzles={stages} adventureId={adventureId} />;
+  return <PuzzlesView puzzles={puzzles} adventureId={adventureId} />;
 }

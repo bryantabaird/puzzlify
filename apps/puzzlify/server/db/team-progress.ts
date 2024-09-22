@@ -1,16 +1,16 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Adventure, Stage, TeamProgress, Team } from "@prisma/client";
+import { Adventure, Puzzle, TeamProgress, Team } from "@prisma/client";
 
-type GetTeamStageInProgressParams = {
+type GetTeamPuzzleInProgressParams = {
   teamId: Team["id"];
   adventureId: Adventure["id"];
 };
-export const getTeamStagesInProgress = async ({
+export const getTeamPuzzlesInProgress = async ({
   teamId,
   adventureId,
-}: GetTeamStageInProgressParams) => {
+}: GetTeamPuzzleInProgressParams) => {
   return await prisma.teamProgress.findMany({
     where: {
       teamId,
@@ -18,46 +18,46 @@ export const getTeamStagesInProgress = async ({
       completionTime: null,
     },
     include: {
-      stage: true,
+      puzzle: true,
     },
   });
 };
 
-type GetTeamStageInProgressPayload = {
+type GetTeamPuzzleInProgressPayload = {
   teamId: Team["id"];
   adventureId: Adventure["id"];
-  stageId: Stage["id"];
+  puzzleId: Puzzle["id"];
 };
 
-export const getTeamStageInProgress = async ({
+export const getTeamPuzzleInProgress = async ({
   teamId,
   adventureId,
-  stageId,
-}: GetTeamStageInProgressPayload) => {
+  puzzleId,
+}: GetTeamPuzzleInProgressPayload) => {
   return await prisma.teamProgress.findFirst({
     where: {
       teamId,
       adventureId,
-      stageId,
+      puzzleId,
       completionTime: null,
     },
   });
 };
 
-export const getCountOfIncompletePreviousStages = async ({
+export const getCountOfIncompletePreviousPuzzles = async ({
   adventureId,
   teamId,
-  previousStageIds,
+  previousPuzzleIds,
 }: {
   adventureId: Adventure["id"];
   teamId: Team["id"];
-  previousStageIds: Array<Stage["id"]>;
+  previousPuzzleIds: Array<Puzzle["id"]>;
 }) => {
   return await prisma.teamProgress.count({
     where: {
       teamId,
       adventureId,
-      stageId: { in: previousStageIds },
+      puzzleId: { in: previousPuzzleIds },
       completionTime: null,
     },
   });
@@ -66,19 +66,19 @@ export const getCountOfIncompletePreviousStages = async ({
 export const createTeamProgress = async ({
   teamId,
   adventureId,
-  stageId,
+  puzzleId,
   startTime,
 }: {
   teamId: Team["id"];
   adventureId: Adventure["id"];
-  stageId: Stage["id"];
+  puzzleId: Puzzle["id"];
   startTime: Date;
 }) => {
   return await prisma.teamProgress.create({
     data: {
       teamId,
       adventureId,
-      stageId,
+      puzzleId,
       startTime,
     },
   });
@@ -87,7 +87,7 @@ export const createTeamProgress = async ({
 export const updateTeamProgress = async (
   teamId: Team["id"],
   adventureId: Adventure["id"],
-  stageId: Stage["id"],
+  puzzleId: Puzzle["id"],
   completionTime: Date,
 ) => {
   return prisma.teamProgress.update({
@@ -95,7 +95,7 @@ export const updateTeamProgress = async (
       teamProgressId: {
         teamId,
         adventureId,
-        stageId,
+        puzzleId,
       },
     },
     data: { completionTime },
@@ -103,32 +103,32 @@ export const updateTeamProgress = async (
 };
 
 type CreateTeamProgressesPayload = Array<
-  Pick<TeamProgress, "teamId" | "adventureId" | "stageId">
+  Pick<TeamProgress, "teamId" | "adventureId" | "puzzleId">
 >;
 // TODO: For signup, the start time should be the adventure start time,
 // but if we consider editing the start time on the adventure, ensure data integrity
 // here such that a team progress start time becomes out of sync. Maybe the
-// start time for starting stages could be a special ADVENTURE_START_TIME value
+// start time for starting puzzles could be a special ADVENTURE_START_TIME value
 export const createTeamProgresses = async (
   data: CreateTeamProgressesPayload,
 ) => {
   return await prisma.teamProgress.createMany({ data });
 };
 
-export const getTeamStageStartTime = async ({
+export const getTeamPuzzleStartTime = async ({
   teamId,
-  stageId,
+  puzzleId,
   adventureId,
 }: {
   teamId: Team["id"];
   adventureId: Adventure["id"];
-  stageId: Stage["id"];
+  puzzleId: Puzzle["id"];
 }) => {
   return await prisma.teamProgress.findFirst({
     where: {
       teamId,
       adventureId,
-      stageId,
+      puzzleId,
     },
     select: { startTime: true },
   });

@@ -1,10 +1,9 @@
 import { Metadata } from "next";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TeamsCard from "./_components/cards/Teams";
-import StagesCard from "./_components/cards/Stages";
+import PuzzlesCard from "./_components/cards/Puzzles";
 import StartTimeCard from "./_components/cards/StartTime";
 import OverviewCard from "./_components/cards/Overview";
 import { getAdventureStats } from "@/server/db/adventure";
@@ -51,7 +50,7 @@ export default async function Dashboard({
             <TabsContent value="overview" className="space-y-4">
               <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
                 <TeamsCard adventure={adventure} />
-                <StagesCard adventure={adventure} />
+                <PuzzlesCard adventure={adventure} />
                 <div className="col-span-2 sm:col-span-2">
                   <StartTimeCard adventureId={adventureId} />
                 </div>
@@ -110,7 +109,7 @@ export default async function Dashboard({
 //   //   Countdown
 //   //   Adventure layout (react flow)
 //   // If started:
-//   //   Stats per stage
+//   //   Stats per puzzle
 //   //   Leaderboard
 //   // Both:
 //   //   Upgrade options for teams

@@ -9,7 +9,7 @@ import { z } from "zod";
 export const deleteHint = hostHintActionClient
   .schema(z.object({}))
   .metadata({ roleName: "host", actionName: "delete-hint" })
-  .action(async ({ ctx: { adventureId, stageId, hintId } }) => {
+  .action(async ({ ctx: { adventureId, puzzleId, hintId } }) => {
     try {
       await deleteHintDb(hintId);
     } catch (error) {
@@ -18,6 +18,6 @@ export const deleteHint = hostHintActionClient
       return { error: userFacingErrorMessage };
     }
 
-    revalidatePath(`/adventure/${adventureId}/edit/stage/${stageId}`);
-    redirect(`/adventure/${adventureId}/edit/stage/${stageId}`);
+    revalidatePath(`/adventure/${adventureId}/edit/puzzle/${puzzleId}`);
+    redirect(`/adventure/${adventureId}/edit/puzzle/${puzzleId}`);
   });

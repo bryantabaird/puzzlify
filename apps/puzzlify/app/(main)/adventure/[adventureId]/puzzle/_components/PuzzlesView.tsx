@@ -29,7 +29,7 @@ import {
 import { Adventure } from "@prisma/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { deleteStage } from "@/server/actions/host/delete-stage";
+import { deletePuzzle } from "@/server/actions/host/delete-puzzle";
 import { useAction } from "next-safe-action/hooks";
 
 type PuzzleCard = {
@@ -54,14 +54,14 @@ export default function PuzzlesCardView({
     router.push(`/adventure/${adventureId}/puzzle/layout?puzzleId=${id}`);
   };
 
-  const handleDelete = (stageId: string) => {
-    setPuzzleCards(puzzleCards.filter((item) => item.id !== stageId));
-    execute({ stageId });
+  const handleDelete = (puzzleId: string) => {
+    setPuzzleCards(puzzleCards.filter((item) => item.id !== puzzleId));
+    execute({ puzzleId });
   };
 
-  const deleteStageBound = deleteStage.bind(null, { adventureId });
+  const deletePuzzleBound = deletePuzzle.bind(null, { adventureId });
 
-  const { execute } = useAction(deleteStageBound);
+  const { execute } = useAction(deletePuzzleBound);
 
   return (
     <div className="container mx-auto p-4">

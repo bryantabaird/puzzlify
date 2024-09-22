@@ -53,79 +53,79 @@ model Team {
 }
 
 model Adventure {
-  id              String          @id @default(uuid())
-  dateCreated     DateTime        @default(now())
-  name            String
-  startDate       DateTime
-  published       Boolean         @default(false)
-  flow            FlowType
-  stages          Stage[]         @relation("AdventureStages")
-  stageRelations  StageRelation[] @relation("AdventureStageRelations")
-  stageProgresses TeamProgress[]
-  tier            Tier            @relation(fields: [tierId], references: [id])
-  tierId          TierId          @default(FREE)
-  hostId          String
-  host            User            @relation("HostAdventures", fields: [hostId], references: [id])
-  teams           TeamAdventure[]
-  users           UserAdventure[]
+  id               String           @id @default(uuid())
+  dateCreated      DateTime         @default(now())
+  name             String
+  startDate        DateTime
+  published        Boolean          @default(false)
+  flow             FlowType
+  puzzles          Puzzle[]         @relation("AdventurePuzzles")
+  puzzleRelations  PuzzleRelation[] @relation("AdventurePuzzleRelations")
+  puzzleProgresses TeamProgress[]
+  tier             Tier             @relation(fields: [tierId], references: [id])
+  tierId           TierId           @default(FREE)
+  hostId           String
+  host             User             @relation("HostAdventures", fields: [hostId], references: [id])
+  teams            TeamAdventure[]
+  users            UserAdventure[]
 }
 
-model Stage {
-  id              String          @id @default(uuid())
-  label           String
-  riddle          String?
-  answer          String?
-  status          String          @default("draft")
-  assets          Asset[]
-  hints           Hint[]          @relation("StageHints")
-  adventureId     String
-  adventure       Adventure       @relation("AdventureStages", fields: [adventureId], references: [id])
-  stageProgresses TeamProgress[]
-  previousStages  StageRelation[] @relation("PreviousStages")
-  nextStages      StageRelation[] @relation("NextStages")
+model Puzzle {
+  id               String           @id @default(uuid())
+  label            String
+  riddle           String?
+  answer           String?
+  status           String           @default("draft")
+  assets           Asset[]
+  hints            Hint[]           @relation("PuzzleHints")
+  adventureId      String
+  adventure        Adventure        @relation("AdventurePuzzles", fields: [adventureId], references: [id])
+  puzzleProgresses TeamProgress[]
+  previousPuzzles  PuzzleRelation[] @relation("PreviousPuzzles")
+  nextPuzzles      PuzzleRelation[] @relation("NextPuzzles")
 }
 
 model Asset {
   id          String   @id
   url         String
-  stageId     String
-  stage       Stage    @relation(fields: [stageId], references: [id])
+  puzzleId    String
+  puzzle      Puzzle   @relation(fields: [puzzleId], references: [id])
   dateCreated DateTime @default(now())
 }
 
-model StageRelation {
-  id          String    @id @default(uuid())
-  adventureId String
-  adventure   Adventure @relation("AdventureStageRelations", fields: [adventureId], references: [id])
-  fromStageId String
-  fromStage   Stage     @relation("NextStages", fields: [fromStageId], references: [id])
-  toStageId   String
-  toStage     Stage     @relation("PreviousStages", fields: [toStageId], references: [id])
+model PuzzleRelation {
+  id           String    @id @default(uuid())
+  adventureId  String
+  adventure    Adventure @relation("AdventurePuzzleRelations", fields: [adventureId], references: [id])
+  fromPuzzleId String
+  fromPuzzle   Puzzle    @relation("NextPuzzles", fields: [fromPuzzleId], references: [id])
+  toPuzzleId   String
+  toPuzzle     Puzzle    @relation("PreviousPuzzles", fields: [toPuzzleId], references: [id])
 
-  @@unique([fromStageId, toStageId])
+  @@unique([fromPuzzleId, toPuzzleId])
 }
 
 model Hint {
-  id      String @id @default(uuid())
-  delay   Int
-  hint    String
-  stageId String
-  stage   Stage  @relation("StageHints", fields: [stageId], references: [id])
+  id       String @id @default(uuid())
+  delay    Int
+  hint     String
+  puzzleId String
+  puzzle   Puzzle @relation("PuzzleHints", fields: [puzzleId], references: [id])
 }
 
 model TeamProgress {
   id             String    @id @default(uuid())
   teamId         String
   adventureId    String
-  stageId        String
+  puzzleId       String
   startTime      DateTime  @default(now())
   completionTime DateTime?
 
   team      Team      @relation(fields: [teamId], references: [id])
   adventure Adventure @relation(fields: [adventureId], references: [id])
-  stage     Stage     @relation(fields: [stageId], references: [id])
+  puzzle    Puzzle    @relation(fields: [puzzleId], references: [id])
 
-  @@unique(name: "teamProgressId", [teamId, adventureId, stageId])
+  @@unique(name: "teamProgressId", [teamId, adventureId, puzzleId])
 }
 
 model TeamUser {
