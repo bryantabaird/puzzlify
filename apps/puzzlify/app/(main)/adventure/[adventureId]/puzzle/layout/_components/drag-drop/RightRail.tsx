@@ -32,7 +32,7 @@ const RightRail: React.FC<TrackProps> = ({
         let item = list.getItem(key);
         return {
           "custom-app-type": JSON.stringify(item),
-          "text/plain": item.name,
+          "text/plain": item.label,
         };
       });
     },
@@ -76,7 +76,10 @@ const RightRail: React.FC<TrackProps> = ({
       setPuzzles((prevPuzzles) =>
         prevPuzzles.map((puzzle) =>
           processedItems.map((item) => item.id).includes(puzzle.id)
-            ? { ...puzzle, trackId }
+            ? (() => {
+                const { trackId, ...puzzleProps } = puzzle;
+                return puzzleProps;
+              })()
             : puzzle,
         ),
       );
@@ -170,7 +173,7 @@ const RightRail: React.FC<TrackProps> = ({
               <Grip size={16} className="hidden lg:block" />
               <GripVertical size={16} className="block lg:hidden" />
             </span>
-            <span className="lg:ml-2 truncate">{item.name}</span>
+            <span className="lg:ml-2 truncate">{item.label}</span>
           </ListBoxItem>
         )}
       </ListBox>

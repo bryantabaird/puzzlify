@@ -32,7 +32,7 @@ const Finish: React.FC<FinishProps> = ({
         let item = list.getItem(key);
         return {
           "custom-app-type": JSON.stringify(item),
-          "text/plain": item.name,
+          "text/plain": item.label,
         };
       });
     },
@@ -173,7 +173,7 @@ const Finish: React.FC<FinishProps> = ({
                 <Grip size={16} className="hidden xl:block" />
                 <GripVertical size={16} className="block xl:hidden" />
               </span>
-              <span className="ml-1 xl:ml-2 truncate">{item.name}</span>
+              <span className="ml-1 xl:ml-2 truncate">{item.label}</span>
             </ListBoxItem>
           );
         }}

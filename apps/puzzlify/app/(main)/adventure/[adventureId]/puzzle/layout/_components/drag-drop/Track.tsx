@@ -35,7 +35,7 @@ const Track: React.FC<TrackProps> = ({
         let item = list.getItem(key);
         return {
           "custom-app-type": JSON.stringify(item),
-          "text/plain": item.name,
+          "text/plain": item.label,
         };
       });
     },
@@ -100,9 +100,17 @@ const Track: React.FC<TrackProps> = ({
           ),
       );
       list.append(...processedItems);
+      setPuzzles((prevPuzzles) =>
+        prevPuzzles.map((puzzle) =>
+          processedItems.map((item) => item.id).includes(puzzle.id)
+            ? { ...puzzle, trackId }
+            : puzzle,
+        ),
+      );
     },
 
     onReorder(e) {
+      console.log("onReorder", e);
       if (e.target.dropPosition === "before") {
         list.moveBefore(e.target.key, e.keys);
       } else if (e.target.dropPosition === "after") {
@@ -184,7 +192,7 @@ const Track: React.FC<TrackProps> = ({
                 <Grip size={16} className="hidden xl:block" />
                 <GripVertical size={16} className="block xl:hidden" />
               </span>
-              <span className="ml-1 xl:ml-2 truncate">{item.name}</span>
+              <span className="ml-1 xl:ml-2 truncate">{item.label}</span>
             </ListBoxItem>
           );
         }}

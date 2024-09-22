@@ -1,8 +1,9 @@
 export type Puzzle = {
   id: string;
-  name: string;
-  trackId: string;
-  trackGroupId: string;
+  label: string;
+  trackId?: string;
+  previousStageIds: string[];
+  nextStageIds: string[];
 };
 
 export type TrackProps = {
