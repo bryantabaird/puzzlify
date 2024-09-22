@@ -1,14 +1,11 @@
 import { Adventure } from "@prisma/client";
 import Builder from "./_components/drag-drop/Builder";
-import { getUserId } from "@/server/helpers/getUserId";
-import { isAdventureHost } from "@/server/helpers/isAdventureHost";
-import { get } from "http";
 import { getAdventureStages } from "@/server/db/stage";
 
 export default async function PuzzleLayout({
-  adventureId,
+  params: { adventureId },
 }: {
-  adventureId: Adventure["id"];
+  params: { adventureId: Adventure["id"] };
 }) {
   const rawPuzzles = await getAdventureStages(adventureId);
 
