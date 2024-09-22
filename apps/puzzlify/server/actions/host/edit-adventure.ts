@@ -9,7 +9,7 @@ import {
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-// TODO: /adventure/undefined/stage/28f09d72-a727-45ba-a8ad-7bb2761cce66
+// TODO: /adventure/undefined/puzzle/28f09d72-a727-45ba-a8ad-7bb2761cce66
 // Make sure this link doesn't work
 
 export const editAdventure = hostAdventureActionClient

@@ -2,11 +2,11 @@
 
 import GetHintForm from "@/components/GetHintForm";
 import useCountdown from "@/hooks/useCountdown";
-import { Adventure, Hint, Stage } from "@prisma/client";
+import { Adventure, Hint, Puzzle } from "@prisma/client";
 
 type Props = {
   hintId: Hint["id"];
-  puzzleId: Stage["id"];
+  puzzleId: Puzzle["id"];
   adventureId: Adventure["id"];
   delay: Hint["delay"];
   startDate: Date;
@@ -29,7 +29,7 @@ export default function TeamHintView({
       ) : (
         <GetHintForm
           hintId={hintId}
-          stageId={puzzleId}
+          puzzleId={puzzleId}
           adventureId={adventureId}
         />
       )}

@@ -11,13 +11,13 @@ import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
  * key to CloudFront. Private key to be used to sign urls
  */
 const PUBLIC_KEY_ID = "K10SXXCDTNL72X";
-const BUCKET_NAME = "adventure-app-stage-images";
+const BUCKET_NAME = "adventure-app-puzzle-images";
 
 export class AssetStorage extends Construct {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id);
 
-    const stageImagesBucket = new s3.Bucket(this, "StageImagesBucket", {
+    const puzzleImagesBucket = new s3.Bucket(this, "PuzzleImagesBucket", {
       bucketName: BUCKET_NAME,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       versioned: true,
@@ -46,16 +46,16 @@ export class AssetStorage extends Construct {
       "OAI",
     );
 
-    stageImagesBucket.grantRead(originAccessIdentity);
+    puzzleImagesBucket.grantRead(originAccessIdentity);
 
     const distribution = new cloudfront.CloudFrontWebDistribution(
       this,
-      "StageImagesDistribution",
+      "PuzzleImagesDistribution",
       {
         originConfigs: [
           {
             s3OriginSource: {
-              s3BucketSource: stageImagesBucket,
+              s3BucketSource: puzzleImagesBucket,
               originAccessIdentity: originAccessIdentity,
             },
             behaviors: [
@@ -82,8 +82,8 @@ export class AssetStorage extends Construct {
       },
     );
 
-    new cdk.CfnOutput(this, "StageImagesBucketName", {
-      value: stageImagesBucket.bucketName,
+    new cdk.CfnOutput(this, "PuzzleImagesBucketName", {
+      value: puzzleImagesBucket.bucketName,
     });
 
     new cdk.CfnOutput(this, "CloudFrontDistributionUrl", {

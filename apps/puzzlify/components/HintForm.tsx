@@ -1,26 +1,26 @@
 "use client";
 
-import { addHint } from "@/server/actions/host/create-stage-hint";
-import { editHint } from "@/server/actions/host/edit-stage-hint";
-import { hintSchema } from "@/schemas/stage";
+import { addHint } from "@/server/actions/host/create-puzzle-hint";
+import { editHint } from "@/server/actions/host/edit-puzzle-hint";
+import { hintSchema } from "@/schemas/puzzle";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
-import { Adventure, Hint, Stage } from "@prisma/client";
+import { Adventure, Hint, Puzzle } from "@prisma/client";
 import { use, useEffect, useState } from "react";
 import DeleteHintForm from "./DeleteHintForm";
 
 type HintProps = {
   adventureId: Adventure["id"];
-  stageId: Stage["id"];
+  puzzleId: Puzzle["id"];
   hint?: Hint;
 };
 
-const HintForm = ({ adventureId, stageId, hint }: HintProps) => {
+const HintForm = ({ adventureId, puzzleId, hint }: HintProps) => {
   const mode = hint ? "edit" : "create";
 
   const updateHint = !hint
-    ? addHint.bind(null, { adventureId, stageId })
-    : editHint.bind(null, { adventureId, stageId, hintId: hint.id });
+    ? addHint.bind(null, { adventureId, puzzleId })
+    : editHint.bind(null, { adventureId, puzzleId, hintId: hint.id });
 
   const [isSubmitSuccess, setIsSubmitSuccess] = useState<boolean>();
 
@@ -95,7 +95,7 @@ const HintForm = ({ adventureId, stageId, hint }: HintProps) => {
       {mode === "edit" && hint && (
         <DeleteHintForm
           adventureId={adventureId}
-          stageId={stageId}
+          puzzleId={puzzleId}
           hintId={hint.id}
         />
       )}

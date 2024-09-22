@@ -2,8 +2,8 @@ export type Puzzle = {
   id: string;
   label: string;
   trackId?: string;
-  previousStageIds: string[];
-  nextStageIds: string[];
+  previousPuzzleIds: string[];
+  nextPuzzleIds: string[];
 };
 
 export type TrackProps = {

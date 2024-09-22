@@ -1,28 +1,32 @@
 import prisma from "@/lib/prisma";
-import { Asset, Stage } from "@prisma/client";
+import { Asset, Puzzle } from "@prisma/client";
 
 export const createAssetDb = async ({
   id,
-  stageId,
+  puzzleId,
   url,
 }: {
   id: Asset["id"];
-  stageId: Stage["id"];
+  puzzleId: Puzzle["id"];
   url: string;
 }) => {
   await prisma.asset.create({
     data: {
       id,
-      stageId,
+      puzzleId,
       url,
     },
   });
 };
 
-export const getStageAssets = async ({ stageId }: { stageId: Stage["id"] }) => {
+export const getPuzzleAssets = async ({
+  puzzleId,
+}: {
+  puzzleId: Puzzle["id"];
+}) => {
   return await prisma.asset.findMany({
     where: {
-      stageId,
+      puzzleId,
     },
   });
 };

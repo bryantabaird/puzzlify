@@ -1,25 +1,22 @@
-import HintForm from "@/components/HintForm";
-import StageForm from "@/components/StageForm";
-import UploadFileForm from "@/components/UploadFileForm";
-import { getStageWithHints } from "@/server/db/stage";
+import { getPuzzleWithHints } from "@/server/db/puzzle";
 import React from "react";
 import PuzzleForm from "../../_components/PuzzlePage";
 
-type EditStageProps = {
+type EditPuzzleProps = {
   adventureId: string;
   puzzleId: string;
 };
 
-export default async function EditStage({
+export default async function EditPuzzle({
   puzzleId,
   adventureId,
-}: EditStageProps) {
-  const stage = await getStageWithHints(puzzleId);
+}: EditPuzzleProps) {
+  const puzzle = await getPuzzleWithHints(puzzleId);
 
-  if (!stage) {
+  if (!puzzle) {
     return (
       <div>
-        <h1>Stage not found</h1>
+        <h1>Puzzle not found</h1>
       </div>
     );
   }
@@ -28,16 +25,16 @@ export default async function EditStage({
 
   // return (
   //   <div className="flex flex-col flex-1 p-10 gap-10">
-  //     <StageForm adventureId={adventureId} stage={stage} />
+  //     <PuzzleForm adventureId={adventureId} puzzle={puzzle} />
   //     <UploadFileForm />
-  //     <HintForm adventureId={adventureId} stageId={puzzleId} />
+  //     <HintForm adventureId={adventureId} puzzleId={puzzleId} />
   //     <div>
-  //       {stage.hints.map((hint) => {
+  //       {puzzle.hints.map((hint) => {
   //         return (
   //           <React.Fragment key={hint.id}>
   //             <HintForm
   //               adventureId={adventureId}
-  //               stageId={puzzleId}
+  //               puzzleId={puzzleId}
   //               hint={hint}
   //             />
   //           </React.Fragment>

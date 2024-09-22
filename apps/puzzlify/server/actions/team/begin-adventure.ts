@@ -2,7 +2,7 @@
 
 import { teamAdventureActionClient } from "@/lib/next-safe-action";
 import { getAdventureStartDateTime } from "@/server/db/adventure";
-import { getStartStages } from "@/server/db/stage";
+import { getStartPuzzles } from "@/server/db/puzzle";
 import { createTeamProgresses } from "@/server/db/team-progress";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -23,7 +23,7 @@ export const beginAdventure = teamAdventureActionClient
       throw new Error("Team ID is required");
     }
 
-    // TODO: Ensure that all adventures have at least one stage before starting
+    // TODO: Ensure that all adventures have at least one puzzle before starting
     const adventure = await getAdventureStartDateTime(adventureId);
 
     console.log();
@@ -39,18 +39,18 @@ export const beginAdventure = teamAdventureActionClient
       throw new Error("Adventure has not started yet");
     }
 
-    const startStages = await getStartStages(adventureId);
+    const startPuzzles = await getStartPuzzles(adventureId);
 
-    console.log("startStages", startStages);
+    console.log("startPuzzles", startPuzzles);
 
-    const teamProgressEntries = startStages.map((stage) => ({
+    const teamProgressEntries = startPuzzles.map((puzzle) => ({
       teamId: teamId,
       adventureId: adventureId,
-      stageId: stage.id,
+      puzzleId: puzzle.id,
     }));
 
     await createTeamProgresses(teamProgressEntries);
 
     revalidatePath(`/adventure/${adventureId}`);
-    redirect(`/adventure/${adventureId}/stage`);
+    redirect(`/adventure/${adventureId}/puzzle`);
   });

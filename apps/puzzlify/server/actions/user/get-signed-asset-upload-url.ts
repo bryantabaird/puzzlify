@@ -6,25 +6,25 @@ import {
   PutObjectCommandInput,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { Adventure, Stage } from "@prisma/client";
+import { Adventure, Puzzle } from "@prisma/client";
 
 const s3 = new S3Client({ region: "us-west-2" });
-const BUCKET_NAME = "adventure-app-stage-images";
+const BUCKET_NAME = "adventure-app-puzzle-images";
 
 export const getSignedAssetUploadUrl = async ({
   adventureId,
-  stageId,
+  puzzleId,
   contentType,
   assetId,
 }: {
   adventureId: Adventure["id"];
-  stageId: Stage["id"];
+  puzzleId: Puzzle["id"];
   contentType: string;
   assetId: string;
 }) => {
   const params: PutObjectCommandInput = {
     Bucket: BUCKET_NAME,
-    Key: `${adventureId}/${stageId}/${assetId}`,
+    Key: `${adventureId}/${puzzleId}/${assetId}`,
     ContentType: contentType,
   };
 

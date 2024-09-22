@@ -1,13 +1,13 @@
 import PuzzlePage from "../_components/PuzzlePage";
-import { getAdventureWithStages } from "@/server/db/adventure";
+import { getAdventureWithPuzzles } from "@/server/db/adventure";
 
-export default async function CreateStagePage({
+export default async function CreatePuzzlePage({
   params,
 }: {
   params: { adventureId: string };
 }) {
   const adventureId = params.adventureId;
-  const adventure = await getAdventureWithStages(adventureId);
+  const adventure = await getAdventureWithPuzzles(adventureId);
 
   if (!adventure) {
     return (

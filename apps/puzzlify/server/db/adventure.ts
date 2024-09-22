@@ -3,11 +3,11 @@
 import prisma from "@/lib/prisma";
 import { Adventure, User } from "@prisma/client";
 
-export const getAdventureWithStages = async (adventureId: Adventure["id"]) => {
+export const getAdventureWithPuzzles = async (adventureId: Adventure["id"]) => {
   return prisma.adventure.findUnique({
     where: { id: adventureId },
     include: {
-      stages: true,
+      puzzles: true,
     },
   });
 };
@@ -57,7 +57,7 @@ export const getAdventureStats = async (adventureId: Adventure["id"]) => {
       where: { id: adventureId },
       include: {
         teams: true,
-        stages: true,
+        puzzles: true,
         tier: true,
       },
     });
@@ -79,10 +79,10 @@ export const getAdventureLayoutDb = async (adventureId: Adventure["id"]) => {
   return prisma.adventure.findUnique({
     where: { id: adventureId },
     include: {
-      stages: {
+      puzzles: {
         include: {
-          previousStages: true,
-          nextStages: true,
+          previousPuzzles: true,
+          nextPuzzles: true,
         },
       },
     },

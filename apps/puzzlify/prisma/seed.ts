@@ -10,8 +10,8 @@ const seed = async () => {
   await prisma.userAdventure.deleteMany();
   await prisma.teamProgress.deleteMany();
   await prisma.hint.deleteMany();
-  await prisma.stageRelation.deleteMany();
-  await prisma.stage.deleteMany();
+  await prisma.puzzleRelation.deleteMany();
+  await prisma.puzzle.deleteMany();
   await prisma.team.deleteMany();
   await prisma.adventure.deleteMany();
   await prisma.user.deleteMany();
@@ -69,10 +69,10 @@ const seed = async () => {
     },
   });
 
-  const stage1 = await prisma.stage.create({
+  const puzzle1 = await prisma.puzzle.create({
     data: {
-      label: "Stage 1",
-      id: "stage-id-1",
+      label: "Puzzle 1",
+      id: "puzzle-id-1",
       riddle: "What is the answer to life, the universe, and everything?",
       answer: await bcryptjs.hash("42".toLowerCase(), 10),
       adventureId: "adventure-id-1",
@@ -91,30 +91,30 @@ const seed = async () => {
     },
   });
 
-  const stage2a = await prisma.stage.create({
+  const puzzle2a = await prisma.puzzle.create({
     data: {
-      label: "Stage 2a",
-      id: "stage-id-2a",
+      label: "Puzzle 2a",
+      id: "puzzle-id-2a",
       riddle: "What is the capital of France?",
       answer: await bcryptjs.hash("Paris".toLowerCase(), 10),
       adventureId: "adventure-id-1",
     },
   });
 
-  const stage2b = await prisma.stage.create({
+  const puzzle2b = await prisma.puzzle.create({
     data: {
-      label: "Stage 2b",
-      id: "stage-id-2b",
+      label: "Puzzle 2b",
+      id: "puzzle-id-2b",
       riddle: "What is the capital of Germany?",
       answer: await bcryptjs.hash("Berlin".toLowerCase(), 10),
       adventureId: "adventure-id-1",
     },
   });
 
-  const stage3 = await prisma.stage.create({
+  const puzzle3 = await prisma.puzzle.create({
     data: {
-      label: "Stage 3",
-      id: "stage-id-3",
+      label: "Puzzle 3",
+      id: "puzzle-id-3",
       riddle: "What is the capital of Italy?",
       answer: await bcryptjs.hash("Rome".toLowerCase(), 10),
       adventureId: "adventure-id-1",
@@ -130,45 +130,45 @@ const seed = async () => {
       hostId: "1",
       flow: "PARALLEL",
       startDate: new Date(new Date().getTime() + 10 * 1000),
-      stages: {
+      puzzles: {
         connect: [
-          { id: stage1.id },
-          { id: stage2a.id },
-          { id: stage2b.id },
-          { id: stage3.id },
+          { id: puzzle1.id },
+          { id: puzzle2a.id },
+          { id: puzzle2b.id },
+          { id: puzzle3.id },
         ],
       },
     },
   });
 
   await Promise.all([
-    prisma.stageRelation.create({
+    prisma.puzzleRelation.create({
       data: {
         adventureId,
-        fromStageId: stage1.id,
-        toStageId: stage2a.id,
+        fromPuzzleId: puzzle1.id,
+        toPuzzleId: puzzle2a.id,
       },
     }),
-    prisma.stageRelation.create({
+    prisma.puzzleRelation.create({
       data: {
         adventureId,
-        fromStageId: stage1.id,
-        toStageId: stage2b.id,
+        fromPuzzleId: puzzle1.id,
+        toPuzzleId: puzzle2b.id,
       },
     }),
 
-    prisma.stageRelation.create({
+    prisma.puzzleRelation.create({
       data: {
         adventureId,
-        fromStageId: stage2a.id,
-        toStageId: stage3.id,
+        fromPuzzleId: puzzle2a.id,
+        toPuzzleId: puzzle3.id,
       },
     }),
-    prisma.stageRelation.create({
+    prisma.puzzleRelation.create({
       data: {
         adventureId,
-        fromStageId: stage2b.id,
-        toStageId: stage3.id,
+        fromPuzzleId: puzzle2b.id,
+        toPuzzleId: puzzle3.id,
       },
     }),
   ]);

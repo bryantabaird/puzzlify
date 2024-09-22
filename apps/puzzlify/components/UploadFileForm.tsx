@@ -1,7 +1,7 @@
 "use client";
 
 import { createAsset } from "@/server/actions/host/create-asset";
-import { getStageFileUrl } from "@/server/actions/user/get-signed-asset-retrieval-url";
+import { getPuzzleFileUrl } from "@/server/actions/user/get-signed-asset-retrieval-url";
 import { getSignedAssetUploadUrl } from "@/server/actions/user/get-signed-asset-upload-url";
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
@@ -10,9 +10,9 @@ const allowedFileTypes = ["image/jpeg", "image/png", "image/gif", "image/jpg"];
 
 export default function UploadFileForm() {
   const [file, setFile] = useState<File>();
-  const { adventureId, stageId } = useParams<{
+  const { adventureId, puzzleId } = useParams<{
     adventureId: string;
-    stageId: string;
+    puzzleId: string;
   }>();
 
   // TODO: typing
@@ -35,7 +35,7 @@ export default function UploadFileForm() {
       const assetId = self.crypto.randomUUID();
       const { assetUploadUrl } = await getSignedAssetUploadUrl({
         adventureId,
-        stageId,
+        puzzleId,
         contentType: file.type,
         assetId,
       });
@@ -51,13 +51,17 @@ export default function UploadFileForm() {
       if (uploadResponse.ok) {
         // TODO: Consider transactionalizing
         try {
-          const url = await getStageFileUrl({ adventureId, stageId, assetId });
+          const url = await getPuzzleFileUrl({
+            adventureId,
+            puzzleId,
+            assetId,
+          });
 
-          await createAsset({ adventureId, stageId }, { url, id: assetId });
+          await createAsset({ adventureId, puzzleId }, { url, id: assetId });
           alert("File uploaded successfully.");
         } catch (error) {
-          console.error("Error adding asset to stage", error);
-          alert("Failed to add asset to stage.");
+          console.error("Error adding asset to puzzle", error);
+          alert("Failed to add asset to puzzle.");
         }
       } else {
         alert("Failed to upload file.");

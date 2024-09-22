@@ -65,8 +65,8 @@ const Builder: React.FC<BuilderProps> = ({ initialPuzzles }) => {
     initialItems: puzzles.filter(
       (puzzle) =>
         !puzzle.trackId &&
-        puzzle.nextStageIds.length === 0 &&
-        puzzle.previousStageIds.length === 0,
+        puzzle.nextPuzzleIds.length === 0 &&
+        puzzle.previousPuzzleIds.length === 0,
     ),
   });
 

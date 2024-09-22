@@ -1,16 +1,16 @@
-import { Adventure, Stage, TeamAdventure, Tier } from "@prisma/client";
+import { Adventure, Puzzle, TeamAdventure, Tier } from "@prisma/client";
 import Link from "next/link";
 
 type Props = {
   adventure: Adventure & {
-    stages: Stage[];
+    puzzles: Puzzle[];
     teams: TeamAdventure[];
     tier: Tier;
   };
 };
 
 export default function HostAdventureDashboard({ adventure }: Props) {
-  const totalStages = adventure.stages.length;
+  const totalPuzzles = adventure.puzzles.length;
   const teamsSignedUp = adventure.teams.length;
   const maxTeamCount = adventure.tier.maxTeamCount;
   const isUserCountError = teamsSignedUp > maxTeamCount;
@@ -36,11 +36,11 @@ export default function HostAdventureDashboard({ adventure }: Props) {
         </div>
 
         <div className="stat bg-base-300 shadow-md rounded-box">
-          <div className="stat-title text-base-content">Total Stages</div>
-          <div className="stat-value text-accent">{totalStages}</div>
+          <div className="stat-title text-base-content">Total Puzzles</div>
+          <div className="stat-value text-accent">{totalPuzzles}</div>
           <div className="stat-actions">
             <button className="btn btn-sm btn-primary">
-              <Link href={`/adventure/${adventure.id}/stage`}>View</Link>
+              <Link href={`/adventure/${adventure.id}/puzzle`}>View</Link>
             </button>
           </div>
         </div>

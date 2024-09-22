@@ -1,10 +1,10 @@
 import Dagre, { GraphLabel } from "@dagrejs/dagre";
 import { type Node, type Edge } from "@xyflow/react";
 
-type StageNode = Node<{ label: string }>;
+type PuzzleNode = Node<{ label: string }>;
 
 export const getLayoutedElements = (
-  nodes: Array<StageNode>,
+  nodes: Array<PuzzleNode>,
   edges: Array<Edge>,
   options: GraphLabel,
 ) => {
@@ -23,7 +23,7 @@ export const getLayoutedElements = (
   Dagre.layout(g);
 
   return {
-    nodes: nodes.map((node: StageNode) => {
+    nodes: nodes.map((node: PuzzleNode) => {
       const position = g.node(node.id);
       const x = position.x - (node.measured?.width ?? 0) / 2;
       const y = position.y - (node.measured?.height ?? 0) / 2;

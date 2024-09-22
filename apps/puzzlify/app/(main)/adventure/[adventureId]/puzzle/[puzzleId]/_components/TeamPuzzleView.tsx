@@ -1,25 +1,25 @@
 import RiddleForm from "@/components/RiddleForm";
-import { type StageWithPreviousAndNextStages } from "@/server/db/stage";
+import { type PuzzleWithPreviousAndNextPuzzles } from "@/server/db/puzzle";
 import { Hint } from "@prisma/client";
 import TeamHintView from "./TeamHintView";
-import { getStageAssets } from "@/server/db/asset";
+import { getPuzzleAssets } from "@/server/db/asset";
 
-type TeamStageProps = {
-  stage: NonNullable<StageWithPreviousAndNextStages>;
+type TeamPuzzleProps = {
+  puzzle: NonNullable<PuzzleWithPreviousAndNextPuzzles>;
   adventureId: string;
   startDate?: Date;
 };
 
-export default async function TeamStageView({
-  stage,
+export default async function TeamPuzzleView({
+  puzzle,
   adventureId,
   startDate,
-}: TeamStageProps) {
-  const assets = await getStageAssets({ stageId: stage.id });
+}: TeamPuzzleProps) {
+  const assets = await getPuzzleAssets({ puzzleId: puzzle.id });
 
   return (
     <>
-      <RiddleForm stage={stage} adventureId={adventureId} />
+      <RiddleForm puzzle={puzzle} adventureId={adventureId} />
       {/* TODO: Not only images */}
       {assets.map(({ id, url }) => (
         <img key={id} src={url} />
@@ -27,7 +27,7 @@ export default async function TeamStageView({
       <div>
         <h2>Hints</h2>
         <ul>
-          {stage.hints.map((hint: Hint) => {
+          {puzzle.hints.map((hint: Hint) => {
             if (!startDate) {
               throw new Error("startDate is required for a user to see hints");
             }
@@ -36,7 +36,7 @@ export default async function TeamStageView({
               <li key={hint.id}>
                 <TeamHintView
                   hintId={hint.id}
-                  puzzleId={stage.id}
+                  puzzleId={puzzle.id}
                   adventureId={adventureId}
                   delay={hint.delay}
                   startDate={startDate}

@@ -1,20 +1,20 @@
 "use client";
 
-import { verifyStage } from "@/server/actions/team/verify-stage";
+import { verifyPuzzle } from "@/server/actions/team/verify-puzzle";
 import { riddleSubmission } from "@/schemas/riddle";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
-import { Adventure, Stage } from "@prisma/client";
+import { Adventure, Puzzle } from "@prisma/client";
 
 type Props = {
-  stage: Pick<Stage, "id" | "riddle">;
+  puzzle: Pick<Puzzle, "id" | "riddle">;
   adventureId: Adventure["id"];
 };
 
-const RiddleForm = ({ stage, adventureId }: Props) => {
-  const verifyWithIds = verifyStage.bind(null, {
+const RiddleForm = ({ puzzle, adventureId }: Props) => {
+  const verifyWithIds = verifyPuzzle.bind(null, {
     adventureId,
-    stageId: stage.id,
+    puzzleId: puzzle.id,
   });
 
   const { form, handleSubmitWithAction } = useHookFormAction(
@@ -25,9 +25,9 @@ const RiddleForm = ({ stage, adventureId }: Props) => {
 
   return (
     <div>
-      <h1>Stage</h1>
+      <h1>Puzzle</h1>
       <h2>Riddle:</h2>
-      <p>{stage.riddle}</p>
+      <p>{puzzle.riddle}</p>
       <form onSubmit={handleSubmitWithAction}>
         <label htmlFor="answer" className="block">
           Riddle

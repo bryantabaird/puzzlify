@@ -1,4 +1,3 @@
-import DeleteHintForm from "@/components/DeleteHintForm";
 import HintForm from "@/components/HintForm";
 import PuzzleForm from "@/components/PuzzleForm";
 import { getPuzzleWithHints } from "@/server/db/puzzle";
@@ -24,27 +23,22 @@ export default async function EditPuzzle({ params }: EditPuzzleProps) {
   }
 
   return (
-    <>
+    <div className="flex flex-col flex-1 p-10 gap-10">
       <PuzzleForm adventureId={adventureId} puzzle={puzzle} />
-      <br />
       <HintForm adventureId={adventureId} puzzleId={params.puzzleId} />
-      <br />
-      {puzzle.hints.map((hint) => {
-        return (
-          <React.Fragment key={hint.id}>
-            <HintForm
-              adventureId={adventureId}
-              puzzleId={puzzleId}
-              hint={hint}
-            />
-            <DeleteHintForm
-              adventureId={adventureId}
-              puzzleId={puzzleId}
-              hintId={hint.id}
-            />
-          </React.Fragment>
-        );
-      })}
-    </>
+      <div>
+        {puzzle.hints.map((hint) => {
+          return (
+            <React.Fragment key={hint.id}>
+              <HintForm
+                adventureId={adventureId}
+                puzzleId={puzzleId}
+                hint={hint}
+              />
+            </React.Fragment>
+          );
+        })}
+      </div>
+    </div>
   );
 }
