@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Track, Step } from "@prisma/client";
 import bcryptjs from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -10,8 +10,9 @@ const seed = async () => {
   await prisma.userAdventure.deleteMany();
   await prisma.teamProgress.deleteMany();
   await prisma.hint.deleteMany();
-  await prisma.puzzleRelation.deleteMany();
   await prisma.puzzle.deleteMany();
+  await prisma.track.deleteMany();
+  await prisma.step.deleteMany();
   await prisma.team.deleteMany();
   await prisma.adventure.deleteMany();
   await prisma.user.deleteMany();
@@ -35,13 +36,24 @@ const seed = async () => {
     },
   ];
 
+  const steps: Step[] = [
+    { id: "step-1", label: "Step 1", order: 1, adventureId: "adventure-id-1" },
+    { id: "step-2", label: "Step 2", order: 2, adventureId: "adventure-id-1" },
+    { id: "step-3", label: "Step 3", order: 3, adventureId: "adventure-id-1" },
+  ];
+
+  const tracks: Track[] = [
+    { id: "track-1", label: "Track 1", stepId: "step-1", order: 1 },
+    { id: "track-2", label: "Track 2", stepId: "step-1", order: 2 },
+  ];
+
   for (const user of users) {
     await prisma.user.create({
       data: user,
     });
   }
 
-  const freeTier = await prisma.tier.create({
+  await prisma.tier.create({
     data: {
       id: "FREE",
       name: "Free",
@@ -54,7 +66,6 @@ const seed = async () => {
       name: "Test Adventure",
       hostId: "1",
       id: "adventure-id-1",
-      flow: "LINEAR",
       startDate: new Date(new Date().getTime() + 10 * 1000),
     },
   });
@@ -64,18 +75,35 @@ const seed = async () => {
       name: "Test Adventure 3",
       hostId: "1",
       id: "adventure-id-3",
-      flow: "PARALLEL",
       startDate: new Date(new Date().getTime() + 10 * 1000),
     },
   });
 
-  const puzzle1 = await prisma.puzzle.create({
+  await Promise.all(
+    steps.map(async (step) => {
+      await prisma.step.create({
+        data: step,
+      });
+    }),
+  );
+
+  await Promise.all(
+    tracks.map(async (track) => {
+      await prisma.track.create({
+        data: track,
+      });
+    }),
+  );
+
+  await prisma.puzzle.create({
     data: {
       label: "Puzzle 1",
       id: "puzzle-id-1",
       riddle: "What is the answer to life, the universe, and everything?",
       answer: await bcryptjs.hash("42".toLowerCase(), 10),
+      trackId: "track-1",
       adventureId: "adventure-id-1",
+      order: 1,
       hints: {
         create: [
           {
@@ -91,33 +119,38 @@ const seed = async () => {
     },
   });
 
-  const puzzle2a = await prisma.puzzle.create({
+  await prisma.puzzle.create({
     data: {
       label: "Puzzle 2a",
       id: "puzzle-id-2a",
       riddle: "What is the capital of France?",
       answer: await bcryptjs.hash("Paris".toLowerCase(), 10),
+      trackId: "track-1",
       adventureId: "adventure-id-1",
+      order: 1,
     },
   });
 
-  const puzzle2b = await prisma.puzzle.create({
+  await prisma.puzzle.create({
     data: {
       label: "Puzzle 2b",
       id: "puzzle-id-2b",
       riddle: "What is the capital of Germany?",
       answer: await bcryptjs.hash("Berlin".toLowerCase(), 10),
+      trackId: "track-1",
       adventureId: "adventure-id-1",
+      order: 1,
     },
   });
 
-  const puzzle3 = await prisma.puzzle.create({
+  await prisma.puzzle.create({
     data: {
       label: "Puzzle 3",
       id: "puzzle-id-3",
       riddle: "What is the capital of Italy?",
       answer: await bcryptjs.hash("Rome".toLowerCase(), 10),
       adventureId: "adventure-id-1",
+      order: 1,
     },
   });
 
@@ -128,50 +161,12 @@ const seed = async () => {
       id: adventureId,
       name: "Test Adventure",
       hostId: "1",
-      flow: "PARALLEL",
       startDate: new Date(new Date().getTime() + 10 * 1000),
-      puzzles: {
-        connect: [
-          { id: puzzle1.id },
-          { id: puzzle2a.id },
-          { id: puzzle2b.id },
-          { id: puzzle3.id },
-        ],
+      steps: {
+        connect: [{ id: "step-1" }, { id: "step-2" }, { id: "step-3" }],
       },
     },
   });
-
-  await Promise.all([
-    prisma.puzzleRelation.create({
-      data: {
-        adventureId,
-        fromPuzzleId: puzzle1.id,
-        toPuzzleId: puzzle2a.id,
-      },
-    }),
-    prisma.puzzleRelation.create({
-      data: {
-        adventureId,
-        fromPuzzleId: puzzle1.id,
-        toPuzzleId: puzzle2b.id,
-      },
-    }),
-
-    prisma.puzzleRelation.create({
-      data: {
-        adventureId,
-        fromPuzzleId: puzzle2a.id,
-        toPuzzleId: puzzle3.id,
-      },
-    }),
-    prisma.puzzleRelation.create({
-      data: {
-        adventureId,
-        fromPuzzleId: puzzle2b.id,
-        toPuzzleId: puzzle3.id,
-      },
-    }),
-  ]);
 };
 
 seed();

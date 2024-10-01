@@ -3,6 +3,7 @@
 import { teamAdventureActionClient } from "@/lib/next-safe-action";
 import { getAdventureStartDateTime } from "@/server/db/adventure";
 import { getStartPuzzles } from "@/server/db/puzzle";
+import { getFirstStepPuzzles } from "@/server/db/step";
 import { createTeamProgresses } from "@/server/db/team-progress";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -26,8 +27,6 @@ export const beginAdventure = teamAdventureActionClient
     // TODO: Ensure that all adventures have at least one puzzle before starting
     const adventure = await getAdventureStartDateTime(adventureId);
 
-    console.log();
-
     if (!adventure) {
       throw new Error("Adventure not found");
     }
@@ -39,15 +38,17 @@ export const beginAdventure = teamAdventureActionClient
       throw new Error("Adventure has not started yet");
     }
 
-    const startPuzzles = await getStartPuzzles(adventureId);
+    const firstStep = await getFirstStepPuzzles({ adventureId });
 
-    console.log("startPuzzles", startPuzzles);
-
-    const teamProgressEntries = startPuzzles.map((puzzle) => ({
-      teamId: teamId,
-      adventureId: adventureId,
-      puzzleId: puzzle.id,
-    }));
+    const teamProgressEntries = firstStep.tracks.flatMap((track) =>
+      track.puzzles.map((puzzle) => ({
+        teamId: teamId,
+        adventureId: adventureId,
+        puzzleId: puzzle.id,
+        stepId: firstStep.id,
+        trackId: track.id,
+      })),
+    );
 
     await createTeamProgresses(teamProgressEntries);
 

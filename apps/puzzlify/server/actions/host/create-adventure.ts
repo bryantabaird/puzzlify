@@ -26,7 +26,6 @@ export const createAdventure = userActionClient
       name,
       hostId: userId,
       startDate: new Date(startDate),
-      flow: "LINEAR",
     };
 
     try {

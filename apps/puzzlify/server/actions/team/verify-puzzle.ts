@@ -3,7 +3,6 @@
 import { riddleSubmission } from "@/schemas/riddle";
 import { puzzleAdventureActionClient } from "@/lib/next-safe-action";
 import { getPuzzleValidationData } from "@/server/db/puzzle";
-import { getNextPuzzlesWithNextedPreviousPuzzles } from "@/server/db/puzzle-relation";
 import {
   getCountOfIncompletePreviousPuzzles,
   createTeamProgress,
@@ -36,33 +35,34 @@ export const verifyPuzzle = puzzleAdventureActionClient
       if (isCorrectAnswer) {
         const now = new Date();
 
-        const nextPuzzles =
-          await getNextPuzzlesWithNextedPreviousPuzzles(puzzleId);
+        // const nextPuzzles =
+        //   await getNextPuzzlesWithNextedPreviousPuzzles(puzzleId);
 
         // TODO: Transaction for the following operations
-        await Promise.all(
-          nextPuzzles.map(async (nextPuzzle) => {
-            const previousPuzzleIds = nextPuzzle.toPuzzle.previousPuzzles.map(
-              (puzzleRelation) => puzzleRelation.fromPuzzleId,
-            );
+        // TODO: Refactor with the 'order' field
+        // await Promise.all(
+        //   nextPuzzles.map(async (nextPuzzle) => {
+        //     const previousPuzzleIds = nextPuzzle.toPuzzle.previousPuzzles.map(
+        //       (puzzleRelation) => puzzleRelation.fromPuzzleId,
+        //     );
 
-            const incompletePreviousPuzzlesCount =
-              await getCountOfIncompletePreviousPuzzles({
-                adventureId,
-                teamId,
-                previousPuzzleIds,
-              });
+        //     const incompletePreviousPuzzlesCount =
+        //       await getCountOfIncompletePreviousPuzzles({
+        //         adventureId,
+        //         teamId,
+        //         previousPuzzleIds,
+        //       });
 
-            if (incompletePreviousPuzzlesCount === 0) {
-              await createTeamProgress({
-                teamId,
-                adventureId,
-                puzzleId: nextPuzzle.toPuzzleId,
-                startTime: now,
-              });
-            }
-          }),
-        );
+        //     if (incompletePreviousPuzzlesCount === 0) {
+        //       await createTeamProgress({
+        //         teamId,
+        //         adventureId,
+        //         puzzleId: nextPuzzle.toPuzzleId,
+        //         startTime: now,
+        //       });
+        //     }
+        //   }),
+        // );
 
         // Update the user progress entry for the current puzzle
         await updateTeamProgress(teamId, adventureId, puzzleId, now);

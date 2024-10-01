@@ -79,19 +79,14 @@ export const getAdventureLayoutDb = async (adventureId: Adventure["id"]) => {
   return prisma.adventure.findUnique({
     where: { id: adventureId },
     include: {
-      puzzles: {
-        include: {
-          previousPuzzles: true,
-          nextPuzzles: true,
-        },
-      },
+      puzzles: true,
     },
   });
 };
 
 export type CreateAdventurePayload = Pick<
   Adventure,
-  "name" | "hostId" | "startDate" | "flow"
+  "name" | "hostId" | "startDate"
 >;
 export const createAdventureDb = async (data: CreateAdventurePayload) => {
   return await prisma.adventure.create({ data });

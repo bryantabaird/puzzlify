@@ -12,12 +12,6 @@ export default async function PuzzleLayout({
   const puzzles = rawPuzzles.map((rawPuzzle) => ({
     id: rawPuzzle.id,
     label: rawPuzzle.label,
-    previousPuzzleIds: rawPuzzle.previousPuzzles.map(
-      (relation) => relation.fromPuzzle.id,
-    ),
-    nextPuzzleIds: rawPuzzle.nextPuzzles.map(
-      (relation) => relation.toPuzzle.id,
-    ),
   }));
 
   return <Builder initialPuzzles={puzzles} />;

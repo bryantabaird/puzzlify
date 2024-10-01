@@ -5,27 +5,22 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// datasource db {
-//   provider = "postgresql"
-//   url      = env("DATABASE_URL")
-// }
-
 datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
+
+// datasource db {
+//   provider  = "postgresql"
+//   url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+//   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+// }
 
 enum TierId {
   FREE
   BASIC
   PREMIUM
   ENTERPRISE
-}
-
-enum FlowType {
-  LINEAR
-  PARALLEL
 }
 
 model Tier {
@@ -53,36 +48,54 @@ model Team {
 }
 
 model Adventure {
-  id               String           @id @default(uuid())
-  dateCreated      DateTime         @default(now())
+  id               String          @id @default(uuid())
+  dateCreated      DateTime        @default(now())
   name             String
   startDate        DateTime
-  published        Boolean          @default(false)
-  flow             FlowType
-  puzzles          Puzzle[]         @relation("AdventurePuzzles")
-  puzzleRelations  PuzzleRelation[] @relation("AdventurePuzzleRelations")
-  puzzleProgresses TeamProgress[]
-  tier             Tier             @relation(fields: [tierId], references: [id])
-  tierId           TierId           @default(FREE)
+  published        Boolean         @default(false)
+  steps            Step[]          @relation("AdventureSteps")
+  puzzles          Puzzle[]        
+  tier             Tier            @relation(fields: [tierId], references: [id])
+  tierId           TierId          @default(FREE)
   hostId           String
-  host             User             @relation("HostAdventures", fields: [hostId], references: [id])
+  host             User            @relation("HostAdventures", fields: [hostId], references: [id])
   teams            TeamAdventure[]
   users            UserAdventure[]
+  puzzleProgresses TeamProgress[]
+}
+
+model Step {
+  id               String         @id @default(uuid())
+  label            String
+  order            Int
+  adventureId      String
+  adventure        Adventure      @relation("AdventureSteps", fields: [adventureId], references: [id])
+  tracks           Track[]        @relation("StepTracks")
+}
+
+model Track {
+  id               String         @id @default(uuid())
+  label            String
+  order            Int
+  stepId           String
+  step             Step           @relation("StepTracks", fields: [stepId], references: [id])
+  puzzles          Puzzle[]       @relation("TrackPuzzles")
 }
 
 model Puzzle {
-  id               String           @id @default(uuid())
+  id               String         @id @default(uuid())
   label            String
   riddle           String?
   answer           String?
-  status           String           @default("draft")
-  assets           Asset[]
-  hints            Hint[]           @relation("PuzzleHints")
+  status           String         @default("draft")
   adventureId      String
-  adventure        Adventure        @relation("AdventurePuzzles", fields: [adventureId], references: [id])
+  adventure        Adventure      @relation(fields: [adventureId], references: [id])
+  trackId          String?
+  track            Track?          @relation("TrackPuzzles", fields: [trackId], references: [id])
+  order            Int?
+  assets           Asset[]
+  hints            Hint[]         @relation("PuzzleHints")
   puzzleProgresses TeamProgress[]
-  previousPuzzles  PuzzleRelation[] @relation("PreviousPuzzles")
-  nextPuzzles      PuzzleRelation[] @relation("NextPuzzles")
 }
 
 model Asset {
@@ -91,18 +104,6 @@ model Asset {
   puzzleId    String
   puzzle      Puzzle   @relation(fields: [puzzleId], references: [id])
   dateCreated DateTime @default(now())
-}
-
-model PuzzleRelation {
-  id           String    @id @default(uuid())
-  adventureId  String
-  adventure    Adventure @relation("AdventurePuzzleRelations", fields: [adventureId], references: [id])
-  fromPuzzleId String
-  fromPuzzle   Puzzle    @relation("NextPuzzles", fields: [fromPuzzleId], references: [id])
-  toPuzzleId   String
-  toPuzzle     Puzzle    @relation("PreviousPuzzles", fields: [toPuzzleId], references: [id])
-
-  @@unique([fromPuzzleId, toPuzzleId])
 }
 
 model Hint {

@@ -1,25 +1,13 @@
 import prisma from "@/lib/prisma";
-import { Puzzle, PuzzleRelation } from "@prisma/client";
-import { deletePuzzleRelationsDb } from "./puzzle-relation";
+import { Puzzle } from "@prisma/client";
 import { deletePuzzlesDb } from "./puzzle";
 import { deleteHintsFromPuzzlesDb } from "./hint";
 
-type DeletePuzzleRelationsAndPuzzlesParams = {
-  puzzleRelationIds: Array<PuzzleRelation["id"]>;
+type DeletePuzzlesParams = {
   puzzleIds: Array<Puzzle["id"]>;
 };
-export const deletePuzzleRelationsAndPuzzlesDb = async ({
-  puzzleRelationIds,
-  puzzleIds,
-}: DeletePuzzleRelationsAndPuzzlesParams) => {
+export const deletePuzzles = async ({ puzzleIds }: DeletePuzzlesParams) => {
   return await prisma.$transaction(async (prismaPuzzleClient) => {
-    console.log("deleting puzzle relations", puzzleRelationIds);
-    // TODO: I can probably derive the puzzle relations to delete from the puzzle ids
-    await deletePuzzleRelationsDb({
-      puzzleRelationIds,
-      prismaClient: prismaPuzzleClient,
-    });
-    console.log("deleting puzzles", puzzleIds);
     await deleteHintsFromPuzzlesDb(puzzleIds);
     await deletePuzzlesDb({ puzzleIds, prismaClient: prismaPuzzleClient });
   });

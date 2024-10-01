@@ -2,7 +2,6 @@
 
 import prisma from "@/lib/prisma";
 import { Prisma, Puzzle } from "@prisma/client";
-import { deletePuzzleRelationsFromPuzzleDb } from "./puzzle-relation";
 import { deleteHintsFromPuzzlesDb } from "./hint";
 
 export type PuzzleWithPreviousAndNextPuzzles = Awaited<
@@ -16,16 +15,6 @@ export const getPuzzleWithPreviousAndNextPuzzles = async (
     where: { id: puzzleId },
     include: {
       hints: true,
-      previousPuzzles: {
-        include: {
-          fromPuzzle: true,
-        },
-      },
-      nextPuzzles: {
-        include: {
-          toPuzzle: true,
-        },
-      },
     },
   });
 };
@@ -33,7 +22,7 @@ export const getPuzzleWithPreviousAndNextPuzzles = async (
 export const getPuzzleValidationData = async (puzzleId: Puzzle["id"]) => {
   return await prisma.puzzle.findUnique({
     where: { id: puzzleId },
-    select: { answer: true, id: true, nextPuzzles: true },
+    select: { answer: true, id: true },
   });
 };
 
@@ -55,11 +44,8 @@ export const createPuzzleDb = async (data: CreatePuzzlePayload) => {
 };
 
 export const deletePuzzleDb = async (puzzleId: string) => {
+  // TODO: Remove transaction here for a single op
   return await prisma.$transaction(async (prismaPuzzleClient) => {
-    await deletePuzzleRelationsFromPuzzleDb({
-      puzzleId,
-      prismaClient: prismaPuzzleClient,
-    });
     return await prismaPuzzleClient.puzzle.delete({
       where: {
         id: puzzleId,
@@ -115,9 +101,6 @@ export const getStartPuzzles = async (adventureId: string) => {
   return await prisma.puzzle.findMany({
     where: {
       adventureId,
-      previousPuzzles: {
-        none: {},
-      },
     },
   });
 };
@@ -128,20 +111,6 @@ export const getAdventurePuzzles = async (adventureId: string) => {
     select: {
       id: true,
       label: true,
-      previousPuzzles: {
-        select: {
-          fromPuzzle: {
-            select: { id: true },
-          },
-        },
-      },
-      nextPuzzles: {
-        select: {
-          toPuzzle: {
-            select: { id: true },
-          },
-        },
-      },
     },
   });
 };

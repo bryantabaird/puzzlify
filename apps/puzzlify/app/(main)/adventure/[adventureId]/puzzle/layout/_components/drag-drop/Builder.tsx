@@ -61,12 +61,13 @@ const Builder: React.FC<BuilderProps> = ({ initialPuzzles }) => {
     );
   };
 
+  console.log("puzzles", puzzles);
+
   const unassignedList = useListData({
     initialItems: puzzles.filter(
-      (puzzle) =>
-        !puzzle.trackId &&
-        puzzle.nextPuzzleIds.length === 0 &&
-        puzzle.previousPuzzleIds.length === 0,
+      (puzzle) => !puzzle.trackId,
+      // puzzle.nextPuzzleIds.length === 0 &&
+      // puzzle.previousPuzzleIds.length === 0,
     ),
   });
 
