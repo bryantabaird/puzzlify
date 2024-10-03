@@ -93,8 +93,14 @@ export const createAdventureDb = async (data: CreateAdventurePayload) => {
 };
 
 export const deleteAdventureDb = async (adventureId: Adventure["id"]) => {
-  return await prisma.adventure.delete({
-    where: { id: adventureId },
+  return await prisma.adventure.delete({ where: { id: adventureId } });
+};
+
+export const deleteAdventuresDb = async (
+  adventureIds: Array<Adventure["id"]>,
+) => {
+  return await prisma.adventure.deleteMany({
+    where: { id: { in: adventureIds } },
   });
 };
 
@@ -109,21 +115,26 @@ export const updateAdventureDb = async (
   });
 };
 
-type GetHostAdventureIdParams = {
-  adventureId: Adventure["id"];
-  userId: User["id"];
-};
 export const getHostAdventureId = async ({
   adventureId,
   userId,
-}: GetHostAdventureIdParams) => {
-  return await prisma.adventure.findFirst({
+}: {
+  adventureId: string;
+  userId: string;
+}) => {
+  const hostAdventure = await prisma.adventure.findFirst({
     where: {
       id: adventureId,
       hostId: userId,
     },
     select: { id: true },
   });
+
+  if (!hostAdventure) {
+    throw new Error("User is not the host of this adventure");
+  }
+
+  return hostAdventure.id;
 };
 
 export const getHostAdventures = async (userId: string) => {

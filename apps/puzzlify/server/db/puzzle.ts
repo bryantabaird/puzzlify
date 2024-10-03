@@ -43,14 +43,12 @@ export const createPuzzleDb = async (data: CreatePuzzlePayload) => {
   return await prisma.puzzle.create({ data });
 };
 
+// TODO: Prevent delete either if adventure started
+// or if a team has arrived at this puzzle after start
 export const deletePuzzleDb = async (puzzleId: string) => {
-  // TODO: Remove transaction here for a single op
-  return await prisma.$transaction(async (prismaPuzzleClient) => {
-    return await prismaPuzzleClient.puzzle.delete({
-      where: {
-        id: puzzleId,
-      },
-    });
+  await deleteHintsFromPuzzlesDb([puzzleId]);
+  return await prisma.puzzle.delete({
+    where: { id: puzzleId },
   });
 };
 
@@ -85,8 +83,14 @@ export const updatePuzzleDb = async (
   });
 };
 
-export const getHostPuzzleId = async (puzzleId: string, userId: string) => {
-  return await prisma.puzzle.findFirst({
+export const getHostPuzzleId = async ({
+  puzzleId,
+  userId,
+}: {
+  puzzleId: string;
+  userId: string;
+}) => {
+  const hostPuzzle = await prisma.puzzle.findFirst({
     where: {
       id: puzzleId,
       adventure: {
@@ -95,6 +99,42 @@ export const getHostPuzzleId = async (puzzleId: string, userId: string) => {
     },
     select: { id: true },
   });
+
+  if (!hostPuzzle) {
+    throw new Error("User is not the host of this puzzle");
+  }
+
+  return hostPuzzle.id;
+};
+
+export const getHostPuzzleIds = async ({
+  puzzleIds,
+  userId,
+}: {
+  puzzleIds: string[];
+  userId: string;
+}) => {
+  const response = await prisma.puzzle.findMany({
+    where: {
+      id: { in: puzzleIds },
+      adventure: {
+        hostId: userId,
+      },
+    },
+    select: { id: true },
+  });
+
+  const hostPuzzleIds = response.map((puzzle) => puzzle.id);
+
+  const missingPuzzles = puzzleIds.filter((id) => !hostPuzzleIds.includes(id));
+
+  if (missingPuzzles.length > 0) {
+    throw new Error(
+      `User is not the host for puzzles with IDs: ${missingPuzzles.join(", ")}`,
+    );
+  }
+
+  return hostPuzzleIds;
 };
 
 export const getStartPuzzles = async (adventureId: string) => {
@@ -111,6 +151,37 @@ export const getAdventurePuzzles = async (adventureId: string) => {
     select: {
       id: true,
       label: true,
+      track: {
+        select: {
+          id: true,
+          label: true,
+        },
+      },
+      order: true,
     },
+  });
+};
+
+export type AdventurePuzzles = Awaited<ReturnType<typeof getAdventurePuzzles>>;
+
+export type PuzzlePositionPayload = Array<{
+  puzzleId: string;
+  order: number;
+  trackId: string;
+}>;
+
+export const updatePuzzlePositions = async (payload: PuzzlePositionPayload) => {
+  return await prisma.$transaction(async () => {
+    await Promise.all(
+      payload.map(async ({ puzzleId, order, trackId }) => {
+        await prisma.puzzle.update({
+          where: { id: puzzleId },
+          data: {
+            order,
+            trackId,
+          },
+        });
+      }),
+    );
   });
 };

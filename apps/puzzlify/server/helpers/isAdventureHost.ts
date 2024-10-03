@@ -10,7 +10,7 @@ export async function isAdventureHost({
   adventureId,
   userId,
 }: IsAdventureHostProps): Promise<boolean> {
-  const adventure = await getHostAdventureId({ adventureId, userId });
+  const hostAdventureId = await getHostAdventureId({ adventureId, userId });
 
-  return !!adventure;
+  return !!hostAdventureId;
 }

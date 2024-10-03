@@ -1,8 +1,4 @@
-export type Puzzle = {
-  id: string;
-  label: string;
-  trackId?: string;
-};
+import { Puzzle } from "@prisma/client";
 
 export type TrackProps = {
   setPuzzles: React.Dispatch<React.SetStateAction<Puzzle[]>>;
@@ -13,5 +9,5 @@ export type TrackProps = {
 
 export type Track = {
   id: string;
-  name: string;
+  label: string;
 };

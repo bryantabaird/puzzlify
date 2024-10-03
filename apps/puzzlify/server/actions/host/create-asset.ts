@@ -9,18 +9,18 @@ import { createAssetDb } from "@/server/db/asset";
 export const createAsset = hostPuzzleActionClient
   .schema(assetSchema)
   .metadata({ roleName: "host", actionName: "create-asset" })
-  .action(async ({ parsedInput, ctx: { adventureId, puzzleId } }) => {
+  .action(async ({ parsedInput, ctx: { hostAdventureId, hostPuzzleId } }) => {
     const { url, id } = parsedInput;
 
     try {
-      await createAssetDb({ puzzleId, url, id });
+      await createAssetDb({ puzzleId: hostPuzzleId, url, id });
 
-      revalidatePath(`/adventure/${adventureId}/puzzle`);
+      revalidatePath(`/adventure/${hostAdventureId}/puzzle`);
     } catch (error) {
       const userFacingErrorMessage = "Failed to edit puzzle";
       console.error(userFacingErrorMessage, error);
       return { error: userFacingErrorMessage };
     }
 
-    redirect(`/adventure/${adventureId}/puzzle`);
+    redirect(`/adventure/${hostAdventureId}/puzzle`);
   });

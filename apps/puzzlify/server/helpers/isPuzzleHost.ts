@@ -1,4 +1,4 @@
-import { getHostPuzzleId } from "../db/puzzle";
+import { getHostPuzzleIds } from "../db/puzzle";
 
 type IsPuzzleHost = {
   userId: string;
@@ -9,7 +9,10 @@ export async function isPuzzleHost({
   puzzleId,
   userId,
 }: IsPuzzleHost): Promise<boolean> {
-  const adventure = await getHostPuzzleId(puzzleId, userId);
+  const hostPuzzleIds = await getHostPuzzleIds({
+    puzzleIds: [puzzleId],
+    userId,
+  });
 
-  return !!adventure;
+  return hostPuzzleIds[0] === puzzleId;
 }

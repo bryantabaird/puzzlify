@@ -7,15 +7,14 @@ import {
   DropIndicator,
   isTextDropItem,
 } from "react-aria-components";
-import { ListData, useListData } from "react-stately";
-import { Puzzle } from "./types";
-import { Button } from "@/components/ui/button";
+import { ListData } from "react-stately";
 import { ArrowUpFromLine, Grip, GripVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AdventurePuzzles } from "@/server/db/puzzle";
 
 interface TrackProps {
-  setPuzzles: React.Dispatch<React.SetStateAction<Puzzle[]>>;
-  list: ListData<Puzzle>;
+  setPuzzles: React.Dispatch<React.SetStateAction<AdventurePuzzles>>;
+  list: ListData<AdventurePuzzles[number]>;
   ariaLabel: string;
   trackId: string;
 }
@@ -71,13 +70,14 @@ const RightRail: React.FC<TrackProps> = ({
           .map(async (item) =>
             JSON.parse(await item.getText("custom-app-type")),
           ),
-      )) as Puzzle[];
+      )) as AdventurePuzzles;
 
+      // @ts-expect-error TODO: Fix typing of track removal
       setPuzzles((prevPuzzles) =>
         prevPuzzles.map((puzzle) =>
           processedItems.map((item) => item.id).includes(puzzle.id)
             ? (() => {
-                const { trackId, ...puzzleProps } = puzzle;
+                const { track: _, ...puzzleProps } = puzzle;
                 return puzzleProps;
               })()
             : puzzle,

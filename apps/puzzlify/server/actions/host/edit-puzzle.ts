@@ -10,20 +10,24 @@ import { redirect } from "next/navigation";
 export const editPuzzle = hostPuzzleActionClient
   .schema(puzzleSchema)
   .metadata({ roleName: "host", actionName: "edit-puzzle" })
-  .action(async ({ parsedInput, ctx: { adventureId, puzzleId } }) => {
+  .action(async ({ parsedInput, ctx: { hostAdventureId, hostPuzzleId } }) => {
     const { riddle, answer, label } = parsedInput;
 
     const hashedAnswer = answer ? await hashInput(answer) : null;
 
     try {
-      await updatePuzzleDb(puzzleId, { label, riddle, answer: hashedAnswer });
+      await updatePuzzleDb(hostPuzzleId, {
+        label,
+        riddle,
+        answer: hashedAnswer,
+      });
 
-      revalidatePath(`/adventure/${adventureId}`);
+      revalidatePath(`/adventure/${hostAdventureId}`);
     } catch (error) {
       const userFacingErrorMessage = "Failed to edit puzzle";
       console.error(userFacingErrorMessage, error);
       return { error: userFacingErrorMessage };
     }
 
-    redirect(`/adventure/${adventureId}/puzzle`);
+    redirect(`/adventure/${hostAdventureId}/puzzle`);
   });

@@ -7,17 +7,21 @@ import {
   isTextDropItem,
 } from "react-aria-components";
 import { useListData } from "react-stately";
-import { Puzzle } from "./types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowUpFromLine, Grip, GripVertical, X } from "lucide-react";
+import { type AdventurePuzzles } from "@/server/db/puzzle";
+import { editPuzzlePosition } from "@/server/actions/host/edit-puzzle-positions";
+import { Adventure } from "@prisma/client";
+import { useAction } from "next-safe-action/hooks";
 
 interface TrackProps {
-  setPuzzles: React.Dispatch<React.SetStateAction<Puzzle[]>>;
+  setPuzzles: React.Dispatch<React.SetStateAction<AdventurePuzzles>>;
   removeTrack: (trackId: string) => void;
-  puzzles: Puzzle[];
+  puzzles: AdventurePuzzles;
   ariaLabel: string;
   trackId: string;
+  adventureId: Adventure["id"];
 }
 
 const Track: React.FC<TrackProps> = ({
@@ -26,8 +30,15 @@ const Track: React.FC<TrackProps> = ({
   puzzles,
   ariaLabel,
   trackId,
+  adventureId,
 }) => {
   const list = useListData({ initialItems: puzzles });
+
+  const editPuzzlePositionBound = editPuzzlePosition.bind(null, {
+    adventureId,
+  });
+
+  const { execute } = useAction(editPuzzlePositionBound);
 
   let { dragAndDropHooks } = useDragAndDrop({
     getItems(keys) {
@@ -74,7 +85,7 @@ const Track: React.FC<TrackProps> = ({
           .map(async (item) =>
             JSON.parse(await item.getText("custom-app-type")),
           ),
-      )) as Puzzle[];
+      )) as AdventurePuzzles;
 
       setPuzzles((prevPuzzles) =>
         prevPuzzles.map((puzzle) =>
@@ -92,13 +103,13 @@ const Track: React.FC<TrackProps> = ({
     },
 
     async onRootDrop(e) {
-      let processedItems = await Promise.all(
+      let processedItems = (await Promise.all(
         e.items
           .filter(isTextDropItem)
           .map(async (item) =>
             JSON.parse(await item.getText("custom-app-type")),
           ),
-      );
+      )) as AdventurePuzzles;
       list.append(...processedItems);
       setPuzzles((prevPuzzles) =>
         prevPuzzles.map((puzzle) =>
@@ -116,6 +127,8 @@ const Track: React.FC<TrackProps> = ({
       } else if (e.target.dropPosition === "after") {
         list.moveAfter(e.target.key, e.keys);
       }
+
+      list.items.forEach((item) => {});
     },
 
     onDragEnd(e) {

@@ -32,6 +32,20 @@ export const puzzleSchema = z.object({
 
 export type Puzzle = z.infer<typeof puzzleSchema>;
 
+export const puzzlePositionSchema = z.object({
+  puzzleId: z.string().min(1, "Puzzle ID is required"),
+  trackId: z.string().min(1, "Track ID is required"),
+  order: z.number().int().positive("Order must be greater than 0"),
+});
+
+export type PuzzlePosition = z.infer<typeof puzzlePositionSchema>;
+
+export const puzzlePositionPayloadSchema = z.object({
+  puzzlePositions: z.array(puzzlePositionSchema),
+});
+
+export type PuzzlePositionPayload = z.infer<typeof puzzlePositionPayloadSchema>;
+
 export const hintSchema = z.object({
   hint: z.string().min(1, "Hint is required"),
   delay: z.coerce

@@ -127,7 +127,7 @@ const seed = async () => {
       answer: await bcryptjs.hash("Paris".toLowerCase(), 10),
       trackId: "track-1",
       adventureId: "adventure-id-1",
-      order: 1,
+      order: 2,
     },
   });
 
@@ -137,7 +137,7 @@ const seed = async () => {
       id: "puzzle-id-2b",
       riddle: "What is the capital of Germany?",
       answer: await bcryptjs.hash("Berlin".toLowerCase(), 10),
-      trackId: "track-1",
+      trackId: "track-2",
       adventureId: "adventure-id-1",
       order: 1,
     },
@@ -150,7 +150,6 @@ const seed = async () => {
       riddle: "What is the capital of Italy?",
       answer: await bcryptjs.hash("Rome".toLowerCase(), 10),
       adventureId: "adventure-id-1",
-      order: 1,
     },
   });
 

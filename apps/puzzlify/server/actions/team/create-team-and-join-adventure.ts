@@ -1,6 +1,6 @@
 "use server";
 
-import { userActionClient } from "@/lib/next-safe-action";
+import { teamAdventureActionClient } from "@/lib/next-safe-action";
 import { createTeamSchema } from "@/schemas/adventure";
 import { getAdventureTeamData } from "@/server/db/adventure";
 import { createTeam } from "@/server/db/team";
@@ -11,7 +11,7 @@ import {
 import { createAdventureUsers } from "@/server/db/user-adventure";
 import { revalidatePath } from "next/cache";
 
-export const createTeamAndJoinAdventure = userActionClient
+export const createTeamAndJoinAdventure = teamAdventureActionClient
   .schema(createTeamSchema)
   .metadata({ roleName: "team", actionName: "join-adventure" })
   .action(async ({ parsedInput, bindArgsParsedInputs, ctx }) => {

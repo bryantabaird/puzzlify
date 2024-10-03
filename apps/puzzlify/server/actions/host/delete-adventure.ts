@@ -8,11 +8,11 @@ import { z } from "zod";
 export const deleteAdventure = hostAdventureActionClient
   .schema(z.object({}))
   .metadata({ roleName: "host", actionName: "delete-adventure" })
-  .action(async ({ ctx: { adventureId } }) => {
+  .action(async ({ ctx: { hostAdventureId } }) => {
     try {
-      await deleteAdventureDb(adventureId);
+      await deleteAdventureDb(hostAdventureId);
     } catch (error) {
-      const userFacingErrorMessage = "Failed to delete adventure";
+      const userFacingErrorMessage = "Failed to delete adventures";
       console.error(userFacingErrorMessage, error);
       return { error: userFacingErrorMessage };
     }

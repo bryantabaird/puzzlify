@@ -9,18 +9,17 @@ import { redirect } from "next/navigation";
 export const addHint = hostPuzzleActionClient
   .schema(hintSchema)
   .metadata({ roleName: "host", actionName: "add-hint" })
-  .action(async ({ parsedInput, ctx }) => {
+  .action(async ({ parsedInput, ctx: { hostAdventureId, hostPuzzleId } }) => {
     const { hint, delay } = parsedInput;
-    const { adventureId, puzzleId } = ctx;
 
     try {
-      await createHintDb({ puzzleId, hint, delay });
+      await createHintDb({ puzzleId: hostPuzzleId, hint, delay });
     } catch (error) {
       const userFacingErrorMessage = "Failed to add hint";
       console.error(userFacingErrorMessage, error);
       return { error: userFacingErrorMessage };
     }
 
-    revalidatePath(`/adventure/${adventureId}/edit/puzzle/${puzzleId}`);
-    redirect(`/adventure/${adventureId}/edit/puzzle/${puzzleId}`);
+    revalidatePath(`/adventure/${hostAdventureId}/edit/puzzle/${hostPuzzleId}`);
+    redirect(`/adventure/${hostAdventureId}/edit/puzzle/${hostPuzzleId}`);
   });

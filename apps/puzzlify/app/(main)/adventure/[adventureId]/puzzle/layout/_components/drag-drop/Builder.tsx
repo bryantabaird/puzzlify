@@ -1,56 +1,52 @@
 "use client";
 
 import React, { useState } from "react";
-import { Puzzle } from "./types"; // Adjust the import path if necessary
 import RightRail from "./RightRail";
 import Finish from "./Finish";
-import TrackGroupComponent from "./TrackGroup";
+import Step from "./Step";
 import Start from "./Start";
 import { useListData } from "react-stately";
-
-type Track = {
-  id: string;
-  name: string;
-};
-
-const initialTracks: Array<Track> = [
-  { id: "1", name: "Track 1" },
-  { id: "2", name: "Track 2" },
-  { id: "3", name: "Track 3" },
-  { id: "4", name: "Track 4" },
-];
+import { AdventurePuzzles } from "@/server/db/puzzle";
+import { Track } from "./types";
 
 type BuilderProps = {
-  initialPuzzles: Puzzle[];
+  initialPuzzles: AdventurePuzzles;
+  adventureId: string;
 };
 
-const Builder: React.FC<BuilderProps> = ({ initialPuzzles }) => {
-  const [puzzles, setPuzzles] = useState<Puzzle[]>(initialPuzzles);
+const Builder: React.FC<BuilderProps> = ({ initialPuzzles, adventureId }) => {
+  const [puzzles, setPuzzles] = useState<AdventurePuzzles>(initialPuzzles);
+
+  const initialTracks = puzzles.reduce((acc: Track[], puzzle) => {
+    const puzzleTrack = puzzle.track;
+    if (puzzleTrack && !acc.some((track) => track.id === puzzleTrack.id)) {
+      acc.push(puzzleTrack);
+    }
+    return acc;
+  }, []);
+
   const [tracks, setTracks] = useState(initialTracks);
+
+  console.log("tracks", tracks);
 
   const addTrack = () => {
     setTracks((prevTracks) => [
       ...prevTracks,
       {
-        id: `${prevTracks.length + 1}`,
-        name: `Track ${prevTracks.length + 1}`,
+        id: self.crypto.randomUUID(),
+        label: `Track ${prevTracks.length + 1}`,
       },
     ]);
   };
 
   const removeTrack = (trackId: string) => {
     const puzzlesToUnassign = puzzles.filter(
-      (puzzle) => puzzle.trackId === trackId,
+      (puzzle) => puzzle.track?.id === trackId,
     );
 
     setPuzzles((prevPuzzles) =>
       prevPuzzles.map((puzzle) =>
-        puzzle.trackId === trackId
-          ? (() => {
-              const { trackId, ...puzzleProps } = puzzle;
-              return puzzleProps;
-            })()
-          : puzzle,
+        puzzle.track?.id === trackId ? { ...puzzle, trackId: null } : puzzle,
       ),
     );
 
@@ -61,14 +57,8 @@ const Builder: React.FC<BuilderProps> = ({ initialPuzzles }) => {
     );
   };
 
-  console.log("puzzles", puzzles);
-
   const unassignedList = useListData({
-    initialItems: puzzles.filter(
-      (puzzle) => !puzzle.trackId,
-      // puzzle.nextPuzzleIds.length === 0 &&
-      // puzzle.previousPuzzleIds.length === 0,
-    ),
+    initialItems: puzzles.filter((puzzle) => !puzzle.track?.id),
   });
 
   return (
@@ -80,19 +70,24 @@ const Builder: React.FC<BuilderProps> = ({ initialPuzzles }) => {
           </div>
         </div>
 
-        <TrackGroupComponent
+        <Step
           tracks={tracks}
-          puzzles={puzzles.filter((puzzle) => puzzle.trackId !== "unassigned")}
+          puzzles={puzzles.filter(
+            (puzzle) => puzzle.track?.id !== "unassigned",
+          )}
           setPuzzles={setPuzzles}
           addTrack={addTrack}
           removeTrack={removeTrack}
+          adventureId={adventureId}
         />
 
         <div className="col-span-full rounded-md text-center">
           <div className="p-2 border rounded-md shadow-sm overflow-auto">
             <Finish
               setPuzzles={setPuzzles}
-              puzzles={puzzles.filter((puzzle) => puzzle.trackId === "finish")}
+              puzzles={puzzles.filter(
+                (puzzle) => puzzle.track?.id === "finish",
+              )}
               ariaLabel={"Finish"}
               trackId={"finish"}
             />

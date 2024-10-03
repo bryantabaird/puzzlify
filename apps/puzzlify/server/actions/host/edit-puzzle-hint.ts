@@ -12,17 +12,21 @@ import { redirect } from "next/navigation";
 export const editHint = hostHintActionClient
   .schema(hintSchema)
   .metadata({ roleName: "host", actionName: "edit-hint" })
-  .action(async ({ parsedInput, ctx: { adventureId, puzzleId, hintId } }) => {
-    const { hint, delay } = parsedInput;
+  .action(
+    async ({ parsedInput, ctx: { hostAdventureId, hostPuzzleId, hintId } }) => {
+      const { hint, delay } = parsedInput;
 
-    try {
-      await updateHintDb(hintId, { hint, delay });
-    } catch (error) {
-      const userFacingErrorMessage = "Failed to edit hint";
-      console.error(userFacingErrorMessage, error);
-      return { error: userFacingErrorMessage };
-    }
+      try {
+        await updateHintDb(hintId, { hint, delay });
+      } catch (error) {
+        const userFacingErrorMessage = "Failed to edit hint";
+        console.error(userFacingErrorMessage, error);
+        return { error: userFacingErrorMessage };
+      }
 
-    revalidatePath(`/adventure/${adventureId}/edit/puzzle/${puzzleId}`);
-    redirect(`/adventure/${adventureId}/edit/puzzle/${puzzleId}`);
-  });
+      revalidatePath(
+        `/adventure/${hostAdventureId}/edit/puzzle/${hostPuzzleId}`,
+      );
+      redirect(`/adventure/${hostAdventureId}/edit/puzzle/${hostPuzzleId}`);
+    },
+  );

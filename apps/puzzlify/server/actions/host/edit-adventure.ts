@@ -15,7 +15,7 @@ import { redirect } from "next/navigation";
 export const editAdventure = hostAdventureActionClient
   .schema(adventureSchema)
   .metadata({ roleName: "host", actionName: "edit-adventure" })
-  .action(async ({ parsedInput, ctx: { adventureId } }) => {
+  .action(async ({ parsedInput, ctx: { hostAdventureId } }) => {
     const { name, startDate } = parsedInput;
 
     const parsedStartDate = new Date(startDate);
@@ -24,7 +24,7 @@ export const editAdventure = hostAdventureActionClient
       throw new Error("Invalid start date");
     }
 
-    const adventure = await getAdventureStartDateTime(adventureId);
+    const adventure = await getAdventureStartDateTime(hostAdventureId);
 
     if (!adventure) {
       throw new Error("Adventure not found");
@@ -41,7 +41,7 @@ export const editAdventure = hostAdventureActionClient
     }
 
     try {
-      await updateAdventureDb(adventureId, {
+      await updateAdventureDb(hostAdventureId, {
         name,
         startDate: parsedStartDate,
       });
@@ -51,6 +51,6 @@ export const editAdventure = hostAdventureActionClient
       return { error: userFacingErrorMessage };
     }
 
-    revalidatePath(`/adventure/${adventureId}`);
-    redirect(`/adventure/${adventureId}`);
+    revalidatePath(`/adventure/${hostAdventureId}`);
+    redirect(`/adventure/${hostAdventureId}`);
   });

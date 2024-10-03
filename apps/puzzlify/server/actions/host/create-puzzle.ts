@@ -10,12 +10,17 @@ import { createHintDb } from "@/server/db/hint";
 export const createPuzzle = hostAdventureActionClient
   .schema(puzzleFormSchema)
   .metadata({ roleName: "host", actionName: "create-puzzle" })
-  .action(async ({ parsedInput, ctx: { adventureId } }) => {
+  .action(async ({ parsedInput, ctx: { hostAdventureId } }) => {
     const { riddle, answer, label, assets, hints } = parsedInput;
 
     const hashedAnswer = answer ? await hashInput(answer) : null;
 
-    const puzzlePayload = { label, adventureId, riddle, answer: hashedAnswer };
+    const puzzlePayload = {
+      label,
+      adventureId: hostAdventureId,
+      riddle,
+      answer: hashedAnswer,
+    };
 
     try {
       const { id: puzzleId } = await createPuzzleDb(puzzlePayload);
@@ -26,7 +31,7 @@ export const createPuzzle = hostAdventureActionClient
         }),
       );
 
-      revalidatePath(`/adventure/${adventureId}`);
+      revalidatePath(`/adventure/${hostAdventureId}`);
 
       return { puzzleId };
     } catch (error) {

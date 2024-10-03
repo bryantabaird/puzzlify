@@ -3,25 +3,29 @@ import {
   hostAdventureMiddlewareFn,
   hostHintMiddlewareFn,
   hostPuzzleMiddlewareFn,
+  hostPuzzlesMiddlewareFn,
 } from "./middleware-host";
 import {
   adventureBindArgsSchema,
-  baseBindArgsSchema,
+  emptySchema,
+  hintBindArgsSchema,
   metadataSchema,
   puzzleBindArgsSchema,
+  puzzlesBindArgsSchema,
 } from "./schemas";
 import { userMiddlewareFn } from "./middleware-user";
 import {
   puzzleAdventureMiddlewareFn,
   teamAdventureMiddlewareFn,
 } from "./middleware-team";
+import { z } from "zod";
 
 export const baseActionClient = createSafeActionClient({
   defineMetadataSchema: () => metadataSchema,
 });
 
 export const userActionClient = baseActionClient
-  .bindArgsSchemas<[schema: typeof baseBindArgsSchema]>([baseBindArgsSchema])
+  .bindArgsSchemas<[bindArgsSchema: typeof emptySchema]>([emptySchema])
   .use(userMiddlewareFn);
 
 // TODO: zod-prisma-types
@@ -43,10 +47,16 @@ export const hostPuzzleActionClient = hostAdventureActionClient
   >([puzzleBindArgsSchema])
   .use(hostPuzzleMiddlewareFn);
 
+export const hostPuzzlesActionClient = hostAdventureActionClient
+  .bindArgsSchemas<
+    [bindArgsSchema: typeof puzzlesBindArgsSchema]
+  >([puzzlesBindArgsSchema])
+  .use(hostPuzzlesMiddlewareFn);
+
 export const hostHintActionClient = hostPuzzleActionClient
   .bindArgsSchemas<
-    [bindArgsSchema: typeof baseBindArgsSchema]
-  >([baseBindArgsSchema])
+    [bindArgsSchema: typeof hintBindArgsSchema]
+  >([hintBindArgsSchema])
   .use(hostHintMiddlewareFn);
 
 export const teamAdventureActionClient = userActionClient

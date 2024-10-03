@@ -5,23 +5,20 @@ export const metadataSchema = z.object({
   actionName: z.string(),
 });
 
-export const baseBindArgsSchema = z.object({
-  adventureId: z.string().optional(),
-  puzzleId: z.string().optional(),
-  hintId: z.string().optional(),
-  teamId: z.string().optional(),
-});
+export const emptySchema = z.object({});
 
-export const adventureBindArgsSchema = baseBindArgsSchema.extend({
+export const adventureBindArgsSchema = z.object({
   adventureId: z.string().min(1, "Adventure ID must be at least 1 character"),
-});
-
-export const teamBindArgsSchema = adventureBindArgsSchema.extend({
-  teamId: z.string().min(1, "Team ID must be at least 1 character"),
 });
 
 export const puzzleBindArgsSchema = adventureBindArgsSchema.extend({
   puzzleId: z.string().min(1, "Puzzle ID must be at least 1 character"),
+});
+
+export const puzzlesBindArgsSchema = adventureBindArgsSchema.extend({
+  puzzleIds: z.array(
+    z.string().min(1, "Puzzle ID must be at least 1 character"),
+  ),
 });
 
 export const hintBindArgsSchema = puzzleBindArgsSchema.extend({

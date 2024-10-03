@@ -7,13 +7,13 @@ import {
   isTextDropItem,
 } from "react-aria-components";
 import { useListData } from "react-stately";
-import { Puzzle } from "./types";
+import { type AdventurePuzzles } from "@/server/db/puzzle";
 import { cn } from "@/lib/utils";
 import { ArrowUpFromLine, Grip, GripVertical } from "lucide-react";
 
 interface FinishProps {
-  setPuzzles: React.Dispatch<React.SetStateAction<Puzzle[]>>;
-  puzzles: Puzzle[];
+  setPuzzles: React.Dispatch<React.SetStateAction<AdventurePuzzles>>;
+  puzzles: AdventurePuzzles;
   ariaLabel: string;
   trackId: string;
 }
@@ -71,7 +71,7 @@ const Finish: React.FC<FinishProps> = ({
           .map(async (item) =>
             JSON.parse(await item.getText("custom-app-type")),
           ),
-      )) as Puzzle[];
+      )) as AdventurePuzzles;
 
       setPuzzles((prevPuzzles) =>
         prevPuzzles.map((puzzle) =>

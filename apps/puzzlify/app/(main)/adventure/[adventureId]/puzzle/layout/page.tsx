@@ -7,12 +7,9 @@ export default async function PuzzleLayout({
 }: {
   params: { adventureId: Adventure["id"] };
 }) {
-  const rawPuzzles = await getAdventurePuzzles(adventureId);
+  const puzzles = await getAdventurePuzzles(adventureId);
 
-  const puzzles = rawPuzzles.map((rawPuzzle) => ({
-    id: rawPuzzle.id,
-    label: rawPuzzle.label,
-  }));
+  console.log("puzzles", puzzles);
 
-  return <Builder initialPuzzles={puzzles} />;
+  return <Builder initialPuzzles={puzzles} adventureId={adventureId} />;
 }
